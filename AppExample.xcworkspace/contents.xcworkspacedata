@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workspace
+   version = "1.0">
+   <FileRef
+      location = "group:TCAFeatureAction">
+   </FileRef>
+   <FileRef
+      location = "group:PHAssetExtensions">
+   </FileRef>
+   <FileRef
+      location = "group:UIModifiers">
+   </FileRef>
+   <FileRef
+      location = "group:UIConstants">
+   </FileRef>
+   <FileRef
+      location = "group:ImageMagick">
+   </FileRef>
+   <FileRef
+      location = "group:Example/Example.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:UIComponents">
+   </FileRef>
+   <FileRef
+      location = "group:TCADependencies">
+   </FileRef>
+</Workspace>

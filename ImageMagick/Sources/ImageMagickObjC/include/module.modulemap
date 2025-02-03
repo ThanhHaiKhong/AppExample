@@ -1,0 +1,17 @@
+
+module ImageMagickObjC [system] {
+    header "ImageMagickObjC.h"
+    export *
+}
+
+module MagickWand [system] {
+    header "wand/MagickWand.h"
+    link "MagickWand"
+    export *
+}
+
+module MagickCore [system] {
+    header "magick/magick-config.h"
+    link "MagickCore"
+    export *
+}

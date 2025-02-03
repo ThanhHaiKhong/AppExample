@@ -1,0 +1,24 @@
+{
+  "originHash" : "3417e83a1ff9a6bb773f87dee073417bf5b3cd96bf1ce9250c88d636c9ab0993",
+  "pins" : [
+    {
+      "identity" : "coregeometry",
+      "kind" : "remoteSourceControl",
+      "location" : "https://gitlab.com/Pyroh/CoreGeometry.git",
+      "state" : {
+        "revision" : "c8604b90dc60084e9d08f289573e537585b84129",
+        "version" : "4.0.0"
+      }
+    },
+    {
+      "identity" : "smoothoperators",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Pyroh/SmoothOperators.git",
+      "state" : {
+        "revision" : "dd013309755d75d8636fd7fb89bb25da34b92c7e",
+        "version" : "0.20.0"
+      }
+    }
+  ],
+  "version" : 3
+}
