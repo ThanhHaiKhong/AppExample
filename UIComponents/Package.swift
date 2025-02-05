@@ -24,7 +24,6 @@ let package = Package(
         .package(url: "https://github.com/Pyroh/SmoothOperators.git", .upToNextMajor(from: "0.4.0")),
         .package(url: "https://gitlab.com/Pyroh/CoreGeometry.git", .upToNextMajor(from: "4.0.0")),
         .package(url: "https://github.com/onevcat/Kingfisher", branch: "master"),
-        .package(path: "/Users/thanhhaikhong/Desktop/AppExample/TCAFeatureAction"),
         .package(path: "/Users/thanhhaikhong/Desktop/AppExample/TCADependencies"),
         .package(path: "/Users/thanhhaikhong/Desktop/AppExample/UIConstants"),
         .package(path: "/Users/thanhhaikhong/Desktop/AppExample/UIModifiers"),

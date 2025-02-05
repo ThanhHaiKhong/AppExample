@@ -234,7 +234,7 @@ extension SequenceImageProcessor {
     
     private func loadImages(_ imagePaths: [String]) async throws {
         for path in imagePaths {
-            try await loadImage(from: path, to: wand)
+            try loadImage(from: path, to: wand)
         }
     }
     

@@ -18,12 +18,10 @@ let package = Package(
         .singleTargetLibrary("SequenceImageClient"),
         .singleTargetLibrary("Zipper"),
         .singleTargetLibrary("AppTrackingClient"),
-        .singleTargetLibrary("MobileAdsClient"),
         .singleTargetLibrary("MobilePlatformClient"),
     ],
     dependencies: [
         .package(url: "https://github.com/pointfreeco/swift-composable-architecture.git", branch: "main"),
-        .package(url: "https://github.com/googleads/swift-package-manager-google-mobile-ads.git", branch: "main"),
         .package(url: "https://github.com/firebase/firebase-ios-sdk.git", branch: "main"),
         .package(url: "https://github.com/marmelroy/Zip.git", branch: "master"),
         .package(path: "../PHAssetExtensions"),
@@ -41,7 +39,6 @@ let package = Package(
                 "Zipper",
                 "SequenceImageClient",
                 "InAppPurchaseClient",
-                "MobileAdsClient",
                 "AppTrackingClient",
                 "MobilePlatformClient",
             ]
@@ -106,13 +103,6 @@ let package = Package(
             ]
         ),
         .target(
-            name: "MobileAdsClient",
-            dependencies: [
-                .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
-                .product(name: "GoogleMobileAds", package: "swift-package-manager-google-mobile-ads"),
-            ]
-        ),
-        .target(
             name: "AppTrackingClient",
             dependencies: [
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
@@ -122,7 +112,6 @@ let package = Package(
             name: "MobilePlatformClient",
             dependencies: [
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
-                "MobileAdsClient",
                 "InAppPurchaseClient",
                 "AppTrackingClient",
             ]

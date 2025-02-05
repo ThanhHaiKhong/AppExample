@@ -1,5 +1,5 @@
 {
-  "originHash" : "1b87c0319b3462598cfd67d62ffed97fbd6f8bd17accd1da6b6ea1d620d1cd1d",
+  "originHash" : "96daf5c06468a631d21cc5e2dc3d3cf6b51ed5699c179c507b58cf680d3cf132",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -43,7 +43,7 @@
       "location" : "https://github.com/firebase/firebase-ios-sdk.git",
       "state" : {
         "branch" : "main",
-        "revision" : "0fbc5385ee4667878d46edd347b953b6f454a889"
+        "revision" : "2b8829352f329e6a2071a4fb6525644276be378e"
       }
     },
     {
@@ -96,8 +96,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/google/interop-ios-for-google-sdks.git",
       "state" : {
-        "revision" : "2d12673670417654f08f5f90fdd62926dc3a2648",
-        "version" : "100.0.0"
+        "revision" : "040d087ac2267d2ddd4cca36c757d1c6a05fdbfe",
+        "version" : "101.0.0"
       }
     },
     {
@@ -232,7 +232,7 @@
       "location" : "https://github.com/googleads/swift-package-manager-google-mobile-ads.git",
       "state" : {
         "branch" : "main",
-        "revision" : "7778cc1ab037c10dbbe026959e51e616bd961be9"
+        "revision" : "aa24c7dc03bca62c42747314dc8537f15587b50d"
       }
     },
     {

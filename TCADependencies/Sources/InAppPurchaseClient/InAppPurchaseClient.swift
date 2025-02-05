@@ -9,24 +9,26 @@ import ComposableArchitecture
 import StoreKit
 import Combine
 
+@available(iOS 15.0, *)
 @DependencyClient
 public struct InAppPurchaseClient: Sendable {
-    public var fetchProducts: @Sendable (_ productIdentifiers: [String]) async throws -> [SKProduct]
-    public var purchase: @Sendable (_ product: SKProduct) async throws -> PurchaseResult
-    public var restorePurchases: @Sendable () async throws -> [SKPaymentTransaction]
-    public var observeTransactions: @Sendable () async throws -> AsyncStream<SKPaymentTransaction>
+    public var fetchProducts: @Sendable (_ productIdentifiers: [String]) async throws -> [IAPProduct]
+    public var purchase: @Sendable (_ productID: String) async throws -> Transaction
+    public var restorePurchases: @Sendable () async throws -> [Transaction]
+    public var observeTransactions: @Sendable () async throws -> AsyncStream<Transaction>
     public var verifySubscriptionStatus: @Sendable (_ productIdentifiers: [String], _ sharedSecret: String) async throws -> SubscriptionStatus
 }
 
+@available(iOS 15.0, *)
 extension InAppPurchaseClient: DependencyKey {
     public static let liveValue: InAppPurchaseClient = {
-        let manager = InAppPurchaseManager()
+        let manager = Delegate()
         return InAppPurchaseClient(
             fetchProducts: { productIdentifiers in
-                return try await manager.fetchProducts(productIdentifiers: productIdentifiers)
+                return try await manager.fetchProducts(identifiers: productIdentifiers)
             },
-            purchase: { product in
-                return try await manager.purchase(product: product)
+            purchase: { productID in
+                return try await manager.purchase(productID)
             },
             restorePurchases: {
                 return try await manager.restorePurchases()
@@ -41,16 +43,51 @@ extension InAppPurchaseClient: DependencyKey {
     }()
 }
 
+@available(iOS 15.0, *)
 extension InAppPurchaseClient: TestDependencyKey {
     public static var testValue: InAppPurchaseClient {
         InAppPurchaseClient()
     }
 }
 
+@available(iOS 15.0, *)
 extension DependencyValues {
     public var inAppPurchaseClient: InAppPurchaseClient {
         get { self[InAppPurchaseClient.self] }
         set { self[InAppPurchaseClient.self] = newValue }
+    }
+}
+
+@available(iOS 15.0, *)
+public struct IAPProduct: Identifiable, Equatable, Hashable, Sendable, Codable, CustomStringConvertible {
+    public let id: String
+    public let displayName: String
+    public let price: Decimal
+    public let displayPrice: String
+    public let localizedDescription: String
+    public let offer: String
+    
+    public init(product: Product) {
+        self.id = product.id
+        self.displayName = product.displayName
+        self.price = product.price
+        self.displayPrice = product.displayPrice
+        self.localizedDescription = product.id == "com.orientpro.photocompress_Weekly" ? "WEEKLY" : "ANNUALLY"
+        self.offer = product.id == "com.orientpro.photocompress_Weekly" ? "Flexible" : "Best Value"
+    }
+    
+    public static func == (lhs: IAPProduct, rhs: IAPProduct) -> Bool {
+        lhs.id == rhs.id
+    }
+    
+    public var description: String {
+        """
+        IAPProduct:
+        - ID: \(id)
+        - Title: \(displayName)
+        - Price: \(displayPrice)
+        - Description: \(localizedDescription)
+        """
     }
 }
 
@@ -66,96 +103,101 @@ public enum SubscriptionStatus {
     case notPurchased
 }
 
-private final class InAppPurchaseManager: NSObject, SKPaymentTransactionObserver, SKProductsRequestDelegate, @unchecked Sendable {
-    private var productRequest: SKProductsRequest?
-    private var continuation: CheckedContinuation<[SKProduct], Error>?
-    private let transactionSubject = PassthroughSubject<SKPaymentTransaction, Never>()
+@available(iOS 15.0, *)
+internal final class Delegate: @unchecked Sendable {
+    private var continuation: CheckedContinuation<[Product], Error>?
     private var cancellables: Set<AnyCancellable> = []
     
-    override init() {
-        super.init()
-        SKPaymentQueue.default().add(self)
-    }
-
-    deinit {
-        SKPaymentQueue.default().remove(self)
-    }
-
-    public func fetchProducts(productIdentifiers: [String]) async throws -> [SKProduct] {
-        try await withCheckedThrowingContinuation { continuation in
-            self.continuation = continuation
-            productRequest = SKProductsRequest(productIdentifiers: Set(productIdentifiers))
-            productRequest?.delegate = self
-            productRequest?.start()
-        }
-    }
-
-    public func purchase(product: SKProduct) async throws -> PurchaseResult {
-        try await withCheckedThrowingContinuation { continuation in
-            let payment = SKPayment(product: product)
-            SKPaymentQueue.default().add(payment)
-            transactionSubject
-                .first { $0.payment.productIdentifier == product.productIdentifier }
-                .sink { transaction in
-                    switch transaction.transactionState {
-                    case .purchased:
-                        continuation.resume(returning: .success(transaction))
-                    case .failed:
-                        continuation.resume(returning: .failure(transaction.error ?? NSError(domain: "PurchaseError", code: -1)))
-                    case .restored:
-                        continuation.resume(returning: .success(transaction))
-                    default:
-                        continuation.resume(returning: .cancelled)
-                    }
-                }
-                .store(in: &cancellables)
-        }
-    }
-
-    public func restorePurchases() async throws -> [SKPaymentTransaction] {
-        try await withCheckedThrowingContinuation { continuation in
-            SKPaymentQueue.default().restoreCompletedTransactions()
-            transactionSubject
-                .collect()
-                .sink { transactions in
-                    continuation.resume(returning: transactions)
-                }
-                .store(in: &cancellables)
-        }
-    }
-
-    public func observeTransactions() -> AsyncStream<SKPaymentTransaction> {
-        AsyncStream { continuation in
-            transactionSubject
-                .sink { transaction in
-                    continuation.yield(transaction)
-                }
-                .store(in: &cancellables)
-        }
-    }
-
-    public func paymentQueue(_ queue: SKPaymentQueue, updatedTransactions transactions: [SKPaymentTransaction]) {
-        for transaction in transactions {
-            transactionSubject.send(transaction)
-        }
+    init() {
+        observeTransactionUpdates()
     }
     
-    public func verifySubscriptionStatus(for productIdentifiers: [String], sharedSecret: String) async -> SubscriptionStatus {
-        let receiptURL = Bundle.main.appStoreReceiptURL
+    private func observeTransactionUpdates() {
+        Task {
+            for await result in Transaction.updates {
+                do {
+                    let transaction = try await checkVerified(result)
+                    await handleTransaction(transaction)
+                } catch {
+                    print("Transaction verification failed: \(error)")
+                }
+            }
+        }
+    }
 
-        guard let receiptURL, let receiptData = try? Data(contentsOf: receiptURL) else {
+    private func handleTransaction(_ transaction: Transaction) async {
+        print("✅ Xử lý giao dịch \(transaction.id) - \(transaction.productID)")
+        await transaction.finish()
+    }
+    
+    public func fetchProducts(identifiers: [String]) async throws -> [IAPProduct] {
+        let products = try await Product.products(for: identifiers)
+        return products.map { IAPProduct(product: $0) }
+    }
+
+    public func purchase(_ productIdentifier: String) async throws -> Transaction {
+        let product = try await getProduct(for: productIdentifier)
+        let result = try await product.purchase()
+
+        switch result {
+        case .success(let verificationResult):
+            return try await checkVerified(verificationResult)
+
+        case .pending:
+            throw NSError(domain: "PurchasePending", code: -2, userInfo: nil)
+
+        case .userCancelled:
+            throw NSError(domain: "UserCancelled", code: -3, userInfo: nil)
+
+        @unknown default:
+            throw NSError(domain: "UnknownPurchaseError", code: -4, userInfo: nil)
+        }
+    }
+
+    public func restorePurchases() async throws -> [Transaction] {
+        var restoredTransactions: [Transaction] = []
+        for await result in Transaction.all {
+            let transaction = try await checkVerified(result)
+            await transaction.finish()
+            restoredTransactions.append(transaction)
+        }
+        return restoredTransactions
+    }
+
+    public func observeTransactions() -> AsyncStream<Transaction> {
+        AsyncStream { continuation in
+            Task {
+                for await result in Transaction.updates {
+                    do {
+                        let transaction = try await checkVerified(result)
+                        continuation.yield(transaction)
+                    } catch {
+                        print("Transaction verification failed: \(error)")
+                    }
+                }
+            }
+        }
+    }
+
+    private func checkVerified(_ result: VerificationResult<Transaction>) async throws -> Transaction {
+        switch result {
+        case .verified(let transaction):
+            return transaction
+        case .unverified(_, let error):
+            throw error
+        }
+    }
+
+    public func verifySubscriptionStatus(for productIdentifiers: [String], sharedSecret: String) async -> SubscriptionStatus {
+        guard let receiptURL = Bundle.main.appStoreReceiptURL,
+              let receiptData = try? Data(contentsOf: receiptURL) else {
             return .notPurchased
         }
 
         do {
             let receiptInfo = try await verifyReceipt(with: receiptData, sharedSecret: sharedSecret)
             let activeSubscriptions = parseReceipt(receiptInfo, for: productIdentifiers)
-
-            if activeSubscriptions.isEmpty {
-                return .expired
-            } else {
-                return .active
-            }
+            return activeSubscriptions.isEmpty ? .expired : .active
         } catch {
             print("Failed to verify receipt: \(error)")
             return .notPurchased
@@ -163,9 +205,8 @@ private final class InAppPurchaseManager: NSObject, SKPaymentTransactionObserver
     }
 
     private func verifyReceipt(with receiptData: Data, sharedSecret: String) async throws -> [String: Any] {
-        let receiptBase64 = receiptData.base64EncodedString()
         let requestBody = [
-            "receipt-data": receiptBase64,
+            "receipt-data": receiptData.base64EncodedString(),
             "password": sharedSecret
         ]
         let jsonData = try JSONSerialization.data(withJSONObject: requestBody, options: [])
@@ -187,36 +228,26 @@ private final class InAppPurchaseManager: NSObject, SKPaymentTransactionObserver
 
     private func parseReceipt(_ receiptInfo: [String: Any], for productIdentifiers: [String]) -> [String] {
         guard let receipt = receiptInfo["receipt"] as? [String: Any],
-              let inApp = receipt["in_app"] as? [[String: Any]] else { return [] }
+              let inApp = receipt["in_app"] as? [[String: Any]] else {
+            return []
+        }
 
         let now = Date()
-
         let activeSubscriptions = inApp.compactMap { transaction -> String? in
             guard let productId = transaction["product_id"] as? String,
                   let expirationDateString = transaction["expires_date"] as? String,
                   let expirationDate = ISO8601DateFormatter().date(from: expirationDateString) else {
                 return nil
             }
-
-            if productIdentifiers.contains(productId) && expirationDate > now {
-                return productId
-            }
-            return nil
+            return productIdentifiers.contains(productId) && expirationDate > now ? productId : nil
         }
         return activeSubscriptions
     }
     
-    // MARK: - SKProductsRequestDelegate
-    
-    func productsRequest(_ request: SKProductsRequest, didReceive response: SKProductsResponse) {
-        guard let continuation = continuation else { return }
-        continuation.resume(returning: response.products)
-        self.continuation = nil
-    }
-
-    func request(_ request: SKRequest, didFailWithError error: Error) {
-        guard let continuation = continuation else { return }
-        continuation.resume(throwing: error)
-        self.continuation = nil
+    private func getProduct(for productIdentifier: String) async throws -> Product {
+        guard let product = try await Product.products(for: [productIdentifier]).first else {
+            throw NSError(domain: "ProductNotFound", code: -1, userInfo: nil)
+        }
+        return product
     }
 }

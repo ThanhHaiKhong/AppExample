@@ -9,13 +9,13 @@ import GoogleMobileAds
 import SwiftUI
 import UIKit
 
-public struct BannerView: UIViewRepresentable {
+public struct BannerAdView: UIViewRepresentable {
     private let adUnitID: String
-    private let adSize: GADAdSize
+    private let adSize: AdSize
     
     public init(adUnitID: String, size: CGSize) {
         self.adUnitID = adUnitID
-        self.adSize = GADAdSizeFromCGSize(size)
+        self.adSize = adSizeFor(cgSize: size)
     }
     
     public func makeUIView(context: Context) -> UIView {
@@ -44,35 +44,25 @@ public struct BannerView: UIViewRepresentable {
         return BannerCoordinator(self)
     }
     
-    public class BannerCoordinator: NSObject, GADBannerViewDelegate {
+    public class BannerCoordinator: NSObject, BannerViewDelegate {
         
         @MainActor
-        private(set) lazy var bannerView: GADBannerView = {
-            let banner = GADBannerView(adSize: parent.adSize)
+        private(set) lazy var bannerView: BannerView = {
+            let banner = BannerView(adSize: parent.adSize)
             banner.adUnitID = parent.adUnitID
-            let extras = GADExtras()
+            let extras = Extras()
             extras.additionalParameters = ["collapsible" : "bottom"]
-            let request = GADRequest()
+            let request = Request()
             // request.register(extras)
             banner.load(request)
             banner.delegate = self
             return banner
         }()
         
-        private let parent: BannerView
+        private let parent: BannerAdView
         
-        public init(_ parent: BannerView) {
+        public init(_ parent: BannerAdView) {
             self.parent = parent
-        }
-        
-        // MARK: - GADBannerViewDelegate methods
-        
-        public func bannerViewDidReceiveAd(_ bannerView: GADBannerView) {
-            
-        }
-        
-        public func bannerView(_ bannerView: GADBannerView, didFailToReceiveAdWithError error: Error) {
-            
         }
     }
 }

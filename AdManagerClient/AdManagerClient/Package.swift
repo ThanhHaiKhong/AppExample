@@ -1,0 +1,42 @@
+// swift-tools-version: 6.0
+// The swift-tools-version declares the minimum version of Swift required to build this package.
+
+import PackageDescription
+
+let package = Package(
+    name: "AdManagerClient",
+    platforms: [
+        .iOS(.v15)
+    ],
+    products: [
+        .singleTargetLibrary("AdManagerClient"),
+        .singleTargetLibrary("AdManagerClientLive"),
+    ],
+    dependencies: [
+        .package(url: "https://github.com/pointfreeco/swift-composable-architecture.git", branch: "main"),
+        .package(url: "https://github.com/googleads/swift-package-manager-google-mobile-ads.git", branch: "main"),
+    ],
+    targets: [
+        .target(
+            name: "AdManagerClient",
+            dependencies: [
+                .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
+                .product(name: "GoogleMobileAds", package: "swift-package-manager-google-mobile-ads"),
+            ]
+        ),
+        .target(
+            name: "AdManagerClientLive",
+            dependencies: [
+                .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
+                .product(name: "GoogleMobileAds", package: "swift-package-manager-google-mobile-ads"),
+            ]
+        ),
+    ]
+)
+
+
+extension Product {
+    static func singleTargetLibrary(_ name: String) -> Product {
+        .library(name: name, targets: [name])
+    }
+}

@@ -6,9 +6,6 @@
 //
 
 import ComposableArchitecture
-import MobileAdsClient
-import InAppPurchaseClient
-import AppTrackingClient
 
 @DependencyClient
 public struct MobilePlatformClient: Sendable {
