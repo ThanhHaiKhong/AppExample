@@ -125,6 +125,7 @@ public struct Subscriptions: Sendable {
     }
     
     @Dependency(\.inAppPurchaseClient) var iapClient
+    @Dependency(\.openURL) var openURL
     
     public var body: some ReducerOf<Self> {
         BindingReducer()
@@ -195,6 +196,20 @@ extension Subscriptions {
             
             return .runWithAdCheck(adType: interstitial) { send in
 
+            }
+            
+        case .terms:
+            return .run { _ in
+                if let url = URL(string: "https://orlincproducts.wixsite.com/compressphotos/termsofservice") {
+                    await openURL(url)
+                }
+            }
+            
+        case .privacy:
+            return .run { _ in
+                if let url = URL(string: "https://orlincproducts.wixsite.com/toonaicartoonphoto/privacypolicy") {
+                    await openURL(url)
+                }
             }
             
         default:
