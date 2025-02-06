@@ -195,8 +195,6 @@ extension Subscriptions {
             
             return .runWithAdCheck(adType: interstitial) { send in
 
-            } catch: { error, send in
-                
             }
             
         default:

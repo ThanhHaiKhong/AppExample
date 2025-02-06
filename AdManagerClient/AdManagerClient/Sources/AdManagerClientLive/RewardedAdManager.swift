@@ -35,7 +35,7 @@ extension RewardedAdManager {
     @MainActor
     public func showAd(_ adUnitID: String, from viewController: UIViewController) async throws {
         guard let ad = rewardeds[adUnitID] else {
-            throw AdError.adNotReady
+            throw AdManagerClient.AdError.adNotReady
         }
         
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in

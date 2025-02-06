@@ -8,10 +8,6 @@
 import GoogleMobileAds
 import AdManagerClient
 
-enum AdError: Error {
-    case adNotReady
-}
-
 final internal actor AdsManager {
     internal static let shared = AdsManager()
     

@@ -36,7 +36,7 @@ extension InterstitialAdManager {
     @MainActor
     public func showAd(_ adUnitID: String, from viewController: UIViewController) async throws {
         guard let ad = interstitials[adUnitID] else {
-            throw AdError.adNotReady
+            throw AdManagerClient.AdError.adNotReady
         }
         
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in

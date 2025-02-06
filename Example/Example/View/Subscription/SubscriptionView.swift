@@ -6,8 +6,8 @@
 //
 
 import ComposableArchitecture
-import SwiftUI
 import InAppPurchaseClient
+import SwiftUI
 
 struct SubscriptionView: View {
     
