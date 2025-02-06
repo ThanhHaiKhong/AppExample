@@ -1,52 +1,14 @@
-// The Swift Programming Language
-// https://docs.swift.org/swift-book
+//
+//  Effect+Extensions.swift
+//  Example
+//
+//  Created by Thanh Hai Khong on 6/2/25.
+//
 
 import ComposableArchitecture
+import AdManagerClient
 
-@DependencyClient
-public struct AdManagerClient: Sendable {
-    public var requestTrackingAuthorizationIfNeeded: @Sendable () async throws -> Void
-    public var isUserSubscribed: @Sendable () async throws -> Bool
-    public var shouldShowAd: @Sendable (_ adType: AdType, _ rules: [AdRule]) async throws -> Bool
-    public var showAd: @Sendable () async throws -> Void
-    
-    public struct AdRule: Sendable {
-        public let name: String
-        public let priority: Int
-        public let evaluate: @Sendable () async -> Bool
-        
-        public init(name: String, priority: Int = 0, evaluate: @escaping @Sendable () async -> Bool) {
-            self.name = name
-            self.priority = priority
-            self.evaluate = evaluate
-        }
-    }
-
-    public enum AdType: Sendable, Equatable, CustomStringConvertible {
-        case appOpen(AdUnitID)
-        case interstitial(AdUnitID)
-        case rewarded(AdUnitID)
-        
-        public typealias AdUnitID = String
-        
-        public var description: String {
-            switch self {
-            case .appOpen: return "APP OPEN"
-            case .interstitial: return "INTERSTITIAL"
-            case .rewarded: return "REWARDED"
-            }
-        }
-    }
-}
-
-extension DependencyValues {
-    public var adManagerClient: AdManagerClient {
-        get { self[AdManagerClient.self] }
-        set { self[AdManagerClient.self] = newValue }
-    }
-}
-
-
+/*
 extension Effect {
     public static func runWithAdCheck(
         adType: AdManagerClient.AdType,
@@ -91,3 +53,4 @@ extension Effect {
         }
     }
 }
+*/

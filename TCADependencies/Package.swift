@@ -17,8 +17,6 @@ let package = Package(
         .singleTargetLibrary("ImageMagickClient"),
         .singleTargetLibrary("SequenceImageClient"),
         .singleTargetLibrary("Zipper"),
-        .singleTargetLibrary("AppTrackingClient"),
-        .singleTargetLibrary("MobilePlatformClient"),
     ],
     dependencies: [
         .package(url: "https://github.com/pointfreeco/swift-composable-architecture.git", branch: "main"),
@@ -39,8 +37,6 @@ let package = Package(
                 "Zipper",
                 "SequenceImageClient",
                 "InAppPurchaseClient",
-                "AppTrackingClient",
-                "MobilePlatformClient",
             ]
         ),
         .target(
@@ -100,20 +96,6 @@ let package = Package(
             dependencies: [
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
                 "Zip",
-            ]
-        ),
-        .target(
-            name: "AppTrackingClient",
-            dependencies: [
-                .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
-            ]
-        ),
-        .target(
-            name: "MobilePlatformClient",
-            dependencies: [
-                .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
-                "InAppPurchaseClient",
-                "AppTrackingClient",
             ]
         )
     ]

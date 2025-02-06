@@ -5,12 +5,20 @@
 //  Created by Thanh Hai Khong on 4/2/25.
 //
 
+import AppTrackingTransparency
 import ComposableArchitecture
 import AdManagerClient
 
 extension AdManagerClient: DependencyKey {
     public static let liveValue: AdManagerClient = {
         return AdManagerClient(
+            requestTrackingAuthorizationIfNeeded: {
+                return await withCheckedContinuation { continuation in
+                    ATTrackingManager.requestTrackingAuthorization { status in
+                        continuation.resume(returning: ())
+                    }
+                }
+            },
             isUserSubscribed: {
                 return await SubscriptionManager.shared.isUserSubscribed()
             },

@@ -8,32 +8,58 @@
 import Foundation
 import StoreKit
 
-final actor SubscriptionManager {
+public final actor SubscriptionManager {
     public static let shared = SubscriptionManager()
     
     private let subscriptionKey = "isUserSubscribed"
-    
-    public func isUserSubscribed() async -> Bool {
-        if let cachedValue = UserDefaults.standard.value(forKey: subscriptionKey) as? Bool {
-            return cachedValue
-        }
+    private let lastCheckedKey = "lastCheckedSubscription"
+    private let cacheDuration: TimeInterval = 24 * 60 * 60  // Cache trong 24 giờ
 
-        let isSubscribed = await fetchSubscriptionStatus()
+    private init() {}
+}
+
+// MARK: - Public Methods
+
+extension SubscriptionManager {
+    public func isUserSubscribed() async -> Bool {
+        if let cachedStatus = getCachedSubscriptionStatus(), !isCacheExpired() {
+            return cachedStatus
+        }
         
-        UserDefaults.standard.setValue(isSubscribed, forKey: subscriptionKey)
+        let isSubscribed = await checkSubscriptionWithStoreKit()
+        cacheSubscriptionStatus(isSubscribed)
         return isSubscribed
     }
-    
-    private func fetchSubscriptionStatus() async -> Bool {
-        do {
-            let products = try await Product.products(for: ["com.app.premium"])
-            guard let subscription = products.first else { return false }
+}
 
-            let statuses = try await subscription.subscription?.status
-            return statuses?.contains(where: { $0.state == .subscribed }) ?? false
-        } catch {
-            print("Lỗi kiểm tra subscription: \(error)")
-            return false
+// MARK: - Private Methods
+
+extension SubscriptionManager {
+    private func checkSubscriptionWithStoreKit() async -> Bool {
+        for await result in Transaction.currentEntitlements {
+            if case .verified(let transaction) = result {
+                if (transaction.productType == .autoRenewable || transaction.productType == .nonRenewable),
+                   let expirationDate = transaction.expirationDate,
+                   expirationDate > Date() {
+                    return true
+                }
+            }
         }
+        return false
+    }
+
+    private func cacheSubscriptionStatus(_ status: Bool) {
+        UserDefaults.standard.set(status, forKey: subscriptionKey)
+        UserDefaults.standard.set(Date().timeIntervalSince1970, forKey: lastCheckedKey)
+    }
+
+    private func getCachedSubscriptionStatus() -> Bool? {
+        return UserDefaults.standard.value(forKey: subscriptionKey) as? Bool
+    }
+
+    private func isCacheExpired() -> Bool {
+        let lastChecked = UserDefaults.standard.double(forKey: lastCheckedKey)
+        let currentTime = Date().timeIntervalSince1970
+        return currentTime - lastChecked > cacheDuration
     }
 }

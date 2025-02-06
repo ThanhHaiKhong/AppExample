@@ -193,8 +193,10 @@ extension Subscriptions {
             let rewarded: AdManagerClient.AdType = .rewarded("ca-app-pub-3940256099942544/1712485313")
             let rules: [AdManagerClient.AdRule] = []
             
-            return .performActionWithAd(interstitial, rules) {
-                print("Restore purchases")
+            return .runWithAdCheck(adType: interstitial) { send in
+
+            } catch: { error, send in
+                
             }
             
         default:

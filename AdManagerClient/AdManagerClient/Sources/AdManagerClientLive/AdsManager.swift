@@ -56,15 +56,14 @@ extension AdsManager {
         switch adType {
         case let .appOpen(adUnitID):
             try await openAdManager.showAd(adUnitID, from: rootVC)
-            print("👉 Quảng cáo APP OPEN đã bị đóng, tiếp tục thực hiện hành động tiếp theo!")
             
         case let .interstitial(adUnitID):
             try await interstitialAdManager.showAd(adUnitID, from: rootVC)
-            print("👉 Quảng cáo INTERSTITIAL đã bị đóng, tiếp tục thực hiện hành động tiếp theo!")
             
         case let .rewarded(adUnitID):
             try await rewardedAdManager.showAd(adUnitID, from: rootVC)
-            print("👉 Quảng cáo REWARDED đã bị đóng, tiếp tục thực hiện hành động tiếp theo!")
         }
+        
+        debugPrint("👉 The \(adType.description) ad has been closed, proceeding with the next action!")
     }
 }
