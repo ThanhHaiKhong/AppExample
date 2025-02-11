@@ -6,7 +6,7 @@
 //
 
 import ComposableArchitecture
-import AdManagerClient
+import MobileAdsClient
 import Combine
 import SwiftUI
 import UIKit
@@ -34,9 +34,9 @@ class AppSceneDelegate: UIResponder, UIWindowSceneDelegate {
         publisher.phase = .active
         
         Task {
-            let adManager = DependencyValues._current.adManagerClient
-            let appOpen: AdManagerClient.AdType = .appOpen("ca-app-pub-3940256099942544/5575463023")
-            let rules: [AdManagerClient.AdRule] = []
+            let adManager = DependencyValues._current.mobileAdsClient
+            let appOpen: MobileAdsClient.AdType = .appOpen("ca-app-pub-3940256099942544/5575463023")
+            let rules: [MobileAdsClient.AdRule] = []
             
             if try await adManager.isUserSubscribed() {
                 

@@ -16,7 +16,6 @@ let package = Package(
         .singleTargetLibrary("BlurView"),
         .singleTargetLibrary("EditorChoiceView"),
         .singleTargetLibrary("SettingsView"),
-        .singleTargetLibrary("GoogleAdMobUI"),
     ],
     dependencies: [
         .package(url: "https://github.com/pointfreeco/swift-composable-architecture.git", branch: "main"),
@@ -38,7 +37,6 @@ let package = Package(
                 "BlurView",
                 "EditorChoiceView",
                 "SettingsView",
-                "GoogleAdMobUI",
             ]
         ),
         .target(
@@ -77,12 +75,6 @@ let package = Package(
                 "UIConstants",
                 "UIModifiers",
                 "BlurView"
-            ]
-        ),
-        .target(
-            name: "GoogleAdMobUI",
-            dependencies: [
-                .product(name: "GoogleMobileAds", package: "swift-package-manager-google-mobile-ads"),
             ]
         )
     ]

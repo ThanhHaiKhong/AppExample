@@ -5,14 +5,14 @@ import ComposableArchitecture
 import Foundation
 
 @DependencyClient
-public struct AdManagerClient: Sendable {
+public struct MobileAdsClient: Sendable {
     public var requestTrackingAuthorizationIfNeeded: @Sendable () async throws -> Void
     public var isUserSubscribed: @Sendable () async throws -> Bool
     public var shouldShowAd: @Sendable (_ adType: AdType, _ rules: [AdRule]) async throws -> Bool
     public var showAd: @Sendable () async throws -> Void
 }
 
-extension AdManagerClient {
+extension MobileAdsClient {
     public struct AdRule: Sendable, Identifiable, Equatable, CustomStringConvertible {
         public let id: String = UUID().uuidString
         public let name: String
@@ -80,17 +80,17 @@ extension AdManagerClient {
 }
 
 extension DependencyValues {
-    public var adManagerClient: AdManagerClient {
-        get { self[AdManagerClient.self] }
-        set { self[AdManagerClient.self] = newValue }
+    public var mobileAdsClient: MobileAdsClient {
+        get { self[MobileAdsClient.self] }
+        set { self[MobileAdsClient.self] = newValue }
     }
 }
 
 
 extension Effect {
     public static func runWithAdCheck(
-        adType: AdManagerClient.AdType,
-        rules: [AdManagerClient.AdRule] = [],
+        adType: MobileAdsClient.AdType,
+        rules: [MobileAdsClient.AdRule] = [],
         priority: TaskPriority? = nil,
         operation: @escaping @Sendable (_ send: Send<Action>) async throws -> Void,
         catch handler: (@Sendable (_ error: any Error, _ send: Send<Action>) async -> Void)? = nil,
@@ -100,7 +100,7 @@ extension Effect {
         column: UInt = #column
     ) -> Self {
         .run(priority: priority) { send in
-            let adManager = DependencyValues._current.adManagerClient
+            let adManager = DependencyValues._current.mobileAdsClient
             
             if try await adManager.isUserSubscribed() {
                 try await operation(send)

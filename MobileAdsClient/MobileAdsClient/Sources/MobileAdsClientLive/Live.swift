@@ -1,17 +1,17 @@
 //
 //  Live.swift
-//  AdManagerClient
+//  MobileAdsClient
 //
 //  Created by Thanh Hai Khong on 4/2/25.
 //
 
 import AppTrackingTransparency
 import ComposableArchitecture
-import AdManagerClient
+import MobileAdsClient
 
-extension AdManagerClient: DependencyKey {
-    public static let liveValue: AdManagerClient = {
-        return AdManagerClient(
+extension MobileAdsClient: DependencyKey {
+    public static let liveValue: MobileAdsClient = {
+        return MobileAdsClient(
             requestTrackingAuthorizationIfNeeded: {
                 return await withCheckedContinuation { continuation in
                     ATTrackingManager.requestTrackingAuthorization { status in
@@ -32,7 +32,7 @@ extension AdManagerClient: DependencyKey {
     }()
 }
 
-extension Array where Element == AdManagerClient.AdRule {
+extension Array where Element == MobileAdsClient.AdRule {
     public func allRulesSatisfied() async -> Bool {
         await withTaskGroup(of: Bool.self) { group in
             for rule in self {

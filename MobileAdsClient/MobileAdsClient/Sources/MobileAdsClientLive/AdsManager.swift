@@ -1,12 +1,12 @@
 //
 //  AdManager.swift
-//  AdManagerClient
+//  MobileAdsClient
 //
 //  Created by Thanh Hai Khong on 4/2/25.
 //
 
 import GoogleMobileAds
-import AdManagerClient
+import MobileAdsClient
 
 final internal actor AdsManager {
     internal static let shared = AdsManager()
@@ -14,7 +14,7 @@ final internal actor AdsManager {
     private let openAdManager = OpenAdManager()
     private let interstitialAdManager = InterstitialAdManager()
     private let rewardedAdManager = RewardedAdManager()
-    private var lastAdType: AdManagerClient.AdType?
+    private var lastAdType: MobileAdsClient.AdType?
     
     private init() {
         MobileAds.shared.start(completionHandler: nil)
@@ -24,7 +24,7 @@ final internal actor AdsManager {
 // MARK: - Public Methods
 
 extension AdsManager {
-    internal func shouldShowAd(_ adType: AdManagerClient.AdType, rules: [AdManagerClient.AdRule]) async -> Bool {
+    internal func shouldShowAd(_ adType: MobileAdsClient.AdType, rules: [MobileAdsClient.AdRule]) async -> Bool {
         lastAdType = adType
         
         switch adType {

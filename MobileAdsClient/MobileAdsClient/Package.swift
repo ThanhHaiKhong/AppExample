@@ -4,13 +4,14 @@
 import PackageDescription
 
 let package = Package(
-    name: "AdManagerClient",
+    name: "MobileAdsClient",
     platforms: [
         .iOS(.v15)
     ],
     products: [
-        .singleTargetLibrary("AdManagerClient"),
-        .singleTargetLibrary("AdManagerClientLive"),
+        .singleTargetLibrary("MobileAdsClient"),
+        .singleTargetLibrary("MobileAdsClientLive"),
+        .singleTargetLibrary("MobileAdsClientUI"),
     ],
     dependencies: [
         .package(url: "https://github.com/pointfreeco/swift-composable-architecture.git", branch: "main"),
@@ -18,14 +19,21 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "AdManagerClient",
+            name: "MobileAdsClient",
             dependencies: [
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
                 .product(name: "GoogleMobileAds", package: "swift-package-manager-google-mobile-ads"),
             ]
         ),
         .target(
-            name: "AdManagerClientLive",
+            name: "MobileAdsClientLive",
+            dependencies: [
+                .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
+                .product(name: "GoogleMobileAds", package: "swift-package-manager-google-mobile-ads"),
+            ]
+        ),
+        .target(
+            name: "MobileAdsClientUI",
             dependencies: [
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
                 .product(name: "GoogleMobileAds", package: "swift-package-manager-google-mobile-ads"),
@@ -34,9 +42,9 @@ let package = Package(
     ]
 )
 
-
 extension Product {
     static func singleTargetLibrary(_ name: String) -> Product {
         .library(name: name, targets: [name])
     }
 }
+

@@ -2,7 +2,10 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:AdManagerClient/AdManagerClient">
+      location = "group:NotificationsClient/NotificationsClient">
+   </FileRef>
+   <FileRef
+      location = "group:MobileAdsClient/MobileAdsClient">
    </FileRef>
    <FileRef
       location = "group:TCAFeatureAction">

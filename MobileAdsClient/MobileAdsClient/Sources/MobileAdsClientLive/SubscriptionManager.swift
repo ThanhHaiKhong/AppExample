@@ -1,10 +1,11 @@
 //
 //  SubscriptionManager.swift
-//  AdManagerClient
+//  MobileAdsClient
 //
 //  Created by Thanh Hai Khong on 4/2/25.
 //
 
+import ComposableArchitecture
 import Foundation
 import StoreKit
 

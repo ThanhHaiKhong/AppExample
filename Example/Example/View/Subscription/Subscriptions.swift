@@ -8,7 +8,7 @@
 import ComposableArchitecture
 import InAppPurchaseClient
 import TCAFeatureAction
-import AdManagerClient
+import MobileAdsClient
 import StoreKit
 import SwiftUI
 
@@ -189,10 +189,10 @@ extension Subscriptions {
             }
             
         case .restore:
-            let appOpen: AdManagerClient.AdType = .appOpen("ca-app-pub-3940256099942544/5575463023")
-            let interstitial: AdManagerClient.AdType = .interstitial("ca-app-pub-3940256099942544/4411468910")
-            let rewarded: AdManagerClient.AdType = .rewarded("ca-app-pub-3940256099942544/1712485313")
-            let rules: [AdManagerClient.AdRule] = []
+            let appOpen: MobileAdsClient.AdType = .appOpen("ca-app-pub-3940256099942544/5575463023")
+            let interstitial: MobileAdsClient.AdType = .interstitial("ca-app-pub-3940256099942544/4411468910")
+            let rewarded: MobileAdsClient.AdType = .rewarded("ca-app-pub-3940256099942544/1712485313")
+            let rules: [MobileAdsClient.AdRule] = []
             
             return .runWithAdCheck(adType: interstitial) { send in
 

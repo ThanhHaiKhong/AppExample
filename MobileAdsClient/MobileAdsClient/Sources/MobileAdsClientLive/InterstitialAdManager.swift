@@ -1,12 +1,12 @@
 //
 //  InterstitialAdManager.swift
-//  AdManagerClient
+//  MobileAdsClient
 //
 //  Created by Thanh Hai Khong on 4/2/25.
 //
 
 import GoogleMobileAds
-import AdManagerClient
+import MobileAdsClient
 
 final internal class InterstitialAdManager: NSObject, @unchecked Sendable {
     private var interstitials: [String: InterstitialAd] = [:]
@@ -20,7 +20,7 @@ final internal class InterstitialAdManager: NSObject, @unchecked Sendable {
 // MARK: - Public Methods
 
 extension InterstitialAdManager {
-    public func shouldShowAd(_ adUnitID: String, rules: [AdManagerClient.AdRule]) async -> Bool {
+    public func shouldShowAd(_ adUnitID: String, rules: [MobileAdsClient.AdRule]) async -> Bool {
         if interstitials[adUnitID] == nil {
             do {
                 try await loadAd(adUnitID: adUnitID)
@@ -36,7 +36,7 @@ extension InterstitialAdManager {
     @MainActor
     public func showAd(_ adUnitID: String, from viewController: UIViewController) async throws {
         guard let ad = interstitials[adUnitID] else {
-            throw AdManagerClient.AdError.adNotReady
+            throw MobileAdsClient.AdError.adNotReady
         }
         
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
