@@ -4,19 +4,19 @@
 import PackageDescription
 
 let package = Package(
-    name: "TCAFeatureAction",
+    name: "TCAInitializableReducer",
     platforms: [
-        .iOS(.v13)
+        .iOS(.v15)
     ],
     products: [
-        .singleTargetLibrary("TCAFeatureAction")
+        .singleTargetLibrary("TCAInitializableReducer")
     ],
     dependencies: [
         .package(url: "https://github.com/pointfreeco/swift-composable-architecture.git", branch: "main"),
     ],
     targets: [
         .target(
-            name: "TCAFeatureAction",
+            name: "TCAInitializableReducer",
             dependencies: [
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
             ]

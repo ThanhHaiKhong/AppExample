@@ -17,9 +17,17 @@ class AppSceneDelegate: UIResponder, UIWindowSceneDelegate {
     
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let windowScene = scene as? UIWindowScene else { return }
+        /*
         let hostingViewController = UIHostingController(rootView: SubscriptionView(store: Store(
             initialState: Subscriptions.State()) {
                 Subscriptions()
+            }
+        ))
+        */
+        
+        let hostingViewController = UIHostingController(rootView: GoogleAdsView(store: Store(
+            initialState: GoogleAds.State()) {
+                GoogleAds()
             }
         ))
                 

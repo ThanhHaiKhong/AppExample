@@ -10,7 +10,8 @@ import GoogleMobileAds
 
 @Reducer
 public struct Native: Sendable {
-    @ObservableState public struct State: Equatable {
+    @ObservableState
+    public struct State: Equatable {
         public init() {}
     }
     

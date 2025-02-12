@@ -4,23 +4,26 @@
 import PackageDescription
 
 let package = Package(
-    name: "TCAFeatureAction",
+    name: "TCAAdvertisableState",
     platforms: [
-        .iOS(.v13)
+        .iOS(.v15)
     ],
     products: [
-        .singleTargetLibrary("TCAFeatureAction")
+        .singleTargetLibrary("TCAAdvertisableState")
     ],
     dependencies: [
-        .package(url: "https://github.com/pointfreeco/swift-composable-architecture.git", branch: "main"),
+        .package(path: "../MobileAdsClient"),
+        .package(path: "../TCAInitializableReducer"),
     ],
     targets: [
         .target(
-            name: "TCAFeatureAction",
+            name: "TCAAdvertisableState",
             dependencies: [
-                .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
+                .product(name: "MobileAdsClientUI", package: "MobileAdsClient"),
+                "TCAInitializableReducer"
             ]
         ),
+
     ]
 )
 

@@ -9,6 +9,13 @@ import GoogleMobileAds
 import Foundation
 import SwiftUI
 
+// MARK: - AdvertisableType
+
+public enum AdvertisableType: Sendable, Equatable {
+    case banner(BannerType)
+    case native
+}
+
 // MARK: - BannerType
 
 public enum BannerType: Sendable, Equatable {

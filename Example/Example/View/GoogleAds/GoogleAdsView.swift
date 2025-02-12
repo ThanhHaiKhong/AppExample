@@ -9,6 +9,7 @@ import ComposableArchitecture
 import MobileAdsClientUI
 import GoogleMobileAds
 import UIComponents
+import Foundation
 import SwiftUI
 
 struct GoogleAdsView: View {
@@ -24,6 +25,21 @@ struct GoogleAdsView: View {
                 }
                 .onDelete { indexSet in
                     
+                }
+                
+                ForEach(store.scope(state: \.items, action: \.items)) { itemStore in
+                    switch(itemStore.state) {
+                    case .content:
+                        if let store = itemStore.scope(state: \.content, action: \.content) {
+                            ArticleView(store: store)
+                        }
+                        
+                    case .ad:
+                        if let store = itemStore.scope(state: \.ad, action: \.ad) {
+                            BannerAdView(store: store)
+                                .frame(width: store.actualSize.width, height: store.actualSize.height)
+                        }
+                    }
                 }
             }
             .safeAreaInset(edge: .bottom) {
@@ -45,4 +61,12 @@ struct GoogleAdsView: View {
     }
     
     GoogleAdsView(store: store)
+}
+
+struct ArticleView: View {
+    @Perception.Bindable var store: StoreOf<Article>
+    
+    var body: some View {
+        Text("Article")
+    }
 }

@@ -6,13 +6,14 @@
 //
 
 import ComposableArchitecture
+import TCAInitializableReducer
 import GoogleMobileAds
 import SwiftUI
 
 @Reducer
-public struct Banner: Sendable {
+public struct Banner: TCAInitializableReducer, Sendable {
     @ObservableState
-    public struct State: Identifiable, Equatable {
+    public struct State: Identifiable, Sendable, Equatable {
         public var id : String = UUID().uuidString
         public let adUnitID: String
         public let adSize: AdSize
@@ -37,7 +38,7 @@ public struct Banner: Sendable {
         }
     }
     
-    public enum Action: Equatable, BindableAction {
+    public enum Action: Equatable, BindableAction, Sendable {
         case binding(BindingAction<State>)
         case receivedActualSize(CGSize)
         case isCollapsed(Bool)
