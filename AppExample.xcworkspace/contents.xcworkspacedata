@@ -5,9 +5,6 @@
       location = "group:TCAInitializableReducer/TCAInitializableReducer">
    </FileRef>
    <FileRef
-      location = "group:TCAAdvertisableState/TCAAdvertisableState">
-   </FileRef>
-   <FileRef
       location = "group:NotificationsClient/NotificationsClient">
    </FileRef>
    <FileRef

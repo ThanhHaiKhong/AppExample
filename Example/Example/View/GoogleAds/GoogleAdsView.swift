@@ -62,11 +62,3 @@ struct GoogleAdsView: View {
     
     GoogleAdsView(store: store)
 }
-
-struct ArticleView: View {
-    @Perception.Bindable var store: StoreOf<Article>
-    
-    var body: some View {
-        Text("Article")
-    }
-}

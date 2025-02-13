@@ -6,10 +6,10 @@
 //
 
 import ComposableArchitecture
-import TCAInitializableReducer
 import MobileAdsClientUI
-import SwiftUI
+import MobileAdsClient
 import Foundation
+import SwiftUI
 
 @Reducer
 public struct GoogleAds: Sendable {
@@ -91,68 +91,4 @@ public struct GoogleAds: Sendable {
     }
         
     public init() { }
-}
-
-@Reducer
-public struct Article: TCAInitializableReducer, Sendable {
-    @ObservableState
-    public struct State: Identifiable, Sendable, Equatable {
-        public var id: String = UUID().uuidString
-        public init() { }
-    }
-    
-    public enum Action: BindableAction, Sendable, Equatable {
-        case binding(BindingAction<State>)
-    }
-    
-    public var body: some ReducerOf<Self> {
-        BindingReducer()
-        
-        Reduce { state, action in
-            return .none
-        }
-    }
-        
-    public init() { }
-}
-
-@Reducer
-public struct ItemWithAdReducer<Content: TCAInitializableReducer, Ad: TCAInitializableReducer>: Sendable
-where Content.State: Identifiable & Sendable & Equatable,
-      Ad.State: Identifiable & Sendable & Equatable,
-      Content.Action: Sendable & Equatable,
-      Ad.Action: Sendable & Equatable {
-    
-    @ObservableState
-    public enum State: Identifiable, Equatable {
-        case content(Content.State)
-        case ad(Ad.State)
-        
-        public var id: AnyHashable {
-            switch self {
-            case .content(let contentState):
-                return contentState.id
-
-            case .ad(let adState):
-                return adState.id
-            }
-        }
-    }
-    
-    public enum Action: Equatable {
-        case content(Content.Action)
-        case ad(Ad.Action)
-    }
-    
-    public var body: some ReducerOf<Self> {
-        Scope(state: \.content, action: \.content) {
-            Content()
-        }
-        
-        Scope(state: \.ad, action: \.ad) {
-            Ad()
-        }
-    }
-    
-    public init() {}
 }
