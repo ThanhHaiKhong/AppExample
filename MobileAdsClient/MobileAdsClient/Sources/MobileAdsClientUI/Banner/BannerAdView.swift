@@ -60,7 +60,6 @@ public struct BannerAdView: UIViewRepresentable {
             let request = Request()
             
             if case let .anchoredAdaptive(anchored, config?) = parent.store.type, config.isCollapsible {
-                print("Config for Collapsible Ad: \(config)")
                 let extras = Extras()
                 extras.additionalParameters = ["collapsible": "\(config.anchorPosition.rawValue)"]
                 request.register(extras)

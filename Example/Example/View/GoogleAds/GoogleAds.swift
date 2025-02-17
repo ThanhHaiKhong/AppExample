@@ -18,6 +18,7 @@ public struct GoogleAds: Sendable {
         public var banners: IdentifiedArrayOf<Banner.State> = []
         public var anchoredBanner: Banner.State?
         public var items: IdentifiedArrayOf<ItemWithAdReducer<Article, Banner>.State> = []
+        public var native: Native.State?
     }
     
     public enum Action: BindableAction, Equatable {
@@ -25,16 +26,17 @@ public struct GoogleAds: Sendable {
         case banners(IdentifiedActionOf<Banner>)
         case items(IdentifiedActionOf<ItemWithAdReducer<Article, Banner>>)
         case anchoredBanner(Banner.Action)
+        case native(Native.Action)
         case onTask
     }
     
     public var body: some ReducerOf<Self> {
-        BindingReducer() 
+        BindingReducer()
         
         Reduce { state, action in
             switch action {
             case .onTask:
-                
+                /*
                 let staticSize: StandardSize = .banner
                 let staticType = BannerType.static(staticSize)
                 
@@ -66,6 +68,10 @@ public struct GoogleAds: Sendable {
                 }
                 
                 state.items = .init(uniqueElements: items.enumerated().map(\.element))
+                */
+                
+                let native = Native.State.init(adUnitID: "ca-app-pub-3940256099942544/3986624511")
+                state.native = native
                 
                 return .none
                 
@@ -87,6 +93,9 @@ public struct GoogleAds: Sendable {
         }
         .ifLet(\.anchoredBanner, action: \.anchoredBanner) {
             Banner()
+        }
+        .ifLet(\.native, action: \.native) {
+            Native()
         }
     }
         

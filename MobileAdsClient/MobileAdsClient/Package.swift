@@ -12,10 +12,13 @@ let package = Package(
         .singleTargetLibrary("MobileAdsClient"),
         .singleTargetLibrary("MobileAdsClientLive"),
         .singleTargetLibrary("MobileAdsClientUI"),
+        .singleTargetLibrary("NativeAdClient"),
+        .singleTargetLibrary("NativeAdClientLive"),
     ],
     dependencies: [
         .package(url: "https://github.com/pointfreeco/swift-composable-architecture.git", branch: "main"),
         .package(url: "https://github.com/googleads/swift-package-manager-google-mobile-ads.git", branch: "main"),
+        .package(url: "https://github.com/krzysztofzablocki/Inject.git", branch: "main"),
         .package(path: "../TCAInitializableReducer"),
     ],
     targets: [
@@ -40,6 +43,32 @@ let package = Package(
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
                 .product(name: "GoogleMobileAds", package: "swift-package-manager-google-mobile-ads"),
                 "TCAInitializableReducer",
+                "NativeAdClient",
+                "Inject",
+            ],
+            resources: [
+                .process("Resources/NativeAdView.xib"),
+                .process("Resources/CustomNativeAdView.xib"),
+                .process("Resources/stars_3_5.png"),
+                .process("Resources/stars_4.png"),
+                .process("Resources/stars_4_5.png"),
+                .process("Resources/stars_5.png"),
+            ]
+        ),
+        .target(
+            name: "NativeAdClient",
+            dependencies: [
+                .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
+                .product(name: "GoogleMobileAds", package: "swift-package-manager-google-mobile-ads"),
+                "TCAInitializableReducer",
+            ]
+        ),
+        .target(
+            name: "NativeAdClientLive",
+            dependencies: [
+                .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
+                .product(name: "GoogleMobileAds", package: "swift-package-manager-google-mobile-ads"),
+                "NativeAdClient",
             ]
         ),
     ]

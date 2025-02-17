@@ -17,6 +17,7 @@ class AppSceneDelegate: UIResponder, UIWindowSceneDelegate {
     
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let windowScene = scene as? UIWindowScene else { return }
+        
         /*
         let hostingViewController = UIHostingController(rootView: SubscriptionView(store: Store(
             initialState: Subscriptions.State()) {
@@ -30,7 +31,7 @@ class AppSceneDelegate: UIResponder, UIWindowSceneDelegate {
                 GoogleAds()
             }
         ))
-                
+        
         let window = AppUIWindow(windowScene: windowScene)
         window.rootViewController = hostingViewController
         window.makeKeyAndVisible()
@@ -41,6 +42,7 @@ class AppSceneDelegate: UIResponder, UIWindowSceneDelegate {
     func sceneDidBecomeActive(_ scene: UIScene) {
         publisher.phase = .active
         
+        /*
         Task {
             let adManager = DependencyValues._current.mobileAdsClient
             let appOpen: MobileAdsClient.AdType = .appOpen("ca-app-pub-3940256099942544/5575463023")
@@ -53,6 +55,7 @@ class AppSceneDelegate: UIResponder, UIWindowSceneDelegate {
                 try await adManager.showAd()
             }
         }
+        */
     }
     
     func sceneDidEnterBackground(_ scene: UIScene) {
