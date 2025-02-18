@@ -7,8 +7,6 @@
 
 import GoogleMobileAds
 import UIKit
-import SwiftUI
-import AppIntents
 
 public class CustomNativeAdView: NativeAdView {
     
@@ -82,12 +80,13 @@ public class CustomNativeAdView: NativeAdView {
     private lazy var actionButton: UIButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitle("Click Here", for: .normal)
+        button.setTitle("Install Now", for: .normal)
         button.backgroundColor = .systemBlue
         button.setTitleColor(.white, for: .normal)
         button.titleLabel?.font = .boldSystemFont(ofSize: 18)
         button.layer.cornerRadius = 10
         button.layer.masksToBounds = true
+        button.isUserInteractionEnabled = false
         
         return button
     }()
@@ -107,9 +106,9 @@ public class CustomNativeAdView: NativeAdView {
         let label = PaddedLabel(padding: UIEdgeInsets(top: 5, left: 10, bottom: 5, right: 10))
         label.translatesAutoresizingMaskIntoConstraints = false
         label.numberOfLines = 0
-        label.textColor = .systemBlue
+        label.textColor = .white
         label.textAlignment = .center
-        label.backgroundColor = .systemBlue.withAlphaComponent(0.25)
+        label.backgroundColor = .systemGreen
         label.font = .systemFont(ofSize: 14, weight: .semibold)
         label.text = "App Store"
         label.layer.cornerRadius = 5
@@ -122,13 +121,13 @@ public class CustomNativeAdView: NativeAdView {
         let label = PaddedLabel(padding: UIEdgeInsets(top: 5, left: 10, bottom: 5, right: 10))
         label.translatesAutoresizingMaskIntoConstraints = false
         label.numberOfLines = 0
-        label.textColor = .systemBlue
+        label.textColor = .white
         label.textAlignment = .center
         label.font = .systemFont(ofSize: 14, weight: .semibold)
         label.text = "Free"
         label.layer.cornerRadius = 5
         label.layer.masksToBounds = true
-        label.backgroundColor = .systemBlue.withAlphaComponent(0.25)
+        label.backgroundColor = .systemGreen
         
         return label
     }()
@@ -152,6 +151,50 @@ public class CustomNativeAdView: NativeAdView {
         return stack
     }()
     
+    private lazy var storeStack: UIStackView = {
+        let stack = UIStackView()
+        stack.axis = .horizontal
+        stack.spacing = 8
+        stack.alignment = .fill
+        stack.distribution = .fillEqually
+        stack.translatesAutoresizingMaskIntoConstraints = false
+        
+        return stack
+    }()
+    
+    private lazy var attributionStack: UIStackView = {
+        let stack = UIStackView()
+        stack.axis = .horizontal
+        stack.spacing = 8
+        stack.alignment = .center
+        stack.distribution = .fillEqually
+        stack.translatesAutoresizingMaskIntoConstraints = false
+        
+        return stack
+    }()
+    
+    private lazy var labelStack: UIStackView = {
+        let stack = UIStackView()
+        stack.axis = .vertical
+        stack.spacing = 8
+        stack.alignment = .leading
+        stack.distribution = .fill
+        stack.translatesAutoresizingMaskIntoConstraints = false
+        
+        return stack
+    }()
+    
+    private lazy var bodyStack: UIStackView = {
+        let stack = UIStackView()
+        stack.axis = .vertical
+        stack.spacing = 20
+        stack.alignment = .leading
+        stack.distribution = .fillProportionally
+        stack.translatesAutoresizingMaskIntoConstraints = false
+        
+        return stack
+    }()
+    
     public override init(frame: CGRect) {
         super.init(frame: frame)
         setupUI()
@@ -170,30 +213,12 @@ extension CustomNativeAdView {
         layer.cornerRadius = 5
         layer.masksToBounds = true
         
-        let storeStack = UIStackView()
-        storeStack.axis = .horizontal
-        storeStack.spacing = 8
-        storeStack.alignment = .fill
-        storeStack.distribution = .fillEqually
-        storeStack.translatesAutoresizingMaskIntoConstraints = false
         storeStack.addArrangedSubview(adStoreLabel)
         storeStack.addArrangedSubview(adPriceLabel)
         
-        let attributionStack = UIStackView()
-        attributionStack.axis = .horizontal
-        attributionStack.spacing = 8
-        attributionStack.alignment = .center
-        attributionStack.distribution = .fillEqually
-        attributionStack.translatesAutoresizingMaskIntoConstraints = false
         attributionStack.addArrangedSubview(adAttributionLabel)
         attributionStack.addArrangedSubview(adRatingImageView)
         
-        let labelStack = UIStackView()
-        labelStack.axis = .vertical
-        labelStack.spacing = 8
-        labelStack.alignment = .leading
-        labelStack.distribution = .fillProportionally
-        labelStack.translatesAutoresizingMaskIntoConstraints = false
         labelStack.addArrangedSubview(adHeadlineLabel)
         labelStack.addArrangedSubview(adSponsorLabel)
         labelStack.addArrangedSubview(attributionStack)
@@ -202,12 +227,6 @@ extension CustomNativeAdView {
         headlineStack.addArrangedSubview(adIconImageView)
         headlineStack.addArrangedSubview(labelStack)
         
-        let bodyStack = UIStackView()
-        bodyStack.axis = .vertical
-        bodyStack.spacing = 20
-        bodyStack.alignment = .leading
-        bodyStack.distribution = .fillProportionally
-        bodyStack.translatesAutoresizingMaskIntoConstraints = false
         bodyStack.addArrangedSubview(headlineStack)
         bodyStack.addArrangedSubview(adBodyLabel)
         bodyStack.addArrangedSubview(actionButton)
@@ -283,16 +302,45 @@ extension CustomNativeAdView {
     // MARK: - Update UI Elements
     
     private func updateUI(with nativeAd: NativeAd) {
-        adIconImageView.image = nativeAd.icon?.image
-        adHeadlineLabel.text = nativeAd.headline
-        adRatingImageView.image = imageOfStars(from: nativeAd.starRating)
-        adSponsorLabel.text = nativeAd.advertiser
-        adStoreLabel.text = nativeAd.store?.capitalized
-        adPriceLabel.text = nativeAd.price?.capitalized
-        adBodyLabel.text = nativeAd.body
-        actionButton.setTitle(nativeAd.callToAction?.uppercased(), for: .normal)
-        contentView.mediaContent = nativeAd.mediaContent
-        contentView.contentMode = .scaleAspectFill
+        let viewsToAnimate: [UIView] = [
+            adIconImageView,
+            adHeadlineLabel,
+            adRatingImageView,
+            adSponsorLabel,
+            adStoreLabel,
+            adPriceLabel,
+            adBodyLabel,
+            actionButton,
+            contentView
+        ]
+
+        for view in viewsToAnimate {
+            UIView.transition(with: view, duration: 0.3, options: .transitionFlipFromLeft, animations: {
+                switch view {
+                case self.adIconImageView:
+                    self.adIconImageView.image = nativeAd.icon?.image
+                case self.adHeadlineLabel:
+                    self.adHeadlineLabel.text = nativeAd.headline
+                case self.adRatingImageView:
+                    self.adRatingImageView.image = self.imageOfStars(from: nativeAd.starRating)
+                case self.adSponsorLabel:
+                    self.adSponsorLabel.text = nativeAd.advertiser
+                case self.adStoreLabel:
+                    self.adStoreLabel.text = nativeAd.store?.capitalized
+                case self.adPriceLabel:
+                    self.adPriceLabel.text = nativeAd.price?.capitalized
+                case self.adBodyLabel:
+                    self.adBodyLabel.text = nativeAd.body
+                case self.actionButton:
+                    self.actionButton.setTitle(nativeAd.callToAction?.uppercased(), for: .normal)
+                case self.contentView:
+                    self.contentView.mediaContent = nativeAd.mediaContent
+                    self.contentView.contentMode = .scaleAspectFit
+                default:
+                    break
+                }
+            })
+        }
     }
 
     // MARK: - Bind Views to Native Ad
@@ -323,9 +371,15 @@ extension CustomNativeAdView {
             priceView: nativeAd.price
         ]
         
-        for (view, data) in viewBindings {
-            view?.isHidden = data == nil
-        }
+        UIView.animate(withDuration: 0.3, delay: 0, options: [.curveEaseInOut], animations: {
+            for (view, data) in viewBindings {
+                view?.alpha = data == nil ? 0 : 1
+            }
+        }, completion: { _ in
+            for (view, data) in viewBindings {
+                view?.isHidden = data == nil
+            }
+        })
     }
     
     private func imageOfStars(from starRating: NSDecimalNumber?) -> UIImage? {
@@ -346,7 +400,7 @@ extension CustomNativeAdView {
         }
     }
     
-    // MARK: - Tính toán chiều cao superview
+    // MARK: - Calculate Total Height
     
     public func calculateTotalHeight() -> CGFloat {
         let contentHeight = contentView.frame.height

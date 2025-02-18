@@ -47,7 +47,6 @@ let package = Package(
                 "Inject",
             ],
             resources: [
-                .process("Resources/NativeAdView.xib"),
                 .process("Resources/CustomNativeAdView.xib"),
                 .process("Resources/stars_3_5.png"),
                 .process("Resources/stars_4.png"),

@@ -6,6 +6,7 @@
 //
 
 @preconcurrency import GoogleMobileAds
+import NativeAdClient
 import UIKit
 
 final internal class NativeAdManager: NSObject, @unchecked Sendable {
@@ -26,29 +27,26 @@ final internal class NativeAdManager: NSObject, @unchecked Sendable {
 
 extension NativeAdManager {
     
-    public func loadAd(adUnitID: String, from viewController: UIViewController? = nil) async throws -> NativeAd {
+    public func loadAd(adUnitID: String, from viewController: UIViewController?, options: [AnyNativeLoaderOptions]?) async throws -> NativeAd {
         return try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<NativeAd, Error>) in
             queue.async(flags: .barrier) {
                 self.pendingContinuations[adUnitID] = continuation
             }
-
-            let multipleAdOptions = MultipleAdsAdLoaderOptions()
-            multipleAdOptions.numberOfAds = 1
             
-            let mediaOptions = NativeAdMediaAdLoaderOptions()
-            mediaOptions.mediaAspectRatio = .any
+            var loaderOptions: [GADAdLoaderOptions] = []
             
-            let nativeOptions = NativeAdViewAdOptions()
-            nativeOptions.preferredAdChoicesPosition = .topRightCorner
-            
-            let videoOptions = VideoOptions()
-            videoOptions.shouldStartMuted = true
+            if let options = options {
+                for option in options {
+                    let loaderOption = option.unwrapped.toAdLoaderOptions()
+                    loaderOptions.append(loaderOption)
+                }
+            }
 
             adLoader = AdLoader(
                 adUnitID: adUnitID,
                 rootViewController: viewController,
                 adTypes: [.native],
-                options: [multipleAdOptions, nativeOptions, mediaOptions]
+                options: loaderOptions
             )
             adLoader?.delegate = self
             adLoader?.load(Request())

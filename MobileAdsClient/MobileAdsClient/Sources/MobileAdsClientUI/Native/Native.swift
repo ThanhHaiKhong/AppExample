@@ -14,13 +14,15 @@ import NativeAdClient
 public struct Native: TCAInitializableReducer, Sendable {
     @ObservableState
     public struct State: Identifiable, Sendable, Equatable {
-        public var id : String = UUID().uuidString
+        public let id : String = UUID().uuidString
         public let adUnitID: String
+        public let adLoaderOptions: [AnyNativeLoaderOptions]
         public var nativeAd: NativeAd?
         public var adHeight: CGFloat = 300.0
         
-        public init(adUnitID: String) {
+        public init(adUnitID: String, adLoaderOptions: [AnyNativeLoaderOptions] = []) {
             self.adUnitID = adUnitID
+            self.adLoaderOptions = adLoaderOptions
         }
     }
     
@@ -29,6 +31,7 @@ public struct Native: TCAInitializableReducer, Sendable {
         case binding(BindingAction<State>)
         case receivedNativeAd(NativeAd)
         case updateAdHeight(CGFloat)
+        case refreshAd(String)
     }
     
     @Dependency(\.nativeAdClient) var nativeAdClient
@@ -39,15 +42,15 @@ public struct Native: TCAInitializableReducer, Sendable {
         Reduce { state, action in
             switch action {
             case .onAppear:
-                return .run(priority: .background) { [adUnitID = state.adUnitID] send in
+                return .run(priority: .background) { [adUnitID = state.adUnitID, adLoaderOptions = state.adLoaderOptions] send in
                     var rootViewController: UIViewController? = nil
                     if let scene = await UIApplication.shared.connectedScenes.first as? UIWindowScene, let rootVC = await scene.windows.first?.rootViewController {
                         rootViewController = rootVC
                     }
-                    let nativeAd = try await nativeAdClient.loadAd(adUnitID, rootViewController)
+                    let nativeAd = try await nativeAdClient.loadAd(adUnitID, rootViewController, adLoaderOptions)
                     await send(.receivedNativeAd(nativeAd), animation: .default)
                 } catch: { error, send in
-                    print("Error loading native ad: \(error.localizedDescription)")
+                    print("Error LOADING native ad: \(error.localizedDescription)")
                 }
                 
             case let .receivedNativeAd(nativeAd):
@@ -58,6 +61,18 @@ public struct Native: TCAInitializableReducer, Sendable {
                 state.adHeight = height
                 return .none
                 
+            case let .refreshAd(adUnitID):
+                return .run(priority: .background) { [adLoaderOptions = state.adLoaderOptions] send in
+                    var rootViewController: UIViewController? = nil
+                    if let scene = await UIApplication.shared.connectedScenes.first as? UIWindowScene, let rootVC = await scene.windows.first?.rootViewController {
+                        rootViewController = rootVC
+                    }
+                    let nativeAd = try await nativeAdClient.loadAd(adUnitID, rootViewController, adLoaderOptions)
+                    await send(.receivedNativeAd(nativeAd), animation: .default)
+                } catch: { error, send in
+                    print("Error REFRESH native ad: \(error.localizedDescription)")
+                }
+                
                 default:
                     return .none
             }
@@ -66,4 +81,3 @@ public struct Native: TCAInitializableReducer, Sendable {
         
     public init() { }
 }
-

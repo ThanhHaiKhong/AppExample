@@ -8,6 +8,7 @@
 import ComposableArchitecture
 import MobileAdsClientUI
 import MobileAdsClient
+import NativeAdClient
 import Foundation
 import SwiftUI
 
@@ -70,7 +71,13 @@ public struct GoogleAds: Sendable {
                 state.items = .init(uniqueElements: items.enumerated().map(\.element))
                 */
                 
-                let native = Native.State.init(adUnitID: "ca-app-pub-3940256099942544/3986624511")
+                let options: [AnyNativeLoaderOptions] = [
+                    AnyNativeLoaderOptions(MediaLoaderOptions(aspectRatio: .landscape)),
+                    AnyNativeLoaderOptions(VideoLoaderOptions()),
+                    AnyNativeLoaderOptions(AdChoicesOptions(position: .topRight)),
+                ]
+                
+                let native = Native.State.init(adUnitID: "ca-app-pub-3940256099942544/3986624511", adLoaderOptions: options)
                 state.native = native
                 
                 return .none

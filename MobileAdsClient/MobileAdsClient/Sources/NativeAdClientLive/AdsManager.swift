@@ -6,6 +6,7 @@
 //
 
 @preconcurrency import GoogleMobileAds
+import NativeAdClient
 
 final internal actor AdsManager {
     internal static let shared = AdsManager()
@@ -21,7 +22,7 @@ final internal actor AdsManager {
 
 extension AdsManager {
     
-    public func loadAd(adUnitID: String, from viewController: UIViewController? = nil) async throws -> NativeAd {
-        return try await nativeAdManager.loadAd(adUnitID: adUnitID, from: viewController)
+    public func loadAd(adUnitID: String, from viewController: UIViewController?, options: [AnyNativeLoaderOptions]?) async throws -> NativeAd {
+        return try await nativeAdManager.loadAd(adUnitID: adUnitID, from: viewController, options: options)
     }
 }
