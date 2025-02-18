@@ -21,13 +21,21 @@ class PaddedLabel: UILabel {
     }
 
     override func drawText(in rect: CGRect) {
-        let insetRect = rect.inset(by: padding)
-        super.drawText(in: insetRect)
+        if let text = self.text, !text.isEmpty {
+            let insetRect = rect.inset(by: padding)
+            super.drawText(in: insetRect)
+        } else {
+            super.drawText(in: rect)
+        }
     }
 
     override var intrinsicContentSize: CGSize {
-        let size = super.intrinsicContentSize
-        return CGSize(width: size.width + padding.left + padding.right,
-                      height: size.height + padding.top + padding.bottom)
+        if let text = self.text, !text.isEmpty {
+            let size = super.intrinsicContentSize
+            return CGSize(width: size.width + padding.left + padding.right,
+                          height: size.height + padding.top + padding.bottom)
+        } else {
+            return super.intrinsicContentSize
+        }
     }
 }

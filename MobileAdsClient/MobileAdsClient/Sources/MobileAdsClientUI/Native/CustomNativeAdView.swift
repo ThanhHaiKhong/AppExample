@@ -95,7 +95,7 @@ public class CustomNativeAdView: NativeAdView {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.numberOfLines = 0
-        label.font = .systemFont(ofSize: 16, weight: .medium)
+        label.font = .systemFont(ofSize: 15, weight: .medium)
         label.textAlignment = .left
         label.textColor = .secondaryLabel
         
@@ -147,50 +147,7 @@ public class CustomNativeAdView: NativeAdView {
         stack.alignment = .center
         stack.distribution = .fill
         stack.translatesAutoresizingMaskIntoConstraints = false
-        
-        return stack
-    }()
-    
-    private lazy var storeStack: UIStackView = {
-        let stack = UIStackView()
-        stack.axis = .horizontal
-        stack.spacing = 8
-        stack.alignment = .fill
-        stack.distribution = .fillEqually
-        stack.translatesAutoresizingMaskIntoConstraints = false
-        
-        return stack
-    }()
-    
-    private lazy var attributionStack: UIStackView = {
-        let stack = UIStackView()
-        stack.axis = .horizontal
-        stack.spacing = 8
-        stack.alignment = .center
-        stack.distribution = .fillEqually
-        stack.translatesAutoresizingMaskIntoConstraints = false
-        
-        return stack
-    }()
-    
-    private lazy var labelStack: UIStackView = {
-        let stack = UIStackView()
-        stack.axis = .vertical
-        stack.spacing = 8
-        stack.alignment = .leading
-        stack.distribution = .fill
-        stack.translatesAutoresizingMaskIntoConstraints = false
-        
-        return stack
-    }()
-    
-    private lazy var bodyStack: UIStackView = {
-        let stack = UIStackView()
-        stack.axis = .vertical
-        stack.spacing = 20
-        stack.alignment = .leading
-        stack.distribution = .fillProportionally
-        stack.translatesAutoresizingMaskIntoConstraints = false
+        stack.backgroundColor = .yellow
         
         return stack
     }()
@@ -213,20 +170,45 @@ extension CustomNativeAdView {
         layer.cornerRadius = 5
         layer.masksToBounds = true
         
+        let storeStack = UIStackView()
+        storeStack.axis = .horizontal
+        storeStack.spacing = 8
+        storeStack.alignment = .fill
+        storeStack.distribution = .fillEqually
+        storeStack.translatesAutoresizingMaskIntoConstraints = false
         storeStack.addArrangedSubview(adStoreLabel)
         storeStack.addArrangedSubview(adPriceLabel)
         
+        let attributionStack = UIStackView()
+        attributionStack.axis = .horizontal
+        attributionStack.spacing = 8
+        attributionStack.alignment = .center
+        attributionStack.distribution = .fillEqually
+        attributionStack.translatesAutoresizingMaskIntoConstraints = false
         attributionStack.addArrangedSubview(adAttributionLabel)
         attributionStack.addArrangedSubview(adRatingImageView)
         
+        let labelStack = UIStackView()
+        labelStack.axis = .vertical
+        labelStack.spacing = 8
+        labelStack.alignment = .leading
+        labelStack.distribution = .fillProportionally
+        labelStack.translatesAutoresizingMaskIntoConstraints = false
         labelStack.addArrangedSubview(adHeadlineLabel)
         labelStack.addArrangedSubview(adSponsorLabel)
         labelStack.addArrangedSubview(attributionStack)
         labelStack.addArrangedSubview(storeStack)
+        labelStack.backgroundColor = .brown
         
         headlineStack.addArrangedSubview(adIconImageView)
         headlineStack.addArrangedSubview(labelStack)
         
+        let bodyStack = UIStackView()
+        bodyStack.axis = .vertical
+        bodyStack.spacing = 20
+        bodyStack.alignment = .leading
+        bodyStack.distribution = .fillProportionally
+        bodyStack.translatesAutoresizingMaskIntoConstraints = false
         bodyStack.addArrangedSubview(headlineStack)
         bodyStack.addArrangedSubview(adBodyLabel)
         bodyStack.addArrangedSubview(actionButton)
@@ -403,11 +385,14 @@ extension CustomNativeAdView {
     // MARK: - Calculate Total Height
     
     public func calculateTotalHeight() -> CGFloat {
+        let spacing: CGFloat = 20
+        let bottomPadding: CGFloat = 20
+        let verticalPadding: CGFloat = 16
         let contentHeight = contentView.frame.height
         let headlineHeight = headlineStack.frame.height
         let bodyHeight = adBodyLabel.frame.height
         let buttonHeight = actionButton.frame.height
         
-        return contentHeight + headlineHeight + bodyHeight + buttonHeight + 80 + 16
+        return contentHeight + headlineHeight + bodyHeight + buttonHeight + spacing * 3 + bottomPadding + verticalPadding
     }
 }

@@ -72,7 +72,7 @@ public struct GoogleAds: Sendable {
                 */
                 
                 let options: [AnyNativeLoaderOptions] = [
-                    AnyNativeLoaderOptions(MediaLoaderOptions(aspectRatio: .landscape)),
+                    AnyNativeLoaderOptions(MediaLoaderOptions(aspectRatio: .any)),
                     AnyNativeLoaderOptions(VideoLoaderOptions()),
                     AnyNativeLoaderOptions(AdChoicesOptions(position: .topRight)),
                 ]
