@@ -33,6 +33,7 @@ class AppSceneDelegate: UIResponder, UIWindowSceneDelegate {
         ))
         
         let window = AppUIWindow(windowScene: windowScene)
+//        window.rootViewController = UINavigationController(rootViewController: DemoViewController())
         window.rootViewController = hostingViewController
         window.makeKeyAndVisible()
         

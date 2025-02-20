@@ -7,10 +7,10 @@
 
 import UIKit
 
-class PaddedLabel: UILabel {
-    var padding: UIEdgeInsets
+public class PaddedLabel: UILabel {
+    private var padding: UIEdgeInsets
 
-    init(padding: UIEdgeInsets) {
+    public init(padding: UIEdgeInsets) {
         self.padding = padding
         super.init(frame: .zero)
     }
@@ -20,7 +20,7 @@ class PaddedLabel: UILabel {
         super.init(coder: aDecoder)
     }
 
-    override func drawText(in rect: CGRect) {
+    public override func drawText(in rect: CGRect) {
         if let text = self.text, !text.isEmpty {
             let insetRect = rect.inset(by: padding)
             super.drawText(in: insetRect)
@@ -29,7 +29,7 @@ class PaddedLabel: UILabel {
         }
     }
 
-    override var intrinsicContentSize: CGSize {
+    public override var intrinsicContentSize: CGSize {
         if let text = self.text, !text.isEmpty {
             let size = super.intrinsicContentSize
             return CGSize(width: size.width + padding.left + padding.right,

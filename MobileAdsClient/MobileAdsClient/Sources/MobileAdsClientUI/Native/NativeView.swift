@@ -29,7 +29,6 @@ public struct NativeView: UIViewRepresentable {
         
         DispatchQueue.main.async {
             let totalHeight = nativeAdView.calculateTotalHeight()
-            print("Total height: \(totalHeight)")
             store.send(.updateAdHeight(totalHeight))
         }
     }

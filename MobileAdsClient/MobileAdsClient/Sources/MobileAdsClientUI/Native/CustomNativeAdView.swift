@@ -12,6 +12,7 @@ public class CustomNativeAdView: NativeAdView {
     
     private var heightConstraint: NSLayoutConstraint!
     private var currentMultiplier: CGFloat = 9.0 / 16.0
+    private let defaultSpacing: CGFloat = 16
     
     private lazy var adContainerView: UIView = {
         let view = UIView()
@@ -25,6 +26,7 @@ public class CustomNativeAdView: NativeAdView {
     
     private lazy var adHeadlineLabel: UILabel = {
         let label = UILabel()
+        label.accessibilityIdentifier = "Ad Headline Label"
         label.translatesAutoresizingMaskIntoConstraints = false
         label.numberOfLines = 0
         label.font = .boldSystemFont(ofSize: 18)
@@ -36,6 +38,7 @@ public class CustomNativeAdView: NativeAdView {
     
     private lazy var adSponsorLabel: UILabel = {
         let label = UILabel()
+        label.accessibilityIdentifier = "Ad Sponsor Label"
         label.translatesAutoresizingMaskIntoConstraints = false
         label.numberOfLines = 0
         label.textColor = .secondaryLabel
@@ -46,7 +49,8 @@ public class CustomNativeAdView: NativeAdView {
     }()
     
     private lazy var adAttributionLabel: PaddedLabel = {
-        let label = PaddedLabel(padding: UIEdgeInsets(top: 5, left: 10, bottom: 5, right: 10))
+        let label = PaddedLabel(padding: UIEdgeInsets(top: 4, left: 6, bottom: 4, right: 6))
+        label.accessibilityIdentifier = "Ad Attribution Label"
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textColor = .white
         label.text = "Sponsored"
@@ -54,13 +58,14 @@ public class CustomNativeAdView: NativeAdView {
         label.backgroundColor = .systemBlue
         label.layer.cornerRadius = 5
         label.layer.masksToBounds = true
-        label.font = .systemFont(ofSize: 14, weight: .semibold)
+        label.font = .systemFont(ofSize: 13, weight: .semibold)
         
         return label
     }()
     
     private lazy var adIconImageView: UIImageView = {
         let imageView = UIImageView()
+        imageView.accessibilityIdentifier = "Ad Icon Image View"
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.contentMode = .scaleAspectFill
         imageView.layer.cornerRadius = 10
@@ -71,6 +76,7 @@ public class CustomNativeAdView: NativeAdView {
     
     private lazy var adRatingImageView: UIImageView = {
         let imageView = UIImageView()
+        imageView.accessibilityIdentifier = "Ad Rating Image View"
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.contentMode = .left
         
@@ -79,6 +85,7 @@ public class CustomNativeAdView: NativeAdView {
     
     private lazy var actionButton: UIButton = {
         let button = UIButton()
+        button.accessibilityIdentifier = "Ad Action Button"
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle("Install Now", for: .normal)
         button.backgroundColor = .systemBlue
@@ -93,6 +100,7 @@ public class CustomNativeAdView: NativeAdView {
     
     private lazy var adBodyLabel: UILabel = {
         let label = UILabel()
+        label.accessibilityIdentifier = "Ad Body Label"
         label.translatesAutoresizingMaskIntoConstraints = false
         label.numberOfLines = 0
         label.font = .systemFont(ofSize: 15, weight: .medium)
@@ -103,13 +111,14 @@ public class CustomNativeAdView: NativeAdView {
     }()
     
     private lazy var adStoreLabel: PaddedLabel = {
-        let label = PaddedLabel(padding: UIEdgeInsets(top: 5, left: 10, bottom: 5, right: 10))
+        let label = PaddedLabel(padding: UIEdgeInsets(top: 4, left: 6, bottom: 4, right: 6))
+        label.accessibilityIdentifier = "Ad Store Label"
         label.translatesAutoresizingMaskIntoConstraints = false
         label.numberOfLines = 0
         label.textColor = .white
         label.textAlignment = .center
         label.backgroundColor = .systemGreen
-        label.font = .systemFont(ofSize: 14, weight: .semibold)
+        label.font = .systemFont(ofSize: 13, weight: .semibold)
         label.text = "App Store"
         label.layer.cornerRadius = 5
         label.layer.masksToBounds = true
@@ -118,12 +127,13 @@ public class CustomNativeAdView: NativeAdView {
     }()
     
     private lazy var adPriceLabel: PaddedLabel = {
-        let label = PaddedLabel(padding: UIEdgeInsets(top: 5, left: 10, bottom: 5, right: 10))
+        let label = PaddedLabel(padding: UIEdgeInsets(top: 4, left: 6, bottom: 4, right: 6))
+        label.accessibilityIdentifier = "Ad Price Label"
         label.translatesAutoresizingMaskIntoConstraints = false
         label.numberOfLines = 0
         label.textColor = .white
         label.textAlignment = .center
-        label.font = .systemFont(ofSize: 14, weight: .semibold)
+        label.font = .systemFont(ofSize: 13, weight: .semibold)
         label.text = "Free"
         label.layer.cornerRadius = 5
         label.layer.masksToBounds = true
@@ -140,14 +150,14 @@ public class CustomNativeAdView: NativeAdView {
         return view
     }()
     
-    private lazy var headlineStack: UIStackView = {
-        let stack = UIStackView()
+    private lazy var headlineStack: CustomStackView = {
+        let stack = CustomStackView()
+        stack.accessibilityIdentifier = "Headline Stack"
         stack.axis = .horizontal
         stack.spacing = 12
         stack.alignment = .center
         stack.distribution = .fill
         stack.translatesAutoresizingMaskIntoConstraints = false
-        stack.backgroundColor = .yellow
         
         return stack
     }()
@@ -170,44 +180,47 @@ extension CustomNativeAdView {
         layer.cornerRadius = 5
         layer.masksToBounds = true
         
-        let storeStack = UIStackView()
+        let storeStack = CustomStackView()
+        storeStack.accessibilityIdentifier = "Store Stack"
         storeStack.axis = .horizontal
         storeStack.spacing = 8
-        storeStack.alignment = .fill
-        storeStack.distribution = .fillEqually
+        storeStack.alignment = .center
+        storeStack.distribution = .fill
         storeStack.translatesAutoresizingMaskIntoConstraints = false
         storeStack.addArrangedSubview(adStoreLabel)
         storeStack.addArrangedSubview(adPriceLabel)
         
         let attributionStack = UIStackView()
+        attributionStack.accessibilityIdentifier = "Attribution Stack"
         attributionStack.axis = .horizontal
         attributionStack.spacing = 8
         attributionStack.alignment = .center
-        attributionStack.distribution = .fillEqually
+        attributionStack.distribution = .fill
         attributionStack.translatesAutoresizingMaskIntoConstraints = false
         attributionStack.addArrangedSubview(adAttributionLabel)
         attributionStack.addArrangedSubview(adRatingImageView)
         
-        let labelStack = UIStackView()
+        let labelStack = CustomStackView()
+        labelStack.accessibilityIdentifier = "Label Stack"
         labelStack.axis = .vertical
         labelStack.spacing = 8
         labelStack.alignment = .leading
-        labelStack.distribution = .fillProportionally
+        labelStack.distribution = .fill
         labelStack.translatesAutoresizingMaskIntoConstraints = false
         labelStack.addArrangedSubview(adHeadlineLabel)
         labelStack.addArrangedSubview(adSponsorLabel)
         labelStack.addArrangedSubview(attributionStack)
         labelStack.addArrangedSubview(storeStack)
-        labelStack.backgroundColor = .brown
         
         headlineStack.addArrangedSubview(adIconImageView)
         headlineStack.addArrangedSubview(labelStack)
         
-        let bodyStack = UIStackView()
+        let bodyStack = CustomStackView()
+        bodyStack.accessibilityIdentifier = "Body Stack"
         bodyStack.axis = .vertical
-        bodyStack.spacing = 20
+        bodyStack.spacing = defaultSpacing
         bodyStack.alignment = .leading
-        bodyStack.distribution = .fillProportionally
+        bodyStack.distribution = .fill
         bodyStack.translatesAutoresizingMaskIntoConstraints = false
         bodyStack.addArrangedSubview(headlineStack)
         bodyStack.addArrangedSubview(adBodyLabel)
@@ -230,7 +243,7 @@ extension CustomNativeAdView {
             contentView.leadingAnchor.constraint(equalTo: adContainerView.leadingAnchor),
             contentView.trailingAnchor.constraint(equalTo: adContainerView.trailingAnchor),
             
-            bodyStack.topAnchor.constraint(equalTo: contentView.bottomAnchor, constant: 20),
+            bodyStack.topAnchor.constraint(equalTo: contentView.bottomAnchor, constant: defaultSpacing),
             bodyStack.leadingAnchor.constraint(equalTo: adContainerView.leadingAnchor, constant: 20),
             bodyStack.trailingAnchor.constraint(equalTo: adContainerView.trailingAnchor, constant: -20),
             
@@ -302,7 +315,7 @@ extension CustomNativeAdView {
                 case self.adIconImageView:
                     self.adIconImageView.image = nativeAd.icon?.image
                 case self.adHeadlineLabel:
-                    self.adHeadlineLabel.text = nativeAd.headline
+                    self.adHeadlineLabel.text = nativeAd.headline?.capitalized
                 case self.adRatingImageView:
                     self.adRatingImageView.image = self.imageOfStars(from: nativeAd.starRating)
                 case self.adSponsorLabel:
@@ -342,24 +355,34 @@ extension CustomNativeAdView {
     // MARK: - Update View Visibility
     
     private func updateVisibility(for nativeAd: NativeAd) {
-        let viewBindings: [UIView?: Any?] = [
-            iconView: nativeAd.icon,
-            headlineView: nativeAd.headline,
-            advertiserView: nativeAd.advertiser,
-            starRatingView: nativeAd.starRating,
-            bodyView: nativeAd.body,
-            callToActionView: nativeAd.callToAction,
-            storeView: nativeAd.store,
-            priceView: nativeAd.price
+        let views: [(UIView?, Any?)] = [
+            (iconView, nativeAd.icon),
+            (headlineView, nativeAd.headline),
+            (advertiserView, nativeAd.advertiser),
+            (starRatingView, nativeAd.starRating),
+            (bodyView, nativeAd.body),
+            (callToActionView, nativeAd.callToAction),
+            (storeView, nativeAd.store),
+            (priceView, nativeAd.price)
         ]
         
+        let validViews = views.compactMap { view, data in
+            view.map { ($0, data != nil) }
+        }
+        
         UIView.animate(withDuration: 0.3, delay: 0, options: [.curveEaseInOut], animations: {
-            for (view, data) in viewBindings {
-                view?.alpha = data == nil ? 0 : 1
+            validViews.forEach { view, isVisible in
+                view.alpha = isVisible ? 1 : 0
             }
         }, completion: { _ in
-            for (view, data) in viewBindings {
-                view?.isHidden = data == nil
+            validViews.forEach { view, isVisible in
+                if let stackView = view.superview as? CustomStackView {
+                    let viewName = view.accessibilityIdentifier ?? String(describing: type(of: view))
+                    print("- \(viewName) -> \(isVisible ? "Hiển thị ✅" : "Ẩn ❌") trong: \(stackView.accessibilityIdentifier ?? String(describing: type(of: stackView)))")
+                    stackView.setVisibility(for: view, isVisible: isVisible)
+                } else {
+                    view.isHidden = !isVisible
+                }
             }
         })
     }
@@ -385,14 +408,14 @@ extension CustomNativeAdView {
     // MARK: - Calculate Total Height
     
     public func calculateTotalHeight() -> CGFloat {
-        let spacing: CGFloat = 20
         let bottomPadding: CGFloat = 20
         let verticalPadding: CGFloat = 16
         let contentHeight = contentView.frame.height
         let headlineHeight = headlineStack.frame.height
         let bodyHeight = adBodyLabel.frame.height
         let buttonHeight = actionButton.frame.height
-        
-        return contentHeight + headlineHeight + bodyHeight + buttonHeight + spacing * 3 + bottomPadding + verticalPadding
+        let totalHeight = contentHeight + headlineHeight + bodyHeight + buttonHeight + defaultSpacing * 3 + bottomPadding + verticalPadding
+        print("✅ Total height: \(totalHeight) - Body height: \(bodyHeight) - Media height: \(contentHeight)")
+        return totalHeight
     }
 }
