@@ -33,7 +33,6 @@ class AppSceneDelegate: UIResponder, UIWindowSceneDelegate {
         ))
         
         let window = AppUIWindow(windowScene: windowScene)
-//        window.rootViewController = UINavigationController(rootViewController: DemoViewController())
         window.rootViewController = hostingViewController
         window.makeKeyAndVisible()
         
@@ -43,7 +42,6 @@ class AppSceneDelegate: UIResponder, UIWindowSceneDelegate {
     func sceneDidBecomeActive(_ scene: UIScene) {
         publisher.phase = .active
         
-        /*
         Task {
             let adManager = DependencyValues._current.mobileAdsClient
             let appOpen: MobileAdsClient.AdType = .appOpen("ca-app-pub-3940256099942544/5575463023")
@@ -56,7 +54,6 @@ class AppSceneDelegate: UIResponder, UIWindowSceneDelegate {
                 try await adManager.showAd()
             }
         }
-        */
     }
     
     func sceneDidEnterBackground(_ scene: UIScene) {

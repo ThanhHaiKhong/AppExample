@@ -2,19 +2,16 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:TCAInitializableReducer/TCAInitializableReducer">
-   </FileRef>
-   <FileRef
-      location = "group:NotificationsClient/NotificationsClient">
-   </FileRef>
-   <FileRef
-      location = "group:MobileAdsClient/MobileAdsClient">
-   </FileRef>
-   <FileRef
       location = "group:TCAFeatureAction">
    </FileRef>
    <FileRef
       location = "group:PHAssetExtensions">
+   </FileRef>
+   <FileRef
+      location = "group:MobileAdsClient">
+   </FileRef>
+   <FileRef
+      location = "group:NotificationsClient">
    </FileRef>
    <FileRef
       location = "group:UIModifiers">
@@ -30,6 +27,9 @@
    </FileRef>
    <FileRef
       location = "group:UIComponents">
+   </FileRef>
+   <FileRef
+      location = "group:TCAInitializableReducer">
    </FileRef>
    <FileRef
       location = "group:TCADependencies">
