@@ -10,8 +10,8 @@ import ComposableArchitecture
 import MobileAdsClient
 
 extension MobileAdsClient: DependencyKey {
-    public static let liveValue: MobileAdsClient = {
-        return MobileAdsClient(
+    public static let liveValue: Self = {
+        return Self(
             requestTrackingAuthorizationIfNeeded: {
                 return await withCheckedContinuation { continuation in
                     ATTrackingManager.requestTrackingAuthorization { status in

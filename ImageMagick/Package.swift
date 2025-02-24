@@ -14,11 +14,15 @@ let package = Package(
     targets: [
         .target(
             name: "ImageMagick",
-            dependencies: ["ImageMagickObjC"]
+            dependencies: [
+                "ImageMagickObjC"
+            ]
         ),
         .target(
             name: "ImageMagickObjC",
-            dependencies: [],
+            dependencies: [
+                
+            ],
             path: "./Sources/ImageMagickObjC",
             cSettings: [
                 .headerSearchPath("../Sources/ImageMagickObjC/include"),

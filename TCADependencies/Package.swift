@@ -6,7 +6,7 @@ import PackageDescription
 let package = Package(
     name: "TCADependencies",
     platforms: [
-        .iOS(.v14)
+        .iOS(.v15)
     ],
     products: [
         .singleTargetLibrary("TCADependencies"),
@@ -24,6 +24,7 @@ let package = Package(
         .package(url: "https://github.com/marmelroy/Zip.git", branch: "master"),
         .package(path: "../PHAssetExtensions"),
         .package(path: "../ImageMagick"),
+        .package(path: "../MobileAdsClient"),
     ],
     targets: [
         .target(
@@ -79,6 +80,7 @@ let package = Package(
             name: "InAppPurchaseClient",
             dependencies: [
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
+                .product(name: "MobileAdsClientLive", package: "MobileAdsClient"),
             ]
         ),
         .target(

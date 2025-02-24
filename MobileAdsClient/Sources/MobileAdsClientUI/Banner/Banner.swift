@@ -22,7 +22,7 @@ public struct Banner: TCAInitializableReducer, Sendable {
         public var actualSize: CGSize = .zero
         public var isCollapsed: Bool = false
         
-        public init(adUnitID: String, type: BannerType, layer: BannerLayer = .none, padding: BannerPadding = .none) {
+        public init(adUnitID: String, type: BannerType, layer: BannerLayer = .default, padding: BannerPadding = .none) {
             self.adUnitID = adUnitID
             self.type = type
             self.layer = layer

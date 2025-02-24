@@ -99,35 +99,43 @@ extension Effect {
         line: UInt = #line,
         column: UInt = #column
     ) -> Self {
-        .run(priority: priority) { send in
-            let adManager = DependencyValues._current.mobileAdsClient
-            
-            if try await adManager.isUserSubscribed() {
-                try await operation(send)
-            } else if try await adManager.shouldShowAd(adType, rules) {
-                try await adManager.requestTrackingAuthorizationIfNeeded()
-                try await adManager.showAd()
-                try await operation(send)
-            } else {
-                try await operation(send)
+        withEscapedDependencies { escaped in
+            .run(priority: priority) { send in
+                await try escaped.yield {
+                    do {
+                        let adManager = DependencyValues._current.mobileAdsClient
+                        
+                        if try await adManager.isUserSubscribed() {
+                            try await operation(send)
+                        } else if try await adManager.shouldShowAd(adType, rules) {
+                            try await adManager.requestTrackingAuthorizationIfNeeded()
+                            try await adManager.showAd()
+                            try await operation(send)
+                        } else {
+                            try await operation(send)
+                        }
+                    } catch is CancellationError {
+                        return
+                    } catch {
+                        guard let handler else {
+                            reportIssue(
+                                """
+                                An "Effect.runWithAdCheck" returned from "\(fileID):\(line)" threw an unhandled error. …
+                                
+                                All non-cancellation errors must be explicitly handled via the "catch" parameter \
+                                on "Effect.runWithAdCheck", or via a "do" block.
+                                """,
+                                fileID: fileID,
+                                filePath: filePath,
+                                line: line,
+                                column: column
+                            )
+                            return
+                        }
+                        await handler(error, send)
+                    }
+                }
             }
-        } catch: { error, send in
-            guard let handler else {
-                reportIssue(
-                """
-                An "Effect.runWithAdCheck" returned from "\(fileID):\(line)" threw an unhandled error. …
-                
-                All non-cancellation errors must be explicitly handled via the "catch" parameter \
-                on "Effect.runWithAdCheck", or via a "do" block.
-                """,
-                fileID: fileID,
-                filePath: filePath,
-                line: line,
-                column: column
-                )
-                return
-            }
-            await handler(error, send)
         }
     }
 }
@@ -148,7 +156,7 @@ where Content.State: Identifiable ,
             switch self {
             case .content(let contentState):
                 return contentState.id
-
+                
             case .ad(let adState):
                 return adState.id
             }

@@ -11,28 +11,13 @@ import UIKit
 
 @DependencyClient
 public struct SequenceImageClient: Sendable {
-    public var processImagesWithProgress: @Sendable (_ imagePaths: [String], _ input: CompressionInput) async throws -> AsyncStream<SequenceProgress>
-    public var processImages: @Sendable (_ imagePaths: [String], _ input: CompressionInput) async throws -> AsyncStream<SequenceProgress>
-    public var processImagesWithoutProgress: @Sendable (_ imagePaths: [String], _ input: CompressionInput) async throws -> [SequenceCompressionResult]
+    public var processImages: @Sendable (_ imagePaths: [String], _ input: CompressionInput) async throws -> [SequenceCompressionResult]
     public var cleanUp: @Sendable () async throws -> Void
 }
 
 extension SequenceImageClient: DependencyKey {
-    public static let liveValue: SequenceImageClient = .init(
-        processImagesWithProgress: { imagePaths, input in
-            return AsyncStream { continuation in
-                Task {
-                    let results = await SequenceImageProcessor.shared.processImages(imagePaths, input: input) { progress in
-                        continuation.yield(.inProcessing(progress))
-                    }
-                    continuation.yield(.finished(results))
-                }
-            }
-        },
+    public static let liveValue: Self = .init(
         processImages: { imagePaths, input in
-            return try await SequenceImageProcessor.shared.processImages(imagePaths, input: input)
-        },
-        processImagesWithoutProgress: { imagePaths, input in
             return await SequenceImageProcessor.shared.processImages(imagePaths, input: input)
         },
         cleanUp: {
@@ -42,7 +27,11 @@ extension SequenceImageClient: DependencyKey {
 }
 
 extension SequenceImageClient: TestDependencyKey {
-    public static var testValue: SequenceImageClient {
+    public static var testValue: Self {
+        Self()
+    }
+    
+    public static var previewValue: Self {
         Self()
     }
 }

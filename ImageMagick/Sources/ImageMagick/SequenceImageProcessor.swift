@@ -40,7 +40,7 @@ public actor SequenceImageProcessor {
             var results: [SequenceCompressionResult] = []
             var processedImagesCount = 0
             
-//            MagickSetProgressMonitor(wand, progressCallback, nil)
+            MagickSetProgressMonitor(wand, progressCallback, nil)
             
             for path in imagePaths {
                 do {
