@@ -70,7 +70,7 @@ struct CircleStyleWithoutBackgroundModifier: ViewModifier {
         content
             .frame(width: size, height: size)
             .font(.system(.title3).weight(.semibold))
-            .foregroundColor(isSelected ? .accentColor : .black)
+            .foregroundColor(isSelected ? .accentColor : .white)
     }
 }
 

@@ -5,7 +5,9 @@
 //  Created by Thanh Hai Khong on 10/2/25.
 //
 
+import NotificationsClient
 import FirebaseMessaging
+import FirebaseFirestore
 import FirebaseCore
 import UIKit
 
@@ -16,7 +18,6 @@ final class NotificationService: NSObject, @unchecked Sendable {
         super.init()
     }
 }
-
 
 // MARK: - Pulic Methods
 
@@ -42,28 +43,28 @@ extension NotificationService {
     public func getNotifications() async throws -> [NotificationItem] {
         // Giả sử bạn lưu trữ thông báo trong Firestore hoặc Realtime Database
         // Lấy dữ liệu từ Firestore và chuyển thành dạng NotificationItem
-        
         // Ví dụ với Firestore (bạn có thể thay đổi theo cách bạn lưu trữ thông báo)
         let db = Firestore.firestore()
         let snapshot = try await db.collection("notifications").getDocuments()
-        
         var notifications: [NotificationItem] = []
+        
         for document in snapshot.documents {
             let data = document.data()
-            if let id = document.documentID,
-               let title = data["title"] as? String,
+            let id = document.documentID
+            if let title = data["title"] as? String,
                let body = data["body"] as? String,
                let timestamp = data["timestamp"] as? Timestamp {
-                let notification = NotificationItem(id: id, title: title, body: body, timestamp: timestamp.dateValue(), status: data["status"] as? String ?? "unread")
+                let notification = NotificationItem(id: id, title: title, body: body, imageURL: nil, status: false, timestamp: timestamp.dateValue())
                 notifications.append(notification)
             }
         }
-        return notifications
+        
+        return NotificationItem.mocks
     }
     
     public func markAsRead(id: String) async throws {
         let db = Firestore.firestore()
-        await db.collection("notifications").document(id).updateData(["status": "read"])
+        try await db.collection("notifications").document(id).updateData(["status": "read"])
     }
     
     public func removeAllNotifications() async {

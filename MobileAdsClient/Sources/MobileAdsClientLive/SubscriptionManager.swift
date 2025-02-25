@@ -158,7 +158,7 @@ public enum PurchaseResult {
     case cancelled
 }
 
-public enum SubscriptionStatus: Sendable {
+public enum SubscriptionStatus: Sendable, Equatable {
     case active
     case expired
     case notPurchased

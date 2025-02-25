@@ -23,7 +23,7 @@ extension NotificationsClient: DependencyKey {
                 return try await NotificationService.shared.markAsRead(id: id)
             },
             removeAllNotifications: {
-                return try await NotificationService.shared.removeAllNotifications()
+                return await NotificationService.shared.removeAllNotifications()
             }
         )
     }()

@@ -23,7 +23,7 @@ public struct EditorChoiceCardView: View {
 
     public var body: some View {
         RoundedRectangle(cornerRadius: UIConstants.Layers.cornerRadius)
-            .fill(.background)
+            .fill(.thinMaterial)
             .frame(width: screenSize.width - UIConstants.Padding.horizontal * 2, height: (screenSize.width - UIConstants.Padding.horizontal * 2) / 1.4)
             .overlay {
                 KFImage(store.item.artworkURL)

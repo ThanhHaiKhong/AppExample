@@ -14,7 +14,7 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/pointfreeco/swift-composable-architecture.git", branch: "main"),
-        .package(url: "https://github.com/firebase/firebase-ios-sdk.git", branch: "main"),
+        .package(url: "https://github.com/firebase/firebase-ios-sdk.git", .upToNextMajor(from: "11.8.1")),
     ],
     targets: [
         .target(
@@ -29,10 +29,12 @@ let package = Package(
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
                 .product(name: "FirebaseMessaging", package: "firebase-ios-sdk"),
                 .product(name: "FirebaseCore", package: "firebase-ios-sdk"),
+                .product(name: "FirebaseFirestore", package: "firebase-ios-sdk"),
             ]
         ),
     ]
 )
+
 extension Product {
     static func singleTargetLibrary(_ name: String) -> Product {
         .library(name: name, targets: [name])

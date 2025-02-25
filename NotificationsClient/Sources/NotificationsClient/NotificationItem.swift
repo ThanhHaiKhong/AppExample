@@ -15,6 +15,15 @@ public struct NotificationItem: Identifiable, Sendable, Equatable {
     public let status: Bool
     public let timestamp: Date
     
+    public init(id: String, title: String, body: String, imageURL: URL?, status: Bool, timestamp: Date) {
+        self.id = id
+        self.title = title
+        self.body = body
+        self.imageURL = imageURL
+        self.status = status
+        self.timestamp = timestamp
+    }
+    
     public static let mocks: [NotificationItem] = [
         NotificationItem(
             id: "1",
