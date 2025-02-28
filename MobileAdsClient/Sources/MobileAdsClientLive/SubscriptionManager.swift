@@ -90,6 +90,7 @@ extension SubscriptionManager {
 // MARK: - Private Methods
 
 extension SubscriptionManager {
+    
     private func checkSubscriptionWithStoreKit() async -> Bool {
         for await result in Transaction.currentEntitlements {
             if case .verified(let transaction) = result {

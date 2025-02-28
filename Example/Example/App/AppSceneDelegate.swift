@@ -7,6 +7,7 @@
 
 import ComposableArchitecture
 import MobileAdsClient
+import NotificationsClientUI
 import Combine
 import SwiftUI
 import UIKit
@@ -32,6 +33,13 @@ class AppSceneDelegate: UIResponder, UIWindowSceneDelegate {
             }
         ))
         
+        /*
+        let hostingViewController = UIHostingController(rootView: NotificationView(store: Store(
+            initialState: Notifications.State()) {
+                Notifications()
+            }
+        ))
+        */
         let window = AppUIWindow(windowScene: windowScene)
         window.rootViewController = hostingViewController
         window.makeKeyAndVisible()

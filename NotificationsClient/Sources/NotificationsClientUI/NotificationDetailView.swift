@@ -9,12 +9,8 @@ import ComposableArchitecture
 import NotificationsClient
 import SwiftUI
 
-struct NotificationDetailView: View {
-    var body: some View {
+public struct NotificationDetailView: View {
+    public var body: some View {
         Text("Notification Detail View")
     }
-}
-
-#Preview {
-    NotificationDetailView()
 }

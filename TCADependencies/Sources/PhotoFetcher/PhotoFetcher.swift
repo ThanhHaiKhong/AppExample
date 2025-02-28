@@ -57,20 +57,24 @@ public struct PhotoFetcher: Sendable {
         return await asset.getFilePath()
     }
     
-    public var exportedFileURls: @Sendable (_ localIdentifiers: [String]) async throws -> [URL] = { localIdentifiers in
+    public var exportedFileURls: @Sendable (_ localIdentifiers: [String]) async -> [URL] = { localIdentifiers in
         let fetchResult = PHAsset.fetchAssets(withLocalIdentifiers: localIdentifiers, options: nil)
-        var assets: [PHAsset] = (0..<fetchResult.count).map { fetchResult.object(at: $0) }
-        
-        return try await withThrowingTaskGroup(of: URL?.self) { group in
+        let assets: [PHAsset] = (0..<fetchResult.count).map { fetchResult.object(at: $0) }
+
+        return await withTaskGroup(of: URL?.self) { group in
             for asset in assets {
                 group.addTask {
-                    let fileURL = try await asset.fileURL()
-                    return fileURL
+                    do {
+                        return try await asset.fileURL()
+                    } catch {
+                        print("⚠️ Không thể lấy fileURL cho asset \(asset.localIdentifier): \(error)")
+                        return nil
+                    }
                 }
             }
-            
+
             var urls: [URL] = []
-            for try await url in group {
+            for await url in group {
                 if let url = url {
                     urls.append(url)
                 }

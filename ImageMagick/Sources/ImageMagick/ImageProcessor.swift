@@ -112,7 +112,7 @@ public actor ImageProcessor {
     }
     
     public func cleanUp() async throws {
-        DestroyMagickWand(wand)
+        clearAllImages()
         try await deleteCompressedFilesInTempDirectory()
     }
     

@@ -161,7 +161,7 @@ public actor SequenceImageProcessor {
     }
     
     public func cleanUp() async throws {
-        DestroyMagickWand(wand)
+        clearAllImagesFromWand(wand)
         try await deleteCompressedFilesInTempDirectory()
     }
 }

@@ -17,9 +17,11 @@
 		7F7E0D652D55D18200D3A652 /* MobileAdsClientUI in Frameworks */ = {isa = PBXBuildFile; productRef = 7F7E0D642D55D18200D3A652 /* MobileAdsClientUI */; };
 		7F8E6DD42D5DB8820050BDAF /* NativeAdClient in Frameworks */ = {isa = PBXBuildFile; productRef = 7F8E6DD32D5DB8820050BDAF /* NativeAdClient */; };
 		7F8E6DD62D5DB8820050BDAF /* NativeAdClientLive in Frameworks */ = {isa = PBXBuildFile; productRef = 7F8E6DD52D5DB8820050BDAF /* NativeAdClientLive */; };
+		7FA2F0572D701017009F7A9D /* MusicWasmKit in Frameworks */ = {isa = PBXBuildFile; productRef = 7FA2F0562D701017009F7A9D /* MusicWasmKit */; };
 		7FB7E7952CE710BE004A300C /* ImageMagick in Frameworks */ = {isa = PBXBuildFile; productRef = 7FB7E7942CE710BE004A300C /* ImageMagick */; };
 		7FB7E7972CE710F5004A300C /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 7FB7E7962CE710F5004A300C /* libz.tbd */; };
 		7FC297892CFD94AC00674EEA /* UIComponents in Frameworks */ = {isa = PBXBuildFile; productRef = 7FC297882CFD94AC00674EEA /* UIComponents */; };
+		7FDD6FCF2D6FF67D00082A78 /* NotificationsClientUI in Frameworks */ = {isa = PBXBuildFile; productRef = 7FDD6FCE2D6FF67D00082A78 /* NotificationsClientUI */; };
 		7FE06F742D51CAC60002164B /* TCAFeatureAction in Frameworks */ = {isa = PBXBuildFile; productRef = 7FE06F732D51CAC60002164B /* TCAFeatureAction */; };
 /* End PBXBuildFile section */
 
@@ -67,7 +69,9 @@
 				7F76A20F2D5C5BA8001C9C6A /* TCAInitializableReducer in Frameworks */,
 				7F5399BA2CED72B1003141AC /* UIModifiers in Frameworks */,
 				7F7E0D612D55D18200D3A652 /* MobileAdsClient in Frameworks */,
+				7FA2F0572D701017009F7A9D /* MusicWasmKit in Frameworks */,
 				7FC297892CFD94AC00674EEA /* UIComponents in Frameworks */,
+				7FDD6FCF2D6FF67D00082A78 /* NotificationsClientUI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -132,6 +136,8 @@
 				7F76A20E2D5C5BA8001C9C6A /* TCAInitializableReducer */,
 				7F8E6DD32D5DB8820050BDAF /* NativeAdClient */,
 				7F8E6DD52D5DB8820050BDAF /* NativeAdClientLive */,
+				7FDD6FCE2D6FF67D00082A78 /* NotificationsClientUI */,
+				7FA2F0562D701017009F7A9D /* MusicWasmKit */,
 			);
 			productName = Example;
 			productReference = 7FB7E7792CE71033004A300C /* Example.app */;
@@ -443,6 +449,10 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = NativeAdClientLive;
 		};
+		7FA2F0562D701017009F7A9D /* MusicWasmKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MusicWasmKit;
+		};
 		7FB7E7942CE710BE004A300C /* ImageMagick */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = ImageMagick;
@@ -450,6 +460,10 @@
 		7FC297882CFD94AC00674EEA /* UIComponents */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = UIComponents;
+		};
+		7FDD6FCE2D6FF67D00082A78 /* NotificationsClientUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = NotificationsClientUI;
 		};
 		7FE06F732D51CAC60002164B /* TCAFeatureAction */ = {
 			isa = XCSwiftPackageProductDependency;

@@ -29,7 +29,7 @@
 
 import SwiftUI
 
-struct Ruler: View, Equatable {
+struct Ruler: View {
     @Environment(\.slidingRulerStyle) private var style
     
     let cells: [RulerCell]
@@ -51,16 +51,9 @@ struct Ruler: View, Equatable {
         return .init(mark: (cell.mark + markOffset) * step, bounds: bounds, step: step, formatter: formatter)
     }
     
-    static func ==(lhs: Self, rhs: Self) -> Bool {
-        lhs.step == rhs.step &&
-        lhs.cells.count == rhs.cells.count &&
-        (!StaticSlidingRulerStyleEnvironment.hasMarks || lhs.markOffset == rhs.markOffset)
-    }
-}
-
-struct Ruler_Previews: PreviewProvider {
-    static var previews: some View {
-        Ruler(cells: [.init(CGFloat(1))],
-              step: 1.0, markOffset: 0, bounds: -1...1, formatter: nil)
-    }
+//    static func ==(lhs: Self, rhs: Self) -> Bool {
+//        lhs.step == rhs.step &&
+//        lhs.cells.count == rhs.cells.count &&
+//        (!StaticSlidingRulerStyleEnvironment.hasMarks || lhs.markOffset == rhs.markOffset)
+//    }
 }

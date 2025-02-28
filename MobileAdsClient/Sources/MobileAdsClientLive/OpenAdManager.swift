@@ -24,9 +24,8 @@ extension OpenAdManager {
         if appOpenAds[adUnitID] == nil {
             do {
                 try await loadAd(adUnitID: adUnitID)
-                return true
             } catch {
-                return false
+                
             }
         }
         return await rules.allRulesSatisfied()

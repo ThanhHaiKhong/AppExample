@@ -144,7 +144,7 @@ public struct SlidingRuler<V>: View where V: BinaryFloatingPoint, V.Stride: Bina
         return FlexibleWidthContainer {
             ZStack(alignment: .init(horizontal: .center, vertical: self.verticalCursorAlignment)) {
                 Ruler(cells: self.cells, step: self.step, markOffset: self.markOffset, bounds: self.bounds, formatter: self.formatter)
-                    .equatable()
+//                    .equatable()
                     .animation(nil)
                     .modifier(InfiniteOffsetEffect(offset: renderedOffset, maxOffset: self.cellWidthOverflow))
                 self.style.makeCursorBody()

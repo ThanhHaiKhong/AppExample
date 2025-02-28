@@ -9,12 +9,16 @@ import ComposableArchitecture
 import NotificationsClient
 import SwiftUI
 
-struct NotificationView: View {
-    @Perception.Bindable var store: StoreOf<Notifications>
+public struct NotificationView: View {
+    @Perception.Bindable private var store: StoreOf<Notifications>
     private let imageSize: CGFloat = 55.0
     private let cornerRadius: CGFloat = 5.0
     
-    var body: some View {
+    public init(store: StoreOf<Notifications>) {
+        self.store = store
+    }
+    
+    public var body: some View {
         WithPerceptionTracking {
             VStack {
                 List {
@@ -102,15 +106,5 @@ struct NotificationView: View {
                 store.send(.view(.onTask))
             }
         }
-    }
-}
-
-#Preview {
-    NavigationStack {
-        NotificationView(store: Store(initialState: Notifications.State()) {
-            Notifications()
-        })
-        .navigationTitle("Notifications")
-        .navigationBarTitleDisplayMode(.inline)
     }
 }

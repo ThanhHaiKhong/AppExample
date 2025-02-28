@@ -11,10 +11,12 @@ let package = Package(
     products: [
         .singleTargetLibrary("NotificationsClient"),
         .singleTargetLibrary("NotificationsClientLive"),
+        .singleTargetLibrary("NotificationsClientUI"),
     ],
     dependencies: [
         .package(url: "https://github.com/pointfreeco/swift-composable-architecture.git", branch: "main"),
         .package(url: "https://github.com/firebase/firebase-ios-sdk.git", .upToNextMajor(from: "11.8.1")),
+        .package(path: "/Users/thanhhaikhong/Desktop/AppExample/TCAFeatureAction"),
     ],
     targets: [
         .target(
@@ -30,6 +32,15 @@ let package = Package(
                 .product(name: "FirebaseMessaging", package: "firebase-ios-sdk"),
                 .product(name: "FirebaseCore", package: "firebase-ios-sdk"),
                 .product(name: "FirebaseFirestore", package: "firebase-ios-sdk"),
+            ]
+        ),
+        .target(
+            name: "NotificationsClientUI",
+            dependencies: [
+                .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
+                "NotificationsClient",
+                "NotificationsClientLive",
+                "TCAFeatureAction"
             ]
         ),
     ]

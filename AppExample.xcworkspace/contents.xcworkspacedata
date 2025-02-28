@@ -2,6 +2,12 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:MusicWasmKit">
+   </FileRef>
+   <FileRef
+      location = "group:WasmHost">
+   </FileRef>
+   <FileRef
       location = "group:TCAFeatureAction">
    </FileRef>
    <FileRef
