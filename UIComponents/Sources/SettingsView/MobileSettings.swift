@@ -77,9 +77,15 @@ public struct MobileSettings: Sendable {
                 return .run { [info = state.appInfo] send in
                     let subject = "General Inquiry"
                     let body = "Hello, I need help with..."
+                    let appInfo = """
+                        ===========================
+                        🏷 App: \(info.name)
+                        🔢 Version: \(info.version)
+                        ===========================
+                        """
+                    let fullBody = "\(body)\n\n\(appInfo)"
                     let encodedSubject = subject.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
-                    let encodedBody = "\(body)\n\n---\nApp: \(info.name)\nVersion: \(info.version)\n---"
-                        .addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
+                    let encodedBody = fullBody.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
                     
                     if let url = URL(string: "mailto:\(info.supportEmail)?subject=\(encodedSubject)&body=\(encodedBody)") {
                         await openURL(url)
@@ -90,9 +96,15 @@ public struct MobileSettings: Sendable {
                 return .run { [info = state.appInfo] send in
                     let subject = "Bug Report"
                     let body = "I found a problem with..."
+                    let appInfo = """
+                        ===========================
+                        🏷 App: \(info.name)
+                        🔢 Version: \(info.version)
+                        ===========================
+                        """
+                    let fullBody = "\(body)\n\n\(appInfo)"
                     let encodedSubject = subject.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
-                    let encodedBody = "\(body)\n\n---\nApp: \(info.name)\nVersion: \(info.version)\n---"
-                        .addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
+                    let encodedBody = fullBody.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
                     
                     if let url = URL(string: "mailto:\(info.supportEmail)?subject=\(encodedSubject)&body=\(encodedBody)") {
                         await openURL(url)
@@ -103,9 +115,15 @@ public struct MobileSettings: Sendable {
                 return .run { [info = state.appInfo] send in
                     let subject = "Feature Request"
                     let body = "I would love to see..."
+                    let appInfo = """
+                        ===========================
+                        🏷 App: \(info.name)
+                        🔢 Version: \(info.version)
+                        ===========================
+                        """
+                    let fullBody = "\(body)\n\n\(appInfo)"
                     let encodedSubject = subject.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
-                    let encodedBody = "\(body)\n\n---\nApp: \(info.name)\nVersion: \(info.version)\n---"
-                        .addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
+                    let encodedBody = fullBody.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
                     
                     if let url = URL(string: "mailto:\(info.supportEmail)?subject=\(encodedSubject)&body=\(encodedBody)") {
                         await openURL(url)
