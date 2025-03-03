@@ -13,6 +13,7 @@ import UIKit
 public struct SequenceImageClient: Sendable {
     public var processImages: @Sendable (_ imagePaths: [String], _ input: CompressionInput) async throws -> [SequenceCompressionResult]
     public var cleanUp: @Sendable () async throws -> Void
+    public var cancel: @Sendable () async throws -> Void
 }
 
 extension SequenceImageClient: DependencyKey {
@@ -22,6 +23,9 @@ extension SequenceImageClient: DependencyKey {
         },
         cleanUp: {
             return try await SequenceImageProcessor.shared.cleanUp()
+        },
+        cancel: {
+            return try await SequenceImageProcessor.shared.cancel()
         }
     )
 }

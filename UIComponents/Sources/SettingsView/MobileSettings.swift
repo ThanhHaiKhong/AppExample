@@ -11,13 +11,29 @@ import UIKit
 
 @available(iOS 16.0, *)
 @Reducer
-public struct MobileSettings {
+public struct MobileSettings: Sendable {
     @ObservableState
-    public struct State: Equatable {
-        public let appID: String
+    public struct State: Equatable, Sendable {
+        public let appInfo: AppInfo
         
-        public init(appID: String) {
-            self.appID = appID
+        public init(appInfo: AppInfo) {
+            self.appInfo = appInfo
+        }
+        
+        public struct AppInfo: Equatable, Sendable {
+            public let appID: String
+            public let name: String
+            public let version: String
+            public let build: String?
+            public let supportEmail: String
+            
+            public init(appID: String, name: String, version: String, build: String? = nil, supportEmail: String) {
+                self.appID = appID
+                self.name = name
+                self.version = version
+                self.build = build
+                self.supportEmail = supportEmail
+            }
         }
     }
     
@@ -31,11 +47,13 @@ public struct MobileSettings {
         case termsOfServiceButtonTapped
     }
     
+    @Dependency(\.openURL) var openURL
+    
     public var body: some ReducerOf<Self> {
         Reduce { state, action in
             switch action {
             case .shareButtonTapped:
-                guard let url = URL(string: "https://apps.apple.com/app/id\(state.appID)") else {
+                guard let url = URL(string: "https://apps.apple.com/app/id\(state.appInfo.appID)") else {
                     return .none
                 }
                 
@@ -45,20 +63,55 @@ public struct MobileSettings {
                         await topMostViewController.present(activityViewController, animated: true, completion: nil)
                     }
                 }
+                
             case .rateButtonTapped:
-                guard let writeReviewURL = URL(string: "https://apps.apple.com/app/id\(state.appID)?action=write-review") else {
+                guard let writeReviewURL = URL(string: "https://apps.apple.com/app/id\(state.appInfo.appID)?action=write-review") else {
                     return .none
                 }
                 
                 return .run { send in
                     await UIApplication.shared.open(writeReviewURL, options: [:], completionHandler: nil)
                 }
+                
             case .contactButtonTapped:
-                return .none
+                return .run { [info = state.appInfo] send in
+                    let subject = "General Inquiry"
+                    let body = "Hello, I need help with..."
+                    let encodedSubject = subject.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
+                    let encodedBody = "\(body)\n\n---\nApp: \(info.name)\nVersion: \(info.version)\n---"
+                        .addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
+                    
+                    if let url = URL(string: "mailto:\(info.supportEmail)?subject=\(encodedSubject)&body=\(encodedBody)") {
+                        await openURL(url)
+                    }
+                }
+                
             case .reportButtonTapped:
-                return .none
+                return .run { [info = state.appInfo] send in
+                    let subject = "Bug Report"
+                    let body = "I found a problem with..."
+                    let encodedSubject = subject.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
+                    let encodedBody = "\(body)\n\n---\nApp: \(info.name)\nVersion: \(info.version)\n---"
+                        .addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
+                    
+                    if let url = URL(string: "mailto:\(info.supportEmail)?subject=\(encodedSubject)&body=\(encodedBody)") {
+                        await openURL(url)
+                    }
+                }
+                
             case .requestButtonTapped:
-                return .none
+                return .run { [info = state.appInfo] send in
+                    let subject = "Feature Request"
+                    let body = "I would love to see..."
+                    let encodedSubject = subject.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
+                    let encodedBody = "\(body)\n\n---\nApp: \(info.name)\nVersion: \(info.version)\n---"
+                        .addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
+                    
+                    if let url = URL(string: "mailto:\(info.supportEmail)?subject=\(encodedSubject)&body=\(encodedBody)") {
+                        await openURL(url)
+                    }
+                }
+                
             case .privacyPolicyButtonTapped:
                 guard let url = URL(string: "http://orlproducts.com/privacy.html") else {
                     return .none

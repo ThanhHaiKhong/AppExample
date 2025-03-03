@@ -68,7 +68,7 @@ extension SubscriptionManager {
         return restoredTransactions
     }
     
-    public func observeTransactions() -> AsyncStream<Transaction> {
+    public func startObserveTransactions() -> AsyncStream<Transaction> {
         AsyncStream { continuation in
             Task {
                 for await result in Transaction.updates {
@@ -84,6 +84,14 @@ extension SubscriptionManager {
     public func verifySubscriptionStatus(productIdentifiers: [String], sharedSecret: String) async throws -> SubscriptionStatus {
         let isSubscribed = await checkSubscriptionWithStoreKit()
         return isSubscribed ? .active : .expired
+    }
+    
+    public func finishUnfinishedTransactions() async {
+        for await result in Transaction.currentEntitlements {
+            if case .verified(let transaction) = result {
+                await transaction.finish()
+            }
+        }
     }
 }
 

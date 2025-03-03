@@ -4,6 +4,7 @@
 import ComposableArchitecture
 import TCAInitializableReducer
 import Foundation
+import UIKit
 
 @DependencyClient
 public struct MobileAdsClient: Sendable {
@@ -217,3 +218,27 @@ extension ItemWithAdReducer.State: Sendable where Content.State: Sendable, Ad.St
 extension ItemWithAdReducer.Action: Sendable where Content.Action: Sendable, Ad.Action: Sendable { }
 
 extension ItemWithAdReducer: Sendable where Content: Sendable, Ad: Sendable { }
+
+// MARK: - UI Helpers
+
+extension UIApplication {
+    public func topViewController(controller: UIViewController? = nil) -> UIViewController? {
+        let controller = controller ?? keyWindow?.rootViewController
+        if let navigationController = controller as? UINavigationController {
+            return topViewController(controller: navigationController.visibleViewController)
+        } else if let tabController = controller as? UITabBarController,
+                  let selected = tabController.selectedViewController {
+            return topViewController(controller: selected)
+        } else if let presented = controller?.presentedViewController {
+            return topViewController(controller: presented)
+        }
+        return controller
+    }
+    
+    public var keyWindow: UIWindow? {
+        return connectedScenes
+            .compactMap { $0 as? UIWindowScene }
+            .flatMap { $0.windows }
+            .first { $0.isKeyWindow }
+    }
+}

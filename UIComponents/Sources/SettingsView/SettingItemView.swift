@@ -27,27 +27,25 @@ public struct SettingItemView: View {
     // MARK: - Body
     
     public var body: some View {
-        HStack(spacing: 14) {
+        HStack(spacing: 16) {
             Image(systemName: image)
                 .resizable()
                 .scaledToFit()
-                .padding(7)
-                .frame(width: 30, height: 30)
-                .foregroundColor(.white)
-                .background(backgroundColor, in: RoundedRectangle(cornerRadius: 5))
+                .font(.system(.subheadline, design: .default).weight(.semibold))
+                .padding(8)
+                .frame(width: 40, height: 40)
+                .foregroundColor(backgroundColor)
+                .background(backgroundColor.opacity(0.25))
+                .clipShape(.rect(cornerRadius: 10, style: .continuous))
             
-            VStack(alignment: .leading) {
+            VStack(alignment: .leading, spacing: 5) {
                 Text(title)
-                    .font(.system(.headline, design: .rounded).weight(.medium))
-                    .fontWeight(.regular)
-                    .lineLimit(1)
+                    .font(.system(.headline, design: .default).weight(.semibold))
                 
                 if let subtitle = subtitle {
                     Text(subtitle)
-                        .font(.system(.footnote, design: .rounded).weight(.regular))
-                        .fontWeight(.regular)
+                        .font(.system(.subheadline, design: .default).weight(.medium))
                         .foregroundStyle(.secondary)
-                        .lineLimit(2)
                 }
             }
         }

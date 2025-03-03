@@ -41,7 +41,7 @@ extension AdsManager {
     
     @MainActor
     internal func showAd() async throws {
-        guard let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene, let rootVC = scene.windows.first?.rootViewController else {
+        guard let rootVC = UIApplication.shared.topViewController() else {
             return
         }
         

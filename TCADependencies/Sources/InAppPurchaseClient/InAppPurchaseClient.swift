@@ -16,8 +16,9 @@ public struct InAppPurchaseClient: Sendable {
     public var fetchProducts: @Sendable (_ productIdentifiers: [String]) async throws -> [IAPProduct]
     public var purchase: @Sendable (_ productID: String) async throws -> Transaction
     public var restorePurchases: @Sendable () async throws -> [Transaction]
-    public var observeTransactions: @Sendable () async throws -> AsyncStream<Transaction>
+    public var startObserveTransactions: @Sendable () async throws -> AsyncStream<Transaction>
     public var verifySubscriptionStatus: @Sendable (_ productIdentifiers: [String], _ sharedSecret: String) async throws -> SubscriptionStatus
+    public var finishUnfinishedTransactions: @Sendable () async -> Void
 }
 
 @available(iOS 15.0, *)
@@ -35,11 +36,14 @@ extension InAppPurchaseClient: DependencyKey {
             restorePurchases: {
                 return try await subscription.restorePurchases()
             },
-            observeTransactions: {
-                return subscription.observeTransactions()
+            startObserveTransactions: {
+                return subscription.startObserveTransactions()
             },
             verifySubscriptionStatus: { productIdentifiers, sharedSecret in
                 return try await subscription.verifySubscriptionStatus(productIdentifiers: productIdentifiers, sharedSecret: sharedSecret)
+            },
+            finishUnfinishedTransactions: {
+                return await subscription.finishUnfinishedTransactions()
             }
         )
     }()

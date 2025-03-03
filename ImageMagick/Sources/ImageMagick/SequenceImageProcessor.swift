@@ -164,6 +164,11 @@ public actor SequenceImageProcessor {
         clearAllImagesFromWand(wand)
         try await deleteCompressedFilesInTempDirectory()
     }
+    
+    public func cancel() async throws {
+        clearAllImagesFromWand(wand)
+        try await deleteCompressedFilesInTempDirectory()
+    }
 }
 
 extension SequenceImageProcessor {
