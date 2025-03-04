@@ -24,6 +24,10 @@ extension RemoteConfigClient: TestDependencyKey {
     public static var testValue: RemoteConfigClient {
         RemoteConfigClient()
     }
+    
+    public static var previewValue: RemoteConfigClient {
+        RemoteConfigClient()
+    }
 }
 
 extension DependencyValues {

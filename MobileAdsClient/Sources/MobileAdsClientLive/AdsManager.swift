@@ -41,11 +41,9 @@ extension AdsManager {
     
     @MainActor
     internal func showAd() async throws {
-        guard let rootVC = UIApplication.shared.topViewController() else {
-            return
-        }
-        
-        guard let adType = await lastAdType else {
+        guard let rootVC = UIApplication.shared.topViewController(),
+              let adType = await lastAdType
+        else {
             return
         }
         

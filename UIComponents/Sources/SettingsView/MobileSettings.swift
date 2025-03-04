@@ -6,7 +6,6 @@
 //
 
 import ComposableArchitecture
-import SwiftUI
 import UIKit
 
 @available(iOS 16.0, *)
@@ -70,7 +69,7 @@ public struct MobileSettings: Sendable {
                 }
                 
                 return .run { send in
-                    await UIApplication.shared.open(writeReviewURL, options: [:], completionHandler: nil)
+                    await openURL(writeReviewURL)
                 }
                 
             case .contactButtonTapped:
@@ -79,8 +78,8 @@ public struct MobileSettings: Sendable {
                     let body = "Hello, I need help with..."
                     let appInfo = """
                         ===========================
-                        🏷 App: \(info.name)
-                        🔢 Version: \(info.version)
+                        📱 App: \(info.name)
+                        🏷 Version: \(info.version)
                         ===========================
                         """
                     let fullBody = "\(body)\n\n\(appInfo)"
@@ -98,8 +97,8 @@ public struct MobileSettings: Sendable {
                     let body = "I found a problem with..."
                     let appInfo = """
                         ===========================
-                        🏷 App: \(info.name)
-                        🔢 Version: \(info.version)
+                        📱 App: \(info.name)
+                        🏷 Version: \(info.version)
                         ===========================
                         """
                     let fullBody = "\(body)\n\n\(appInfo)"
@@ -117,8 +116,8 @@ public struct MobileSettings: Sendable {
                     let body = "I would love to see..."
                     let appInfo = """
                         ===========================
-                        🏷 App: \(info.name)
-                        🔢 Version: \(info.version)
+                        📱 App: \(info.name)
+                        🏷 Version: \(info.version)
                         ===========================
                         """
                     let fullBody = "\(body)\n\n\(appInfo)"
@@ -136,7 +135,7 @@ public struct MobileSettings: Sendable {
                 }
                 
                 return .run { send in
-                    await UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                    await openURL(url)
                 }
             case .termsOfServiceButtonTapped:
                 guard let url = URL(string: "http://orlproducts.com/terms.html") else {
@@ -144,13 +143,11 @@ public struct MobileSettings: Sendable {
                 }
                 
                 return .run { send in
-                    await UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                    await openURL(url)
                 }
             }
         }
     }
     
-    public init () {
-        
-    }
+    public init () { }
 }

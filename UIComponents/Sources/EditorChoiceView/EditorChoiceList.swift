@@ -13,13 +13,13 @@ import SwiftUI
 public struct EditorChoiceList: Sendable {
     
     @ObservableState
-    public struct State: Equatable {
+    public struct State: Equatable, Sendable {
         public var editorChoiceCards: IdentifiedArrayOf<EditorChoiceCard.State> = []
         
         public init() {}
     }
      
-    public enum Action: Equatable {
+    public enum Action: Equatable, Sendable {
         case onTask
         case editorChoiceCards(IdentifiedActionOf<EditorChoiceCard>)
         case editorChoiceCardsResponse([EditorChoice])

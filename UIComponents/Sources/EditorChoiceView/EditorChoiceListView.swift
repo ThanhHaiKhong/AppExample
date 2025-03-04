@@ -12,18 +12,11 @@ import SwiftUI
 
 @available(iOS 16.0, *)
 public struct EditorChoiceListView: View {
-    
-    // MARK: - Properties
-    
     private let store: StoreOf<EditorChoiceList>
-    
-    // MARK: - Init
     
     public init(store: StoreOf<EditorChoiceList>) {
         self.store = store
     }
-    
-    // MARK: - Body
     
     public var body: some View {
         WithPerceptionTracking {

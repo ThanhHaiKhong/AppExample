@@ -11,9 +11,9 @@ import SwiftUI
 import UIKit
 
 @Reducer
-public struct EditorChoiceCard {
+public struct EditorChoiceCard: Sendable {
     @ObservableState
-    public struct State: Identifiable, Equatable {
+    public struct State: Identifiable, Equatable, Sendable {
         public let id: UUID = UUID()
         public let item: EditorChoice
         
@@ -22,23 +22,22 @@ public struct EditorChoiceCard {
         }
     }
     
-    public enum Action: Equatable {
+    public enum Action: Equatable, Sendable {
         case openURL(URL)
     }
+    
+    @Dependency(\.openURL) var openURL
     
     public var body: some ReducerOf<Self> {
         Reduce { state, action in
             switch action {
-                case .openURL(_):
-                return .none
+                case let .openURL(url):
+                return .run { send in
+                    await openURL(url)
+                }
             }
         }
     }
     
     public init() {}
-    
-    @MainActor
-    private func openURL(_ url: URL) {
-        UIApplication.shared.open(url, options: [:], completionHandler: nil)
-    }
 }
