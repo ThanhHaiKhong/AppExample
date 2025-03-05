@@ -44,6 +44,9 @@ class DefaultWasmInstance: NSObject, WasmInstance {
     func release() async {
         await _wasm.release()
     }
+    deinit {
+        debugPrint("✅ wasm \(#function)")
+    }
     func rebuildWhen(error: any Error) -> Bool {
         error is WasmKit.Trap
     }
@@ -67,15 +70,17 @@ class DefaultWasmInstance: NSObject, WasmInstance {
         var opts: Options? = nil
 #if DEBUG
         let wopts = WasmOptions.wasmtime(target: "pulley64",
-                                         memoryReversation: 4 << 30,
-                                         memoryReversationForGrowth: 2 << 30,
-                                         storeMemorySize: nil
+                                         memoryReversation: 100 << 20,
+                                         memoryReversationForGrowth: 50 << 20,
+                                         storeMemorySize: nil,
+                                         storeMaxInstance: 5
         )
-        opts = Options(wasm: wopts)
-//        mffiLogWithMaxLevel(level: "info")
+        opts = Options(wasm: wopts,
+                       update: UpdateOptions(bundleDir: URL.wasmDir.path, checkInterval: 5))
+        mffiLogWithMaxLevel(level: "info")
 #endif 
-        _wasm = try await AsyncifyWasm(path: file.path, opts: opts)
-        try await _wasm.start()
+        _wasm = AsyncifyWasm()
+        try await _wasm.start(path: file.path, opts: opts)
     }
     
     func call(_ data: Data) async throws -> Data {
@@ -86,6 +91,10 @@ class DefaultWasmInstance: NSObject, WasmInstance {
         return try await _wasm.call(cmd: data)
     }
     func release() async {
+        await _wasm.release()
+    }
+    deinit {
+        debugPrint("✅ wasm \(#function)")
     }
     func rebuildWhen(error: any Error) -> Bool {
         error is AsyncifyWasmError

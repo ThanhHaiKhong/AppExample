@@ -29,44 +29,44 @@
 
 CF_EXTERN_C_BEGIN
 
-@class MusicAuthor;
-@class MusicEntry;
-@class MusicListOptions_Discover;
-@class MusicListOptions_Search;
-@class MusicTrack;
-@class MusicTrackDetails_Format;
-@class MusicTranscript_Segment;
+@class WAMusicAuthor;
+@class WAMusicEntry;
+@class WAMusicListOptions_Discover;
+@class WAMusicListOptions_Search;
+@class WAMusicTrack;
+@class WAMusicTrackDetails_Format;
+@class WAMusicTranscript_Segment;
 
 NS_ASSUME_NONNULL_BEGIN
 
-#pragma mark - Enum MusicCallID
+#pragma mark - Enum WAMusicCallID
 
-typedef GPB_ENUM(MusicCallID) {
+typedef GPB_ENUM(WAMusicCallID) {
   /**
    * Value used if any message's field encounters a value that is not defined
    * by this enum. The message will also have C functions to get/set the rawValue
    * of the field.
    **/
-  MusicCallID_GPBUnrecognizedEnumeratorValue = kGPBUnrecognizedEnumeratorValue,
-  MusicCallID_CallIdUnspecified = 0,
-  MusicCallID_CallIdGetDetails = 1,
-  MusicCallID_CallIdGetPlaylistDetails = 2,
-  MusicCallID_CallIdSearch = 3,
-  MusicCallID_CallIdSuggestion = 4,
-  MusicCallID_CallIdGetOptions = 5,
-  MusicCallID_CallIdGetDiscover = 6,
-  MusicCallID_CallIdGetTranscript = 7,
+  WAMusicCallID_GPBUnrecognizedEnumeratorValue = kGPBUnrecognizedEnumeratorValue,
+  WAMusicCallID_CallIdUnspecified = 0,
+  WAMusicCallID_CallIdGetDetails = 1,
+  WAMusicCallID_CallIdGetPlaylistDetails = 2,
+  WAMusicCallID_CallIdSearch = 3,
+  WAMusicCallID_CallIdSuggestion = 4,
+  WAMusicCallID_CallIdGetOptions = 5,
+  WAMusicCallID_CallIdGetDiscover = 6,
+  WAMusicCallID_CallIdGetTranscript = 7,
 };
 
-GPBEnumDescriptor *MusicCallID_EnumDescriptor(void);
+GPBEnumDescriptor *WAMusicCallID_EnumDescriptor(void);
 
 /**
  * Checks to see if the given value is defined by the enum or was not known at
  * the time this source was generated.
  **/
-BOOL MusicCallID_IsValidValue(int32_t value);
+BOOL WAMusicCallID_IsValidValue(int32_t value);
 
-#pragma mark - MusicRoot
+#pragma mark - WAMusicMusicRoot
 
 /**
  * Exposes the extension registry for this file.
@@ -78,66 +78,66 @@ BOOL MusicCallID_IsValidValue(int32_t value);
  * which is a @c GPBExtensionRegistry that includes all the extensions defined by
  * this file and all files that it depends on.
  **/
-GPB_FINAL @interface MusicRoot : GPBRootObject
+GPB_FINAL @interface WAMusicMusicRoot : GPBRootObject
 @end
 
-#pragma mark - MusicOptions
+#pragma mark - WAMusicOptions
 
-typedef GPB_ENUM(MusicOptions_FieldNumber) {
-  MusicOptions_FieldNumber_Provider = 1,
+typedef GPB_ENUM(WAMusicOptions_FieldNumber) {
+  WAMusicOptions_FieldNumber_Provider = 1,
 };
 
-GPB_FINAL @interface MusicOptions : GPBMessage
+GPB_FINAL @interface WAMusicOptions : GPBMessage
 
 @property(nonatomic, readwrite, copy, null_resettable) NSString *provider;
 
 @end
 
-#pragma mark - MusicListOptions
+#pragma mark - WAMusicListOptions
 
-typedef GPB_ENUM(MusicListOptions_FieldNumber) {
-  MusicListOptions_FieldNumber_ProvidersArray = 1,
-  MusicListOptions_FieldNumber_Discover = 2,
-  MusicListOptions_FieldNumber_Search = 3,
+typedef GPB_ENUM(WAMusicListOptions_FieldNumber) {
+  WAMusicListOptions_FieldNumber_ProvidersArray = 1,
+  WAMusicListOptions_FieldNumber_Discover = 2,
+  WAMusicListOptions_FieldNumber_Search = 3,
 };
 
-GPB_FINAL @interface MusicListOptions : GPBMessage
+GPB_FINAL @interface WAMusicListOptions : GPBMessage
 
-@property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<MusicEntry*> *providersArray;
+@property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<WAMusicEntry*> *providersArray;
 /** The number of items in @c providersArray without causing the container to be created. */
 @property(nonatomic, readonly) NSUInteger providersArray_Count;
 
-@property(nonatomic, readwrite, strong, null_resettable) MusicListOptions_Discover *discover;
+@property(nonatomic, readwrite, strong, null_resettable) WAMusicListOptions_Discover *discover;
 /** Test to see if @c discover has been set. */
 @property(nonatomic, readwrite) BOOL hasDiscover;
 
-@property(nonatomic, readwrite, strong, null_resettable) MusicListOptions_Search *search;
+@property(nonatomic, readwrite, strong, null_resettable) WAMusicListOptions_Search *search;
 /** Test to see if @c search has been set. */
 @property(nonatomic, readwrite) BOOL hasSearch;
 
 @end
 
-#pragma mark - MusicListOptions_Discover
+#pragma mark - WAMusicListOptions_Discover
 
-typedef GPB_ENUM(MusicListOptions_Discover_FieldNumber) {
-  MusicListOptions_Discover_FieldNumber_CategoriesArray = 1,
+typedef GPB_ENUM(WAMusicListOptions_Discover_FieldNumber) {
+  WAMusicListOptions_Discover_FieldNumber_CategoriesArray = 1,
 };
 
-GPB_FINAL @interface MusicListOptions_Discover : GPBMessage
+GPB_FINAL @interface WAMusicListOptions_Discover : GPBMessage
 
-@property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<MusicEntry*> *categoriesArray;
+@property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<WAMusicEntry*> *categoriesArray;
 /** The number of items in @c categoriesArray without causing the container to be created. */
 @property(nonatomic, readonly) NSUInteger categoriesArray_Count;
 
 @end
 
-#pragma mark - MusicListOptions_Search
+#pragma mark - WAMusicListOptions_Search
 
-typedef GPB_ENUM(MusicListOptions_Search_FieldNumber) {
-  MusicListOptions_Search_FieldNumber_ScopesArray = 1,
+typedef GPB_ENUM(WAMusicListOptions_Search_FieldNumber) {
+  WAMusicListOptions_Search_FieldNumber_ScopesArray = 1,
 };
 
-GPB_FINAL @interface MusicListOptions_Search : GPBMessage
+GPB_FINAL @interface WAMusicListOptions_Search : GPBMessage
 
 @property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<NSString*> *scopesArray;
 /** The number of items in @c scopesArray without causing the container to be created. */
@@ -145,14 +145,14 @@ GPB_FINAL @interface MusicListOptions_Search : GPBMessage
 
 @end
 
-#pragma mark - MusicEntry
+#pragma mark - WAMusicEntry
 
-typedef GPB_ENUM(MusicEntry_FieldNumber) {
-  MusicEntry_FieldNumber_Id_p = 1,
-  MusicEntry_FieldNumber_Name = 2,
+typedef GPB_ENUM(WAMusicEntry_FieldNumber) {
+  WAMusicEntry_FieldNumber_Id_p = 1,
+  WAMusicEntry_FieldNumber_Name = 2,
 };
 
-GPB_FINAL @interface MusicEntry : GPBMessage
+GPB_FINAL @interface WAMusicEntry : GPBMessage
 
 @property(nonatomic, readwrite, copy, null_resettable) NSString *id_p;
 
@@ -160,23 +160,23 @@ GPB_FINAL @interface MusicEntry : GPBMessage
 
 @end
 
-#pragma mark - MusicTrackDetails
+#pragma mark - WAMusicTrackDetails
 
-typedef GPB_ENUM(MusicTrackDetails_FieldNumber) {
-  MusicTrackDetails_FieldNumber_Id_p = 1,
-  MusicTrackDetails_FieldNumber_Title = 2,
-  MusicTrackDetails_FieldNumber_Description_p = 3,
-  MusicTrackDetails_FieldNumber_Author = 4,
-  MusicTrackDetails_FieldNumber_FormatsArray = 5,
-  MusicTrackDetails_FieldNumber_Thumbnail = 6,
-  MusicTrackDetails_FieldNumber_Duration = 7,
-  MusicTrackDetails_FieldNumber_Views = 8,
-  MusicTrackDetails_FieldNumber_DashManifestURL = 9,
-  MusicTrackDetails_FieldNumber_HlsManifestURL = 10,
-  MusicTrackDetails_FieldNumber_RelatedTracksArray = 11,
+typedef GPB_ENUM(WAMusicTrackDetails_FieldNumber) {
+  WAMusicTrackDetails_FieldNumber_Id_p = 1,
+  WAMusicTrackDetails_FieldNumber_Title = 2,
+  WAMusicTrackDetails_FieldNumber_Description_p = 3,
+  WAMusicTrackDetails_FieldNumber_Author = 4,
+  WAMusicTrackDetails_FieldNumber_FormatsArray = 5,
+  WAMusicTrackDetails_FieldNumber_Thumbnail = 6,
+  WAMusicTrackDetails_FieldNumber_Duration = 7,
+  WAMusicTrackDetails_FieldNumber_Views = 8,
+  WAMusicTrackDetails_FieldNumber_DashManifestURL = 9,
+  WAMusicTrackDetails_FieldNumber_HlsManifestURL = 10,
+  WAMusicTrackDetails_FieldNumber_RelatedTracksArray = 11,
 };
 
-GPB_FINAL @interface MusicTrackDetails : GPBMessage
+GPB_FINAL @interface WAMusicTrackDetails : GPBMessage
 
 @property(nonatomic, readwrite, copy, null_resettable) NSString *id_p;
 
@@ -184,11 +184,11 @@ GPB_FINAL @interface MusicTrackDetails : GPBMessage
 
 @property(nonatomic, readwrite, copy, null_resettable) NSString *description_p;
 
-@property(nonatomic, readwrite, strong, null_resettable) MusicAuthor *author;
+@property(nonatomic, readwrite, strong, null_resettable) WAMusicAuthor *author;
 /** Test to see if @c author has been set. */
 @property(nonatomic, readwrite) BOOL hasAuthor;
 
-@property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<MusicTrackDetails_Format*> *formatsArray;
+@property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<WAMusicTrackDetails_Format*> *formatsArray;
 /** The number of items in @c formatsArray without causing the container to be created. */
 @property(nonatomic, readonly) NSUInteger formatsArray_Count;
 
@@ -208,23 +208,23 @@ GPB_FINAL @interface MusicTrackDetails : GPBMessage
 /** Test to see if @c hlsManifestURL has been set. */
 @property(nonatomic, readwrite) BOOL hasHlsManifestURL;
 
-@property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<MusicTrack*> *relatedTracksArray;
+@property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<WAMusicTrack*> *relatedTracksArray;
 /** The number of items in @c relatedTracksArray without causing the container to be created. */
 @property(nonatomic, readonly) NSUInteger relatedTracksArray_Count;
 
 @end
 
-#pragma mark - MusicTrackDetails_Format
+#pragma mark - WAMusicTrackDetails_Format
 
-typedef GPB_ENUM(MusicTrackDetails_Format_FieldNumber) {
-  MusicTrackDetails_Format_FieldNumber_Id_p = 1,
-  MusicTrackDetails_Format_FieldNumber_URL = 2,
-  MusicTrackDetails_Format_FieldNumber_Quality = 3,
-  MusicTrackDetails_Format_FieldNumber_Metadata = 4,
-  MusicTrackDetails_Format_FieldNumber_MimeType = 5,
+typedef GPB_ENUM(WAMusicTrackDetails_Format_FieldNumber) {
+  WAMusicTrackDetails_Format_FieldNumber_Id_p = 1,
+  WAMusicTrackDetails_Format_FieldNumber_URL = 2,
+  WAMusicTrackDetails_Format_FieldNumber_Quality = 3,
+  WAMusicTrackDetails_Format_FieldNumber_Metadata = 4,
+  WAMusicTrackDetails_Format_FieldNumber_MimeType = 5,
 };
 
-GPB_FINAL @interface MusicTrackDetails_Format : GPBMessage
+GPB_FINAL @interface WAMusicTrackDetails_Format : GPBMessage
 
 @property(nonatomic, readwrite, copy, null_resettable) NSString *id_p;
 
@@ -244,29 +244,29 @@ GPB_FINAL @interface MusicTrackDetails_Format : GPBMessage
 
 @end
 
-#pragma mark - MusicTranscript
+#pragma mark - WAMusicTranscript
 
-typedef GPB_ENUM(MusicTranscript_FieldNumber) {
-  MusicTranscript_FieldNumber_SegmentsArray = 1,
+typedef GPB_ENUM(WAMusicTranscript_FieldNumber) {
+  WAMusicTranscript_FieldNumber_SegmentsArray = 1,
 };
 
-GPB_FINAL @interface MusicTranscript : GPBMessage
+GPB_FINAL @interface WAMusicTranscript : GPBMessage
 
-@property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<MusicTranscript_Segment*> *segmentsArray;
+@property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<WAMusicTranscript_Segment*> *segmentsArray;
 /** The number of items in @c segmentsArray without causing the container to be created. */
 @property(nonatomic, readonly) NSUInteger segmentsArray_Count;
 
 @end
 
-#pragma mark - MusicTranscript_Segment
+#pragma mark - WAMusicTranscript_Segment
 
-typedef GPB_ENUM(MusicTranscript_Segment_FieldNumber) {
-  MusicTranscript_Segment_FieldNumber_Text = 1,
-  MusicTranscript_Segment_FieldNumber_Offset = 2,
-  MusicTranscript_Segment_FieldNumber_Duration = 3,
+typedef GPB_ENUM(WAMusicTranscript_Segment_FieldNumber) {
+  WAMusicTranscript_Segment_FieldNumber_Text = 1,
+  WAMusicTranscript_Segment_FieldNumber_Offset = 2,
+  WAMusicTranscript_Segment_FieldNumber_Duration = 3,
 };
 
-GPB_FINAL @interface MusicTranscript_Segment : GPBMessage
+GPB_FINAL @interface WAMusicTranscript_Segment : GPBMessage
 
 @property(nonatomic, readwrite, copy, null_resettable) NSString *text;
 
@@ -276,15 +276,15 @@ GPB_FINAL @interface MusicTranscript_Segment : GPBMessage
 
 @end
 
-#pragma mark - MusicAuthor
+#pragma mark - WAMusicAuthor
 
-typedef GPB_ENUM(MusicAuthor_FieldNumber) {
-  MusicAuthor_FieldNumber_Id_p = 1,
-  MusicAuthor_FieldNumber_Name = 2,
-  MusicAuthor_FieldNumber_Thumbnail = 3,
+typedef GPB_ENUM(WAMusicAuthor_FieldNumber) {
+  WAMusicAuthor_FieldNumber_Id_p = 1,
+  WAMusicAuthor_FieldNumber_Name = 2,
+  WAMusicAuthor_FieldNumber_Thumbnail = 3,
 };
 
-GPB_FINAL @interface MusicAuthor : GPBMessage
+GPB_FINAL @interface WAMusicAuthor : GPBMessage
 
 @property(nonatomic, readwrite, copy, null_resettable) NSString *id_p;
 
@@ -296,17 +296,17 @@ GPB_FINAL @interface MusicAuthor : GPBMessage
 
 @end
 
-#pragma mark - MusicTrack
+#pragma mark - WAMusicTrack
 
-typedef GPB_ENUM(MusicTrack_FieldNumber) {
-  MusicTrack_FieldNumber_Id_p = 1,
-  MusicTrack_FieldNumber_Title = 2,
-  MusicTrack_FieldNumber_Kind = 3,
-  MusicTrack_FieldNumber_Author = 4,
-  MusicTrack_FieldNumber_Thumbnail = 5,
+typedef GPB_ENUM(WAMusicTrack_FieldNumber) {
+  WAMusicTrack_FieldNumber_Id_p = 1,
+  WAMusicTrack_FieldNumber_Title = 2,
+  WAMusicTrack_FieldNumber_Kind = 3,
+  WAMusicTrack_FieldNumber_Author = 4,
+  WAMusicTrack_FieldNumber_Thumbnail = 5,
 };
 
-GPB_FINAL @interface MusicTrack : GPBMessage
+GPB_FINAL @interface WAMusicTrack : GPBMessage
 
 @property(nonatomic, readwrite, copy, null_resettable) NSString *id_p;
 
@@ -314,7 +314,7 @@ GPB_FINAL @interface MusicTrack : GPBMessage
 
 @property(nonatomic, readwrite, copy, null_resettable) NSString *kind;
 
-@property(nonatomic, readwrite, strong, null_resettable) MusicAuthor *author;
+@property(nonatomic, readwrite, strong, null_resettable) WAMusicAuthor *author;
 /** Test to see if @c author has been set. */
 @property(nonatomic, readwrite) BOOL hasAuthor;
 
@@ -324,16 +324,16 @@ GPB_FINAL @interface MusicTrack : GPBMessage
 
 @end
 
-#pragma mark - MusicListTracks
+#pragma mark - WAMusicListTracks
 
-typedef GPB_ENUM(MusicListTracks_FieldNumber) {
-  MusicListTracks_FieldNumber_ItemsArray = 1,
-  MusicListTracks_FieldNumber_Continuation = 2,
+typedef GPB_ENUM(WAMusicListTracks_FieldNumber) {
+  WAMusicListTracks_FieldNumber_ItemsArray = 1,
+  WAMusicListTracks_FieldNumber_Continuation = 2,
 };
 
-GPB_FINAL @interface MusicListTracks : GPBMessage
+GPB_FINAL @interface WAMusicListTracks : GPBMessage
 
-@property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<MusicTrack*> *itemsArray;
+@property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<WAMusicTrack*> *itemsArray;
 /** The number of items in @c itemsArray without causing the container to be created. */
 @property(nonatomic, readonly) NSUInteger itemsArray_Count;
 
@@ -343,13 +343,13 @@ GPB_FINAL @interface MusicListTracks : GPBMessage
 
 @end
 
-#pragma mark - MusicListSuggestions
+#pragma mark - WAMusicListSuggestions
 
-typedef GPB_ENUM(MusicListSuggestions_FieldNumber) {
-  MusicListSuggestions_FieldNumber_SuggestionsArray = 1,
+typedef GPB_ENUM(WAMusicListSuggestions_FieldNumber) {
+  WAMusicListSuggestions_FieldNumber_SuggestionsArray = 1,
 };
 
-GPB_FINAL @interface MusicListSuggestions : GPBMessage
+GPB_FINAL @interface WAMusicListSuggestions : GPBMessage
 
 @property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<NSString*> *suggestionsArray;
 /** The number of items in @c suggestionsArray without causing the container to be created. */

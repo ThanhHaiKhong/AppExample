@@ -34,46 +34,47 @@
 // Forward declarations of Objective-C classes that we can use as
 // static values in struct initializers.
 // We don't use [Foo class] because it is not a static value.
-GPBObjCClassDeclaration(TypesBytes);
-GPBObjCClassDeclaration(TypesError);
-GPBObjCClassDeclaration(TypesImage);
-GPBObjCClassDeclaration(TypesPointer);
-GPBObjCClassDeclaration(TypesString);
-GPBObjCClassDeclaration(TypesVoid);
-GPBObjCClassDeclaration(TypesWAFuture);
-GPBObjCClassDeclaration(TypesWAString);
+GPBObjCClassDeclaration(GPBStruct);
+GPBObjCClassDeclaration(WATypesBytes);
+GPBObjCClassDeclaration(WATypesEntry);
+GPBObjCClassDeclaration(WATypesError);
+GPBObjCClassDeclaration(WATypesField);
+GPBObjCClassDeclaration(WATypesImage);
+GPBObjCClassDeclaration(WATypesPointer);
+GPBObjCClassDeclaration(WATypesString);
+GPBObjCClassDeclaration(WATypesVoid);
+GPBObjCClassDeclaration(WATypesWAFuture);
+GPBObjCClassDeclaration(WATypesWAString);
 
-#pragma mark - TypesRoot
+#pragma mark - WATypesTypesRoot
 
-@implementation TypesRoot
+@implementation WATypesTypesRoot
 
 // No extensions in the file and no imports or none of the imports (direct or
 // indirect) defined extensions, so no need to generate +extensionRegistry.
 
 @end
 
-static GPBFileDescription TypesRoot_FileDescription = {
+static GPBFileDescription WATypesTypesRoot_FileDescription = {
   .package = "asyncify.types",
-  .prefix = "Types",
+  .prefix = "WATypes",
   .syntax = GPBFileSyntaxProto3
 };
 
-#pragma mark - TypesImage
+#pragma mark - WATypesImage
 
-@implementation TypesImage
+@implementation WATypesImage
 
 @dynamic hasURL, URL;
 @dynamic hasData_p, data_p;
-@dynamic hasWidth, width;
-@dynamic hasHeight, height;
+@dynamic hasMetadata, metadata;
 
-typedef struct TypesImage__storage_ {
+typedef struct WATypesImage__storage_ {
   uint32_t _has_storage_[1];
   NSString *URL;
-  TypesBytes *data_p;
-  double width;
-  double height;
-} TypesImage__storage_;
+  WATypesBytes *data_p;
+  GPBStruct *metadata;
+} WATypesImage__storage_;
 
 // This method is threadsafe because it is initially called
 // in +initialize for each subclass.
@@ -85,47 +86,38 @@ typedef struct TypesImage__storage_ {
       {
         .name = "URL",
         .dataTypeSpecific.clazz = Nil,
-        .number = TypesImage_FieldNumber_URL,
+        .number = WATypesImage_FieldNumber_URL,
         .hasIndex = 0,
-        .offset = (uint32_t)offsetof(TypesImage__storage_, URL),
+        .offset = (uint32_t)offsetof(WATypesImage__storage_, URL),
         .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom),
         .dataType = GPBDataTypeString,
       },
       {
         .name = "data_p",
-        .dataTypeSpecific.clazz = GPBObjCClass(TypesBytes),
-        .number = TypesImage_FieldNumber_Data_p,
+        .dataTypeSpecific.clazz = GPBObjCClass(WATypesBytes),
+        .number = WATypesImage_FieldNumber_Data_p,
         .hasIndex = 1,
-        .offset = (uint32_t)offsetof(TypesImage__storage_, data_p),
+        .offset = (uint32_t)offsetof(WATypesImage__storage_, data_p),
         .flags = GPBFieldOptional,
         .dataType = GPBDataTypeMessage,
       },
       {
-        .name = "width",
-        .dataTypeSpecific.clazz = Nil,
-        .number = TypesImage_FieldNumber_Width,
+        .name = "metadata",
+        .dataTypeSpecific.clazz = GPBObjCClass(GPBStruct),
+        .number = WATypesImage_FieldNumber_Metadata,
         .hasIndex = 2,
-        .offset = (uint32_t)offsetof(TypesImage__storage_, width),
+        .offset = (uint32_t)offsetof(WATypesImage__storage_, metadata),
         .flags = GPBFieldOptional,
-        .dataType = GPBDataTypeDouble,
-      },
-      {
-        .name = "height",
-        .dataTypeSpecific.clazz = Nil,
-        .number = TypesImage_FieldNumber_Height,
-        .hasIndex = 3,
-        .offset = (uint32_t)offsetof(TypesImage__storage_, height),
-        .flags = GPBFieldOptional,
-        .dataType = GPBDataTypeDouble,
+        .dataType = GPBDataTypeMessage,
       },
     };
     GPBDescriptor *localDescriptor =
-        [GPBDescriptor allocDescriptorForClass:GPBObjCClass(TypesImage)
+        [GPBDescriptor allocDescriptorForClass:GPBObjCClass(WATypesImage)
                                    messageName:@"Image"
-                               fileDescription:&TypesRoot_FileDescription
+                               fileDescription:&WATypesTypesRoot_FileDescription
                                         fields:fields
                                     fieldCount:(uint32_t)(sizeof(fields) / sizeof(GPBMessageFieldDescription))
-                                   storageSize:sizeof(TypesImage__storage_)
+                                   storageSize:sizeof(WATypesImage__storage_)
                                          flags:(GPBDescriptorInitializationFlags)(GPBDescriptorInitializationFlag_UsesClassRefs | GPBDescriptorInitializationFlag_Proto3OptionalKnown | GPBDescriptorInitializationFlag_ClosedEnumSupportKnown)];
     #if !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
       static const char *extraTextFormatInfo =
@@ -142,19 +134,19 @@ typedef struct TypesImage__storage_ {
 
 @end
 
-#pragma mark - TypesBytes
+#pragma mark - WATypesBytes
 
-@implementation TypesBytes
+@implementation WATypesBytes
 
 @dynamic dataOneOfCase;
 @dynamic raw;
 @dynamic ptr;
 
-typedef struct TypesBytes__storage_ {
+typedef struct WATypesBytes__storage_ {
   uint32_t _has_storage_[2];
   NSData *raw;
-  TypesPointer *ptr;
-} TypesBytes__storage_;
+  WATypesPointer *ptr;
+} WATypesBytes__storage_;
 
 // This method is threadsafe because it is initially called
 // in +initialize for each subclass.
@@ -166,29 +158,29 @@ typedef struct TypesBytes__storage_ {
       {
         .name = "raw",
         .dataTypeSpecific.clazz = Nil,
-        .number = TypesBytes_FieldNumber_Raw,
+        .number = WATypesBytes_FieldNumber_Raw,
         .hasIndex = -1,
-        .offset = (uint32_t)offsetof(TypesBytes__storage_, raw),
+        .offset = (uint32_t)offsetof(WATypesBytes__storage_, raw),
         .flags = GPBFieldOptional,
         .dataType = GPBDataTypeBytes,
       },
       {
         .name = "ptr",
-        .dataTypeSpecific.clazz = GPBObjCClass(TypesPointer),
-        .number = TypesBytes_FieldNumber_Ptr,
+        .dataTypeSpecific.clazz = GPBObjCClass(WATypesPointer),
+        .number = WATypesBytes_FieldNumber_Ptr,
         .hasIndex = -1,
-        .offset = (uint32_t)offsetof(TypesBytes__storage_, ptr),
+        .offset = (uint32_t)offsetof(WATypesBytes__storage_, ptr),
         .flags = GPBFieldOptional,
         .dataType = GPBDataTypeMessage,
       },
     };
     GPBDescriptor *localDescriptor =
-        [GPBDescriptor allocDescriptorForClass:GPBObjCClass(TypesBytes)
+        [GPBDescriptor allocDescriptorForClass:GPBObjCClass(WATypesBytes)
                                    messageName:@"Bytes"
-                               fileDescription:&TypesRoot_FileDescription
+                               fileDescription:&WATypesTypesRoot_FileDescription
                                         fields:fields
                                     fieldCount:(uint32_t)(sizeof(fields) / sizeof(GPBMessageFieldDescription))
-                                   storageSize:sizeof(TypesBytes__storage_)
+                                   storageSize:sizeof(WATypesBytes__storage_)
                                          flags:(GPBDescriptorInitializationFlags)(GPBDescriptorInitializationFlag_UsesClassRefs | GPBDescriptorInitializationFlag_Proto3OptionalKnown | GPBDescriptorInitializationFlag_ClosedEnumSupportKnown)];
     static const char *oneofs[] = {
       "data",
@@ -206,23 +198,23 @@ typedef struct TypesBytes__storage_ {
 
 @end
 
-void TypesBytes_ClearDataOneOfCase(TypesBytes *message) {
-  GPBDescriptor *descriptor = [TypesBytes descriptor];
+void WATypesBytes_ClearDataOneOfCase(WATypesBytes *message) {
+  GPBDescriptor *descriptor = [WATypesBytes descriptor];
   GPBOneofDescriptor *oneof = [descriptor.oneofs objectAtIndex:0];
   GPBClearOneof(message, oneof);
 }
-#pragma mark - TypesPointer
+#pragma mark - WATypesPointer
 
-@implementation TypesPointer
+@implementation WATypesPointer
 
 @dynamic ptr;
 @dynamic len;
 
-typedef struct TypesPointer__storage_ {
+typedef struct WATypesPointer__storage_ {
   uint32_t _has_storage_[1];
   uint32_t ptr;
   uint32_t len;
-} TypesPointer__storage_;
+} WATypesPointer__storage_;
 
 // This method is threadsafe because it is initially called
 // in +initialize for each subclass.
@@ -234,29 +226,29 @@ typedef struct TypesPointer__storage_ {
       {
         .name = "ptr",
         .dataTypeSpecific.clazz = Nil,
-        .number = TypesPointer_FieldNumber_Ptr,
+        .number = WATypesPointer_FieldNumber_Ptr,
         .hasIndex = 0,
-        .offset = (uint32_t)offsetof(TypesPointer__storage_, ptr),
+        .offset = (uint32_t)offsetof(WATypesPointer__storage_, ptr),
         .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldClearHasIvarOnZero),
         .dataType = GPBDataTypeUInt32,
       },
       {
         .name = "len",
         .dataTypeSpecific.clazz = Nil,
-        .number = TypesPointer_FieldNumber_Len,
+        .number = WATypesPointer_FieldNumber_Len,
         .hasIndex = 1,
-        .offset = (uint32_t)offsetof(TypesPointer__storage_, len),
+        .offset = (uint32_t)offsetof(WATypesPointer__storage_, len),
         .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldClearHasIvarOnZero),
         .dataType = GPBDataTypeUInt32,
       },
     };
     GPBDescriptor *localDescriptor =
-        [GPBDescriptor allocDescriptorForClass:GPBObjCClass(TypesPointer)
+        [GPBDescriptor allocDescriptorForClass:GPBObjCClass(WATypesPointer)
                                    messageName:@"Pointer"
-                               fileDescription:&TypesRoot_FileDescription
+                               fileDescription:&WATypesTypesRoot_FileDescription
                                         fields:fields
                                     fieldCount:(uint32_t)(sizeof(fields) / sizeof(GPBMessageFieldDescription))
-                                   storageSize:sizeof(TypesPointer__storage_)
+                                   storageSize:sizeof(WATypesPointer__storage_)
                                          flags:(GPBDescriptorInitializationFlags)(GPBDescriptorInitializationFlag_UsesClassRefs | GPBDescriptorInitializationFlag_Proto3OptionalKnown | GPBDescriptorInitializationFlag_ClosedEnumSupportKnown)];
     #if defined(DEBUG) && DEBUG
       NSAssert(descriptor == nil, @"Startup recursed!");
@@ -268,19 +260,19 @@ typedef struct TypesPointer__storage_ {
 
 @end
 
-#pragma mark - TypesString
+#pragma mark - WATypesString
 
-@implementation TypesString
+@implementation WATypesString
 
 @dynamic dataOneOfCase;
 @dynamic raw;
 @dynamic ptr;
 
-typedef struct TypesString__storage_ {
+typedef struct WATypesString__storage_ {
   uint32_t _has_storage_[2];
   NSString *raw;
-  TypesPointer *ptr;
-} TypesString__storage_;
+  WATypesPointer *ptr;
+} WATypesString__storage_;
 
 // This method is threadsafe because it is initially called
 // in +initialize for each subclass.
@@ -292,29 +284,29 @@ typedef struct TypesString__storage_ {
       {
         .name = "raw",
         .dataTypeSpecific.clazz = Nil,
-        .number = TypesString_FieldNumber_Raw,
+        .number = WATypesString_FieldNumber_Raw,
         .hasIndex = -1,
-        .offset = (uint32_t)offsetof(TypesString__storage_, raw),
+        .offset = (uint32_t)offsetof(WATypesString__storage_, raw),
         .flags = GPBFieldOptional,
         .dataType = GPBDataTypeString,
       },
       {
         .name = "ptr",
-        .dataTypeSpecific.clazz = GPBObjCClass(TypesPointer),
-        .number = TypesString_FieldNumber_Ptr,
+        .dataTypeSpecific.clazz = GPBObjCClass(WATypesPointer),
+        .number = WATypesString_FieldNumber_Ptr,
         .hasIndex = -1,
-        .offset = (uint32_t)offsetof(TypesString__storage_, ptr),
+        .offset = (uint32_t)offsetof(WATypesString__storage_, ptr),
         .flags = GPBFieldOptional,
         .dataType = GPBDataTypeMessage,
       },
     };
     GPBDescriptor *localDescriptor =
-        [GPBDescriptor allocDescriptorForClass:GPBObjCClass(TypesString)
+        [GPBDescriptor allocDescriptorForClass:GPBObjCClass(WATypesString)
                                    messageName:@"String"
-                               fileDescription:&TypesRoot_FileDescription
+                               fileDescription:&WATypesTypesRoot_FileDescription
                                         fields:fields
                                     fieldCount:(uint32_t)(sizeof(fields) / sizeof(GPBMessageFieldDescription))
-                                   storageSize:sizeof(TypesString__storage_)
+                                   storageSize:sizeof(WATypesString__storage_)
                                          flags:(GPBDescriptorInitializationFlags)(GPBDescriptorInitializationFlag_UsesClassRefs | GPBDescriptorInitializationFlag_Proto3OptionalKnown | GPBDescriptorInitializationFlag_ClosedEnumSupportKnown)];
     static const char *oneofs[] = {
       "data",
@@ -332,19 +324,19 @@ typedef struct TypesString__storage_ {
 
 @end
 
-void TypesString_ClearDataOneOfCase(TypesString *message) {
-  GPBDescriptor *descriptor = [TypesString descriptor];
+void WATypesString_ClearDataOneOfCase(WATypesString *message) {
+  GPBDescriptor *descriptor = [WATypesString descriptor];
   GPBOneofDescriptor *oneof = [descriptor.oneofs objectAtIndex:0];
   GPBClearOneof(message, oneof);
 }
-#pragma mark - TypesVoid
+#pragma mark - WATypesVoid
 
-@implementation TypesVoid
+@implementation WATypesVoid
 
 
-typedef struct TypesVoid__storage_ {
+typedef struct WATypesVoid__storage_ {
   uint32_t _has_storage_[1];
-} TypesVoid__storage_;
+} WATypesVoid__storage_;
 
 // This method is threadsafe because it is initially called
 // in +initialize for each subclass.
@@ -353,12 +345,12 @@ typedef struct TypesVoid__storage_ {
   if (!descriptor) {
     GPB_DEBUG_CHECK_RUNTIME_VERSIONS();
     GPBDescriptor *localDescriptor =
-        [GPBDescriptor allocDescriptorForClass:GPBObjCClass(TypesVoid)
+        [GPBDescriptor allocDescriptorForClass:GPBObjCClass(WATypesVoid)
                                    messageName:@"Void"
-                               fileDescription:&TypesRoot_FileDescription
+                               fileDescription:&WATypesTypesRoot_FileDescription
                                         fields:NULL
                                     fieldCount:0
-                                   storageSize:sizeof(TypesVoid__storage_)
+                                   storageSize:sizeof(WATypesVoid__storage_)
                                          flags:(GPBDescriptorInitializationFlags)(GPBDescriptorInitializationFlag_UsesClassRefs | GPBDescriptorInitializationFlag_Proto3OptionalKnown | GPBDescriptorInitializationFlag_ClosedEnumSupportKnown)];
     #if defined(DEBUG) && DEBUG
       NSAssert(descriptor == nil, @"Startup recursed!");
@@ -370,18 +362,18 @@ typedef struct TypesVoid__storage_ {
 
 @end
 
-#pragma mark - TypesError
+#pragma mark - WATypesError
 
-@implementation TypesError
+@implementation WATypesError
 
 @dynamic code;
 @dynamic reason;
 
-typedef struct TypesError__storage_ {
+typedef struct WATypesError__storage_ {
   uint32_t _has_storage_[1];
   int32_t code;
   NSString *reason;
-} TypesError__storage_;
+} WATypesError__storage_;
 
 // This method is threadsafe because it is initially called
 // in +initialize for each subclass.
@@ -393,29 +385,29 @@ typedef struct TypesError__storage_ {
       {
         .name = "code",
         .dataTypeSpecific.clazz = Nil,
-        .number = TypesError_FieldNumber_Code,
+        .number = WATypesError_FieldNumber_Code,
         .hasIndex = 0,
-        .offset = (uint32_t)offsetof(TypesError__storage_, code),
+        .offset = (uint32_t)offsetof(WATypesError__storage_, code),
         .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldClearHasIvarOnZero),
         .dataType = GPBDataTypeInt32,
       },
       {
         .name = "reason",
         .dataTypeSpecific.clazz = Nil,
-        .number = TypesError_FieldNumber_Reason,
+        .number = WATypesError_FieldNumber_Reason,
         .hasIndex = 1,
-        .offset = (uint32_t)offsetof(TypesError__storage_, reason),
+        .offset = (uint32_t)offsetof(WATypesError__storage_, reason),
         .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldClearHasIvarOnZero),
         .dataType = GPBDataTypeString,
       },
     };
     GPBDescriptor *localDescriptor =
-        [GPBDescriptor allocDescriptorForClass:GPBObjCClass(TypesError)
+        [GPBDescriptor allocDescriptorForClass:GPBObjCClass(WATypesError)
                                    messageName:@"Error"
-                               fileDescription:&TypesRoot_FileDescription
+                               fileDescription:&WATypesTypesRoot_FileDescription
                                         fields:fields
                                     fieldCount:(uint32_t)(sizeof(fields) / sizeof(GPBMessageFieldDescription))
-                                   storageSize:sizeof(TypesError__storage_)
+                                   storageSize:sizeof(WATypesError__storage_)
                                          flags:(GPBDescriptorInitializationFlags)(GPBDescriptorInitializationFlag_UsesClassRefs | GPBDescriptorInitializationFlag_Proto3OptionalKnown | GPBDescriptorInitializationFlag_ClosedEnumSupportKnown)];
     #if defined(DEBUG) && DEBUG
       NSAssert(descriptor == nil, @"Startup recursed!");
@@ -427,9 +419,9 @@ typedef struct TypesError__storage_ {
 
 @end
 
-#pragma mark - TypesWAFuture
+#pragma mark - WATypesWAFuture
 
-@implementation TypesWAFuture
+@implementation WATypesWAFuture
 
 @dynamic data_p;
 @dynamic len;
@@ -438,7 +430,7 @@ typedef struct TypesError__storage_ {
 @dynamic contextLen;
 @dynamic index;
 
-typedef struct TypesWAFuture__storage_ {
+typedef struct WATypesWAFuture__storage_ {
   uint32_t _has_storage_[1];
   uint32_t data_p;
   uint32_t len;
@@ -446,7 +438,7 @@ typedef struct TypesWAFuture__storage_ {
   uint32_t context;
   uint32_t contextLen;
   uint32_t index;
-} TypesWAFuture__storage_;
+} WATypesWAFuture__storage_;
 
 // This method is threadsafe because it is initially called
 // in +initialize for each subclass.
@@ -458,65 +450,65 @@ typedef struct TypesWAFuture__storage_ {
       {
         .name = "data_p",
         .dataTypeSpecific.clazz = Nil,
-        .number = TypesWAFuture_FieldNumber_Data_p,
+        .number = WATypesWAFuture_FieldNumber_Data_p,
         .hasIndex = 0,
-        .offset = (uint32_t)offsetof(TypesWAFuture__storage_, data_p),
+        .offset = (uint32_t)offsetof(WATypesWAFuture__storage_, data_p),
         .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldClearHasIvarOnZero),
         .dataType = GPBDataTypeUInt32,
       },
       {
         .name = "len",
         .dataTypeSpecific.clazz = Nil,
-        .number = TypesWAFuture_FieldNumber_Len,
+        .number = WATypesWAFuture_FieldNumber_Len,
         .hasIndex = 1,
-        .offset = (uint32_t)offsetof(TypesWAFuture__storage_, len),
+        .offset = (uint32_t)offsetof(WATypesWAFuture__storage_, len),
         .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldClearHasIvarOnZero),
         .dataType = GPBDataTypeUInt32,
       },
       {
         .name = "callback",
         .dataTypeSpecific.clazz = Nil,
-        .number = TypesWAFuture_FieldNumber_Callback,
+        .number = WATypesWAFuture_FieldNumber_Callback,
         .hasIndex = 2,
-        .offset = (uint32_t)offsetof(TypesWAFuture__storage_, callback),
+        .offset = (uint32_t)offsetof(WATypesWAFuture__storage_, callback),
         .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldClearHasIvarOnZero),
         .dataType = GPBDataTypeUInt32,
       },
       {
         .name = "context",
         .dataTypeSpecific.clazz = Nil,
-        .number = TypesWAFuture_FieldNumber_Context,
+        .number = WATypesWAFuture_FieldNumber_Context,
         .hasIndex = 3,
-        .offset = (uint32_t)offsetof(TypesWAFuture__storage_, context),
+        .offset = (uint32_t)offsetof(WATypesWAFuture__storage_, context),
         .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldClearHasIvarOnZero),
         .dataType = GPBDataTypeUInt32,
       },
       {
         .name = "contextLen",
         .dataTypeSpecific.clazz = Nil,
-        .number = TypesWAFuture_FieldNumber_ContextLen,
+        .number = WATypesWAFuture_FieldNumber_ContextLen,
         .hasIndex = 4,
-        .offset = (uint32_t)offsetof(TypesWAFuture__storage_, contextLen),
+        .offset = (uint32_t)offsetof(WATypesWAFuture__storage_, contextLen),
         .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldClearHasIvarOnZero),
         .dataType = GPBDataTypeUInt32,
       },
       {
         .name = "index",
         .dataTypeSpecific.clazz = Nil,
-        .number = TypesWAFuture_FieldNumber_Index,
+        .number = WATypesWAFuture_FieldNumber_Index,
         .hasIndex = 5,
-        .offset = (uint32_t)offsetof(TypesWAFuture__storage_, index),
+        .offset = (uint32_t)offsetof(WATypesWAFuture__storage_, index),
         .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldClearHasIvarOnZero),
         .dataType = GPBDataTypeUInt32,
       },
     };
     GPBDescriptor *localDescriptor =
-        [GPBDescriptor allocDescriptorForClass:GPBObjCClass(TypesWAFuture)
+        [GPBDescriptor allocDescriptorForClass:GPBObjCClass(WATypesWAFuture)
                                    messageName:@"WAFuture"
-                               fileDescription:&TypesRoot_FileDescription
+                               fileDescription:&WATypesTypesRoot_FileDescription
                                         fields:fields
                                     fieldCount:(uint32_t)(sizeof(fields) / sizeof(GPBMessageFieldDescription))
-                                   storageSize:sizeof(TypesWAFuture__storage_)
+                                   storageSize:sizeof(WATypesWAFuture__storage_)
                                          flags:(GPBDescriptorInitializationFlags)(GPBDescriptorInitializationFlag_UsesClassRefs | GPBDescriptorInitializationFlag_Proto3OptionalKnown | GPBDescriptorInitializationFlag_ClosedEnumSupportKnown)];
     #if defined(DEBUG) && DEBUG
       NSAssert(descriptor == nil, @"Startup recursed!");
@@ -528,18 +520,18 @@ typedef struct TypesWAFuture__storage_ {
 
 @end
 
-#pragma mark - TypesWAString
+#pragma mark - WATypesWAString
 
-@implementation TypesWAString
+@implementation WATypesWAString
 
 @dynamic ptr;
 @dynamic len;
 
-typedef struct TypesWAString__storage_ {
+typedef struct WATypesWAString__storage_ {
   uint32_t _has_storage_[1];
   uint32_t ptr;
   uint32_t len;
-} TypesWAString__storage_;
+} WATypesWAString__storage_;
 
 // This method is threadsafe because it is initially called
 // in +initialize for each subclass.
@@ -551,29 +543,176 @@ typedef struct TypesWAString__storage_ {
       {
         .name = "ptr",
         .dataTypeSpecific.clazz = Nil,
-        .number = TypesWAString_FieldNumber_Ptr,
+        .number = WATypesWAString_FieldNumber_Ptr,
         .hasIndex = 0,
-        .offset = (uint32_t)offsetof(TypesWAString__storage_, ptr),
+        .offset = (uint32_t)offsetof(WATypesWAString__storage_, ptr),
         .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldClearHasIvarOnZero),
         .dataType = GPBDataTypeUInt32,
       },
       {
         .name = "len",
         .dataTypeSpecific.clazz = Nil,
-        .number = TypesWAString_FieldNumber_Len,
+        .number = WATypesWAString_FieldNumber_Len,
         .hasIndex = 1,
-        .offset = (uint32_t)offsetof(TypesWAString__storage_, len),
+        .offset = (uint32_t)offsetof(WATypesWAString__storage_, len),
         .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldClearHasIvarOnZero),
         .dataType = GPBDataTypeUInt32,
       },
     };
     GPBDescriptor *localDescriptor =
-        [GPBDescriptor allocDescriptorForClass:GPBObjCClass(TypesWAString)
+        [GPBDescriptor allocDescriptorForClass:GPBObjCClass(WATypesWAString)
                                    messageName:@"WAString"
-                               fileDescription:&TypesRoot_FileDescription
+                               fileDescription:&WATypesTypesRoot_FileDescription
                                         fields:fields
                                     fieldCount:(uint32_t)(sizeof(fields) / sizeof(GPBMessageFieldDescription))
-                                   storageSize:sizeof(TypesWAString__storage_)
+                                   storageSize:sizeof(WATypesWAString__storage_)
+                                         flags:(GPBDescriptorInitializationFlags)(GPBDescriptorInitializationFlag_UsesClassRefs | GPBDescriptorInitializationFlag_Proto3OptionalKnown | GPBDescriptorInitializationFlag_ClosedEnumSupportKnown)];
+    #if defined(DEBUG) && DEBUG
+      NSAssert(descriptor == nil, @"Startup recursed!");
+    #endif  // DEBUG
+    descriptor = localDescriptor;
+  }
+  return descriptor;
+}
+
+@end
+
+#pragma mark - WATypesField
+
+@implementation WATypesField
+
+@dynamic type;
+@dynamic value;
+
+typedef struct WATypesField__storage_ {
+  uint32_t _has_storage_[1];
+  NSString *type;
+  NSString *value;
+} WATypesField__storage_;
+
+// This method is threadsafe because it is initially called
+// in +initialize for each subclass.
++ (GPBDescriptor *)descriptor {
+  static GPBDescriptor *descriptor = nil;
+  if (!descriptor) {
+    GPB_DEBUG_CHECK_RUNTIME_VERSIONS();
+    static GPBMessageFieldDescription fields[] = {
+      {
+        .name = "type",
+        .dataTypeSpecific.clazz = Nil,
+        .number = WATypesField_FieldNumber_Type,
+        .hasIndex = 0,
+        .offset = (uint32_t)offsetof(WATypesField__storage_, type),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeString,
+      },
+      {
+        .name = "value",
+        .dataTypeSpecific.clazz = Nil,
+        .number = WATypesField_FieldNumber_Value,
+        .hasIndex = 1,
+        .offset = (uint32_t)offsetof(WATypesField__storage_, value),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeString,
+      },
+    };
+    GPBDescriptor *localDescriptor =
+        [GPBDescriptor allocDescriptorForClass:GPBObjCClass(WATypesField)
+                                   messageName:@"Field"
+                               fileDescription:&WATypesTypesRoot_FileDescription
+                                        fields:fields
+                                    fieldCount:(uint32_t)(sizeof(fields) / sizeof(GPBMessageFieldDescription))
+                                   storageSize:sizeof(WATypesField__storage_)
+                                         flags:(GPBDescriptorInitializationFlags)(GPBDescriptorInitializationFlag_UsesClassRefs | GPBDescriptorInitializationFlag_Proto3OptionalKnown | GPBDescriptorInitializationFlag_ClosedEnumSupportKnown)];
+    #if defined(DEBUG) && DEBUG
+      NSAssert(descriptor == nil, @"Startup recursed!");
+    #endif  // DEBUG
+    descriptor = localDescriptor;
+  }
+  return descriptor;
+}
+
+@end
+
+#pragma mark - WATypesEntry
+
+@implementation WATypesEntry
+
+@dynamic id_p;
+@dynamic name;
+@dynamic desc;
+@dynamic hasField, field;
+@dynamic hasValidator, validator;
+
+typedef struct WATypesEntry__storage_ {
+  uint32_t _has_storage_[1];
+  NSString *id_p;
+  NSString *name;
+  NSString *desc;
+  WATypesField *field;
+  NSString *validator;
+} WATypesEntry__storage_;
+
+// This method is threadsafe because it is initially called
+// in +initialize for each subclass.
++ (GPBDescriptor *)descriptor {
+  static GPBDescriptor *descriptor = nil;
+  if (!descriptor) {
+    GPB_DEBUG_CHECK_RUNTIME_VERSIONS();
+    static GPBMessageFieldDescription fields[] = {
+      {
+        .name = "id_p",
+        .dataTypeSpecific.clazz = Nil,
+        .number = WATypesEntry_FieldNumber_Id_p,
+        .hasIndex = 0,
+        .offset = (uint32_t)offsetof(WATypesEntry__storage_, id_p),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeString,
+      },
+      {
+        .name = "name",
+        .dataTypeSpecific.clazz = Nil,
+        .number = WATypesEntry_FieldNumber_Name,
+        .hasIndex = 1,
+        .offset = (uint32_t)offsetof(WATypesEntry__storage_, name),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeString,
+      },
+      {
+        .name = "desc",
+        .dataTypeSpecific.clazz = Nil,
+        .number = WATypesEntry_FieldNumber_Desc,
+        .hasIndex = 2,
+        .offset = (uint32_t)offsetof(WATypesEntry__storage_, desc),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeString,
+      },
+      {
+        .name = "field",
+        .dataTypeSpecific.clazz = GPBObjCClass(WATypesField),
+        .number = WATypesEntry_FieldNumber_Field,
+        .hasIndex = 3,
+        .offset = (uint32_t)offsetof(WATypesEntry__storage_, field),
+        .flags = GPBFieldOptional,
+        .dataType = GPBDataTypeMessage,
+      },
+      {
+        .name = "validator",
+        .dataTypeSpecific.clazz = Nil,
+        .number = WATypesEntry_FieldNumber_Validator,
+        .hasIndex = 4,
+        .offset = (uint32_t)offsetof(WATypesEntry__storage_, validator),
+        .flags = GPBFieldOptional,
+        .dataType = GPBDataTypeString,
+      },
+    };
+    GPBDescriptor *localDescriptor =
+        [GPBDescriptor allocDescriptorForClass:GPBObjCClass(WATypesEntry)
+                                   messageName:@"Entry"
+                               fileDescription:&WATypesTypesRoot_FileDescription
+                                        fields:fields
+                                    fieldCount:(uint32_t)(sizeof(fields) / sizeof(GPBMessageFieldDescription))
+                                   storageSize:sizeof(WATypesEntry__storage_)
                                          flags:(GPBDescriptorInitializationFlags)(GPBDescriptorInitializationFlag_UsesClassRefs | GPBDescriptorInitializationFlag_Proto3OptionalKnown | GPBDescriptorInitializationFlag_ClosedEnumSupportKnown)];
     #if defined(DEBUG) && DEBUG
       NSAssert(descriptor == nil, @"Startup recursed!");

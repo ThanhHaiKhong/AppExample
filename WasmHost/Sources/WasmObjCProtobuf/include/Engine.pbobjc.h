@@ -29,33 +29,33 @@
 
 CF_EXTERN_C_BEGIN
 
-@class EngineVersion;
+@class WAEngineVersion;
 
 NS_ASSUME_NONNULL_BEGIN
 
-#pragma mark - Enum EngineCallID
+#pragma mark - Enum WAEngineCallID
 
-typedef GPB_ENUM(EngineCallID) {
+typedef GPB_ENUM(WAEngineCallID) {
   /**
    * Value used if any message's field encounters a value that is not defined
    * by this enum. The message will also have C functions to get/set the rawValue
    * of the field.
    **/
-  EngineCallID_GPBUnrecognizedEnumeratorValue = kGPBUnrecognizedEnumeratorValue,
-  EngineCallID_CallIdUnspecified = 0,
-  EngineCallID_CallIdGetVersion = 1,
-  EngineCallID_CallIdInitialize = 2,
+  WAEngineCallID_GPBUnrecognizedEnumeratorValue = kGPBUnrecognizedEnumeratorValue,
+  WAEngineCallID_CallIdUnspecified = 0,
+  WAEngineCallID_CallIdGetVersion = 1,
+  WAEngineCallID_CallIdInitialize = 2,
 };
 
-GPBEnumDescriptor *EngineCallID_EnumDescriptor(void);
+GPBEnumDescriptor *WAEngineCallID_EnumDescriptor(void);
 
 /**
  * Checks to see if the given value is defined by the enum or was not known at
  * the time this source was generated.
  **/
-BOOL EngineCallID_IsValidValue(int32_t value);
+BOOL WAEngineCallID_IsValidValue(int32_t value);
 
-#pragma mark - EngineRoot
+#pragma mark - WAEngineEngineRoot
 
 /**
  * Exposes the extension registry for this file.
@@ -67,22 +67,22 @@ BOOL EngineCallID_IsValidValue(int32_t value);
  * which is a @c GPBExtensionRegistry that includes all the extensions defined by
  * this file and all files that it depends on.
  **/
-GPB_FINAL @interface EngineRoot : GPBRootObject
+GPB_FINAL @interface WAEngineEngineRoot : GPBRootObject
 @end
 
-#pragma mark - EngineVersion
+#pragma mark - WAEngineVersion
 
-typedef GPB_ENUM(EngineVersion_FieldNumber) {
-  EngineVersion_FieldNumber_Id_p = 1,
-  EngineVersion_FieldNumber_Name = 2,
-  EngineVersion_FieldNumber_Etag = 3,
-  EngineVersion_FieldNumber_Sha = 4,
-  EngineVersion_FieldNumber_URL = 5,
-  EngineVersion_FieldNumber_Next = 6,
-  EngineVersion_FieldNumber_ReleaseDate = 7,
+typedef GPB_ENUM(WAEngineVersion_FieldNumber) {
+  WAEngineVersion_FieldNumber_Id_p = 1,
+  WAEngineVersion_FieldNumber_Name = 2,
+  WAEngineVersion_FieldNumber_Etag = 3,
+  WAEngineVersion_FieldNumber_Sha = 4,
+  WAEngineVersion_FieldNumber_URL = 5,
+  WAEngineVersion_FieldNumber_Next = 6,
+  WAEngineVersion_FieldNumber_ReleaseDate = 7,
 };
 
-GPB_FINAL @interface EngineVersion : GPBMessage
+GPB_FINAL @interface WAEngineVersion : GPBMessage
 
 @property(nonatomic, readwrite, copy, null_resettable) NSString *id_p;
 
@@ -100,7 +100,7 @@ GPB_FINAL @interface EngineVersion : GPBMessage
 /** Test to see if @c URL has been set. */
 @property(nonatomic, readwrite) BOOL hasURL;
 
-@property(nonatomic, readwrite, strong, null_resettable) EngineVersion *next;
+@property(nonatomic, readwrite, strong, null_resettable) WAEngineVersion *next;
 /** Test to see if @c next has been set. */
 @property(nonatomic, readwrite) BOOL hasNext;
 

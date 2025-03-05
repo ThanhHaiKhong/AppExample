@@ -29,12 +29,13 @@
 
 CF_EXTERN_C_BEGIN
 
-@class TypesBytes;
-@class TypesPointer;
+@class WATypesBytes;
+@class WATypesField;
+@class WATypesPointer;
 
 NS_ASSUME_NONNULL_BEGIN
 
-#pragma mark - TypesRoot
+#pragma mark - WATypesTypesRoot
 
 /**
  * Exposes the extension registry for this file.
@@ -46,73 +47,71 @@ NS_ASSUME_NONNULL_BEGIN
  * which is a @c GPBExtensionRegistry that includes all the extensions defined by
  * this file and all files that it depends on.
  **/
-GPB_FINAL @interface TypesRoot : GPBRootObject
+GPB_FINAL @interface WATypesTypesRoot : GPBRootObject
 @end
 
-#pragma mark - TypesImage
+#pragma mark - WATypesImage
 
-typedef GPB_ENUM(TypesImage_FieldNumber) {
-  TypesImage_FieldNumber_URL = 1,
-  TypesImage_FieldNumber_Data_p = 2,
-  TypesImage_FieldNumber_Width = 3,
-  TypesImage_FieldNumber_Height = 4,
+typedef GPB_ENUM(WATypesImage_FieldNumber) {
+  WATypesImage_FieldNumber_URL = 1,
+  WATypesImage_FieldNumber_Data_p = 2,
+  WATypesImage_FieldNumber_Metadata = 3,
 };
 
-GPB_FINAL @interface TypesImage : GPBMessage
+GPB_FINAL @interface WATypesImage : GPBMessage
 
 @property(nonatomic, readwrite, copy, null_resettable) NSString *URL;
 /** Test to see if @c URL has been set. */
 @property(nonatomic, readwrite) BOOL hasURL;
 
 /** base64 data */
-@property(nonatomic, readwrite, strong, null_resettable) TypesBytes *data_p;
+@property(nonatomic, readwrite, strong, null_resettable) WATypesBytes *data_p;
 /** Test to see if @c data_p has been set. */
 @property(nonatomic, readwrite) BOOL hasData_p;
 
-@property(nonatomic, readwrite) double width;
-@property(nonatomic, readwrite) BOOL hasWidth;
-
-@property(nonatomic, readwrite) double height;
-@property(nonatomic, readwrite) BOOL hasHeight;
+/** blur, mime */
+@property(nonatomic, readwrite, strong, null_resettable) GPBStruct *metadata;
+/** Test to see if @c metadata has been set. */
+@property(nonatomic, readwrite) BOOL hasMetadata;
 
 @end
 
-#pragma mark - TypesBytes
+#pragma mark - WATypesBytes
 
-typedef GPB_ENUM(TypesBytes_FieldNumber) {
-  TypesBytes_FieldNumber_Raw = 1,
-  TypesBytes_FieldNumber_Ptr = 2,
+typedef GPB_ENUM(WATypesBytes_FieldNumber) {
+  WATypesBytes_FieldNumber_Raw = 1,
+  WATypesBytes_FieldNumber_Ptr = 2,
 };
 
-typedef GPB_ENUM(TypesBytes_Data_OneOfCase) {
-  TypesBytes_Data_OneOfCase_GPBUnsetOneOfCase = 0,
-  TypesBytes_Data_OneOfCase_Raw = 1,
-  TypesBytes_Data_OneOfCase_Ptr = 2,
+typedef GPB_ENUM(WATypesBytes_Data_OneOfCase) {
+  WATypesBytes_Data_OneOfCase_GPBUnsetOneOfCase = 0,
+  WATypesBytes_Data_OneOfCase_Raw = 1,
+  WATypesBytes_Data_OneOfCase_Ptr = 2,
 };
 
-GPB_FINAL @interface TypesBytes : GPBMessage
+GPB_FINAL @interface WATypesBytes : GPBMessage
 
-@property(nonatomic, readonly) TypesBytes_Data_OneOfCase dataOneOfCase;
+@property(nonatomic, readonly) WATypesBytes_Data_OneOfCase dataOneOfCase;
 
 @property(nonatomic, readwrite, copy, null_resettable) NSData *raw;
 
-@property(nonatomic, readwrite, strong, null_resettable) TypesPointer *ptr;
+@property(nonatomic, readwrite, strong, null_resettable) WATypesPointer *ptr;
 
 @end
 
 /**
  * Clears whatever value was set for the oneof 'data'.
  **/
-void TypesBytes_ClearDataOneOfCase(TypesBytes *message);
+void WATypesBytes_ClearDataOneOfCase(WATypesBytes *message);
 
-#pragma mark - TypesPointer
+#pragma mark - WATypesPointer
 
-typedef GPB_ENUM(TypesPointer_FieldNumber) {
-  TypesPointer_FieldNumber_Ptr = 1,
-  TypesPointer_FieldNumber_Len = 2,
+typedef GPB_ENUM(WATypesPointer_FieldNumber) {
+  WATypesPointer_FieldNumber_Ptr = 1,
+  WATypesPointer_FieldNumber_Len = 2,
 };
 
-GPB_FINAL @interface TypesPointer : GPBMessage
+GPB_FINAL @interface WATypesPointer : GPBMessage
 
 @property(nonatomic, readwrite) uint32_t ptr;
 
@@ -120,48 +119,48 @@ GPB_FINAL @interface TypesPointer : GPBMessage
 
 @end
 
-#pragma mark - TypesString
+#pragma mark - WATypesString
 
-typedef GPB_ENUM(TypesString_FieldNumber) {
-  TypesString_FieldNumber_Raw = 1,
-  TypesString_FieldNumber_Ptr = 2,
+typedef GPB_ENUM(WATypesString_FieldNumber) {
+  WATypesString_FieldNumber_Raw = 1,
+  WATypesString_FieldNumber_Ptr = 2,
 };
 
-typedef GPB_ENUM(TypesString_Data_OneOfCase) {
-  TypesString_Data_OneOfCase_GPBUnsetOneOfCase = 0,
-  TypesString_Data_OneOfCase_Raw = 1,
-  TypesString_Data_OneOfCase_Ptr = 2,
+typedef GPB_ENUM(WATypesString_Data_OneOfCase) {
+  WATypesString_Data_OneOfCase_GPBUnsetOneOfCase = 0,
+  WATypesString_Data_OneOfCase_Raw = 1,
+  WATypesString_Data_OneOfCase_Ptr = 2,
 };
 
-GPB_FINAL @interface TypesString : GPBMessage
+GPB_FINAL @interface WATypesString : GPBMessage
 
-@property(nonatomic, readonly) TypesString_Data_OneOfCase dataOneOfCase;
+@property(nonatomic, readonly) WATypesString_Data_OneOfCase dataOneOfCase;
 
 @property(nonatomic, readwrite, copy, null_resettable) NSString *raw;
 
-@property(nonatomic, readwrite, strong, null_resettable) TypesPointer *ptr;
+@property(nonatomic, readwrite, strong, null_resettable) WATypesPointer *ptr;
 
 @end
 
 /**
  * Clears whatever value was set for the oneof 'data'.
  **/
-void TypesString_ClearDataOneOfCase(TypesString *message);
+void WATypesString_ClearDataOneOfCase(WATypesString *message);
 
-#pragma mark - TypesVoid
+#pragma mark - WATypesVoid
 
-GPB_FINAL @interface TypesVoid : GPBMessage
+GPB_FINAL @interface WATypesVoid : GPBMessage
 
 @end
 
-#pragma mark - TypesError
+#pragma mark - WATypesError
 
-typedef GPB_ENUM(TypesError_FieldNumber) {
-  TypesError_FieldNumber_Code = 1,
-  TypesError_FieldNumber_Reason = 2,
+typedef GPB_ENUM(WATypesError_FieldNumber) {
+  WATypesError_FieldNumber_Code = 1,
+  WATypesError_FieldNumber_Reason = 2,
 };
 
-GPB_FINAL @interface TypesError : GPBMessage
+GPB_FINAL @interface WATypesError : GPBMessage
 
 @property(nonatomic, readwrite) int32_t code;
 
@@ -169,18 +168,18 @@ GPB_FINAL @interface TypesError : GPBMessage
 
 @end
 
-#pragma mark - TypesWAFuture
+#pragma mark - WATypesWAFuture
 
-typedef GPB_ENUM(TypesWAFuture_FieldNumber) {
-  TypesWAFuture_FieldNumber_Data_p = 1,
-  TypesWAFuture_FieldNumber_Len = 2,
-  TypesWAFuture_FieldNumber_Callback = 3,
-  TypesWAFuture_FieldNumber_Context = 4,
-  TypesWAFuture_FieldNumber_ContextLen = 5,
-  TypesWAFuture_FieldNumber_Index = 6,
+typedef GPB_ENUM(WATypesWAFuture_FieldNumber) {
+  WATypesWAFuture_FieldNumber_Data_p = 1,
+  WATypesWAFuture_FieldNumber_Len = 2,
+  WATypesWAFuture_FieldNumber_Callback = 3,
+  WATypesWAFuture_FieldNumber_Context = 4,
+  WATypesWAFuture_FieldNumber_ContextLen = 5,
+  WATypesWAFuture_FieldNumber_Index = 6,
 };
 
-GPB_FINAL @interface TypesWAFuture : GPBMessage
+GPB_FINAL @interface WATypesWAFuture : GPBMessage
 
 @property(nonatomic, readwrite) uint32_t data_p;
 
@@ -196,18 +195,61 @@ GPB_FINAL @interface TypesWAFuture : GPBMessage
 
 @end
 
-#pragma mark - TypesWAString
+#pragma mark - WATypesWAString
 
-typedef GPB_ENUM(TypesWAString_FieldNumber) {
-  TypesWAString_FieldNumber_Ptr = 1,
-  TypesWAString_FieldNumber_Len = 2,
+typedef GPB_ENUM(WATypesWAString_FieldNumber) {
+  WATypesWAString_FieldNumber_Ptr = 1,
+  WATypesWAString_FieldNumber_Len = 2,
 };
 
-GPB_FINAL @interface TypesWAString : GPBMessage
+GPB_FINAL @interface WATypesWAString : GPBMessage
 
 @property(nonatomic, readwrite) uint32_t ptr;
 
 @property(nonatomic, readwrite) uint32_t len;
+
+@end
+
+#pragma mark - WATypesField
+
+typedef GPB_ENUM(WATypesField_FieldNumber) {
+  WATypesField_FieldNumber_Type = 1,
+  WATypesField_FieldNumber_Value = 2,
+};
+
+GPB_FINAL @interface WATypesField : GPBMessage
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *type;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *value;
+
+@end
+
+#pragma mark - WATypesEntry
+
+typedef GPB_ENUM(WATypesEntry_FieldNumber) {
+  WATypesEntry_FieldNumber_Id_p = 1,
+  WATypesEntry_FieldNumber_Name = 2,
+  WATypesEntry_FieldNumber_Desc = 3,
+  WATypesEntry_FieldNumber_Field = 4,
+  WATypesEntry_FieldNumber_Validator = 5,
+};
+
+GPB_FINAL @interface WATypesEntry : GPBMessage
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *id_p;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *name;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *desc;
+
+@property(nonatomic, readwrite, strong, null_resettable) WATypesField *field;
+/** Test to see if @c field has been set. */
+@property(nonatomic, readwrite) BOOL hasField;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *validator;
+/** Test to see if @c validator has been set. */
+@property(nonatomic, readwrite) BOOL hasValidator;
 
 @end
 

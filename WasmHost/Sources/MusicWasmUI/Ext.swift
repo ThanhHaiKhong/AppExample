@@ -32,15 +32,6 @@ extension EngineVersion: RawRepresentable {
     }
 }
 
-@available(iOS 16, macOS 14, tvOS 17, watchOS 10, *)
-extension URL {
-    static let wasmDir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!.appending(component: "wasm")
-    
-    var wasmPath: String {
-        path.replacingOccurrences(of: URL.wasmDir.path, with: "")
-    }
-}
-
 extension EngineVersion {
     static let embedded = {
         let url = Bundle.main.url(forResource: "embedded", withExtension: "wasm")!

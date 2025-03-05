@@ -36,38 +36,38 @@
 // static values in struct initializers.
 // We don't use [Foo class] because it is not a static value.
 GPBObjCClassDeclaration(GPBStruct);
-GPBObjCClassDeclaration(MusicAuthor);
-GPBObjCClassDeclaration(MusicEntry);
-GPBObjCClassDeclaration(MusicListOptions);
-GPBObjCClassDeclaration(MusicListOptions_Discover);
-GPBObjCClassDeclaration(MusicListOptions_Search);
-GPBObjCClassDeclaration(MusicListSuggestions);
-GPBObjCClassDeclaration(MusicListTracks);
-GPBObjCClassDeclaration(MusicOptions);
-GPBObjCClassDeclaration(MusicTrack);
-GPBObjCClassDeclaration(MusicTrackDetails);
-GPBObjCClassDeclaration(MusicTrackDetails_Format);
-GPBObjCClassDeclaration(MusicTranscript);
-GPBObjCClassDeclaration(MusicTranscript_Segment);
+GPBObjCClassDeclaration(WAMusicAuthor);
+GPBObjCClassDeclaration(WAMusicEntry);
+GPBObjCClassDeclaration(WAMusicListOptions);
+GPBObjCClassDeclaration(WAMusicListOptions_Discover);
+GPBObjCClassDeclaration(WAMusicListOptions_Search);
+GPBObjCClassDeclaration(WAMusicListSuggestions);
+GPBObjCClassDeclaration(WAMusicListTracks);
+GPBObjCClassDeclaration(WAMusicOptions);
+GPBObjCClassDeclaration(WAMusicTrack);
+GPBObjCClassDeclaration(WAMusicTrackDetails);
+GPBObjCClassDeclaration(WAMusicTrackDetails_Format);
+GPBObjCClassDeclaration(WAMusicTranscript);
+GPBObjCClassDeclaration(WAMusicTranscript_Segment);
 
-#pragma mark - MusicRoot
+#pragma mark - WAMusicMusicRoot
 
-@implementation MusicRoot
+@implementation WAMusicMusicRoot
 
 // No extensions in the file and no imports or none of the imports (direct or
 // indirect) defined extensions, so no need to generate +extensionRegistry.
 
 @end
 
-static GPBFileDescription MusicRoot_FileDescription = {
+static GPBFileDescription WAMusicMusicRoot_FileDescription = {
   .package = "asyncify.music",
-  .prefix = "Music",
+  .prefix = "WAMusic",
   .syntax = GPBFileSyntaxProto3
 };
 
-#pragma mark - Enum MusicCallID
+#pragma mark - Enum WAMusicCallID
 
-GPBEnumDescriptor *MusicCallID_EnumDescriptor(void) {
+GPBEnumDescriptor *WAMusicCallID_EnumDescriptor(void) {
   static _Atomic(GPBEnumDescriptor*) descriptor = nil;
   if (!descriptor) {
     GPB_DEBUG_CHECK_RUNTIME_VERSIONS();
@@ -77,21 +77,21 @@ GPBEnumDescriptor *MusicCallID_EnumDescriptor(void) {
         "uggestion\000CallIdGetOptions\000CallIdGetDisc"
         "over\000CallIdGetTranscript\000";
     static const int32_t values[] = {
-        MusicCallID_CallIdUnspecified,
-        MusicCallID_CallIdGetDetails,
-        MusicCallID_CallIdGetPlaylistDetails,
-        MusicCallID_CallIdSearch,
-        MusicCallID_CallIdSuggestion,
-        MusicCallID_CallIdGetOptions,
-        MusicCallID_CallIdGetDiscover,
-        MusicCallID_CallIdGetTranscript,
+        WAMusicCallID_CallIdUnspecified,
+        WAMusicCallID_CallIdGetDetails,
+        WAMusicCallID_CallIdGetPlaylistDetails,
+        WAMusicCallID_CallIdSearch,
+        WAMusicCallID_CallIdSuggestion,
+        WAMusicCallID_CallIdGetOptions,
+        WAMusicCallID_CallIdGetDiscover,
+        WAMusicCallID_CallIdGetTranscript,
     };
     GPBEnumDescriptor *worker =
-        [GPBEnumDescriptor allocDescriptorForName:GPBNSStringifySymbol(MusicCallID)
+        [GPBEnumDescriptor allocDescriptorForName:GPBNSStringifySymbol(WAMusicCallID)
                                        valueNames:valueNames
                                            values:values
                                             count:(uint32_t)(sizeof(values) / sizeof(int32_t))
-                                     enumVerifier:MusicCallID_IsValidValue
+                                     enumVerifier:WAMusicCallID_IsValidValue
                                             flags:GPBEnumDescriptorInitializationFlag_None];
     GPBEnumDescriptor *expected = nil;
     if (!atomic_compare_exchange_strong(&descriptor, &expected, worker)) {
@@ -101,32 +101,32 @@ GPBEnumDescriptor *MusicCallID_EnumDescriptor(void) {
   return descriptor;
 }
 
-BOOL MusicCallID_IsValidValue(int32_t value__) {
+BOOL WAMusicCallID_IsValidValue(int32_t value__) {
   switch (value__) {
-    case MusicCallID_CallIdUnspecified:
-    case MusicCallID_CallIdGetDetails:
-    case MusicCallID_CallIdGetPlaylistDetails:
-    case MusicCallID_CallIdSearch:
-    case MusicCallID_CallIdSuggestion:
-    case MusicCallID_CallIdGetOptions:
-    case MusicCallID_CallIdGetDiscover:
-    case MusicCallID_CallIdGetTranscript:
+    case WAMusicCallID_CallIdUnspecified:
+    case WAMusicCallID_CallIdGetDetails:
+    case WAMusicCallID_CallIdGetPlaylistDetails:
+    case WAMusicCallID_CallIdSearch:
+    case WAMusicCallID_CallIdSuggestion:
+    case WAMusicCallID_CallIdGetOptions:
+    case WAMusicCallID_CallIdGetDiscover:
+    case WAMusicCallID_CallIdGetTranscript:
       return YES;
     default:
       return NO;
   }
 }
 
-#pragma mark - MusicOptions
+#pragma mark - WAMusicOptions
 
-@implementation MusicOptions
+@implementation WAMusicOptions
 
 @dynamic provider;
 
-typedef struct MusicOptions__storage_ {
+typedef struct WAMusicOptions__storage_ {
   uint32_t _has_storage_[1];
   NSString *provider;
-} MusicOptions__storage_;
+} WAMusicOptions__storage_;
 
 // This method is threadsafe because it is initially called
 // in +initialize for each subclass.
@@ -138,20 +138,20 @@ typedef struct MusicOptions__storage_ {
       {
         .name = "provider",
         .dataTypeSpecific.clazz = Nil,
-        .number = MusicOptions_FieldNumber_Provider,
+        .number = WAMusicOptions_FieldNumber_Provider,
         .hasIndex = 0,
-        .offset = (uint32_t)offsetof(MusicOptions__storage_, provider),
+        .offset = (uint32_t)offsetof(WAMusicOptions__storage_, provider),
         .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldClearHasIvarOnZero),
         .dataType = GPBDataTypeString,
       },
     };
     GPBDescriptor *localDescriptor =
-        [GPBDescriptor allocDescriptorForClass:GPBObjCClass(MusicOptions)
+        [GPBDescriptor allocDescriptorForClass:GPBObjCClass(WAMusicOptions)
                                    messageName:@"Options"
-                               fileDescription:&MusicRoot_FileDescription
+                               fileDescription:&WAMusicMusicRoot_FileDescription
                                         fields:fields
                                     fieldCount:(uint32_t)(sizeof(fields) / sizeof(GPBMessageFieldDescription))
-                                   storageSize:sizeof(MusicOptions__storage_)
+                                   storageSize:sizeof(WAMusicOptions__storage_)
                                          flags:(GPBDescriptorInitializationFlags)(GPBDescriptorInitializationFlag_UsesClassRefs | GPBDescriptorInitializationFlag_Proto3OptionalKnown | GPBDescriptorInitializationFlag_ClosedEnumSupportKnown)];
     #if defined(DEBUG) && DEBUG
       NSAssert(descriptor == nil, @"Startup recursed!");
@@ -163,20 +163,20 @@ typedef struct MusicOptions__storage_ {
 
 @end
 
-#pragma mark - MusicListOptions
+#pragma mark - WAMusicListOptions
 
-@implementation MusicListOptions
+@implementation WAMusicListOptions
 
 @dynamic providersArray, providersArray_Count;
 @dynamic hasDiscover, discover;
 @dynamic hasSearch, search;
 
-typedef struct MusicListOptions__storage_ {
+typedef struct WAMusicListOptions__storage_ {
   uint32_t _has_storage_[1];
   NSMutableArray *providersArray;
-  MusicListOptions_Discover *discover;
-  MusicListOptions_Search *search;
-} MusicListOptions__storage_;
+  WAMusicListOptions_Discover *discover;
+  WAMusicListOptions_Search *search;
+} WAMusicListOptions__storage_;
 
 // This method is threadsafe because it is initially called
 // in +initialize for each subclass.
@@ -187,39 +187,39 @@ typedef struct MusicListOptions__storage_ {
     static GPBMessageFieldDescription fields[] = {
       {
         .name = "providersArray",
-        .dataTypeSpecific.clazz = GPBObjCClass(MusicEntry),
-        .number = MusicListOptions_FieldNumber_ProvidersArray,
+        .dataTypeSpecific.clazz = GPBObjCClass(WAMusicEntry),
+        .number = WAMusicListOptions_FieldNumber_ProvidersArray,
         .hasIndex = GPBNoHasBit,
-        .offset = (uint32_t)offsetof(MusicListOptions__storage_, providersArray),
+        .offset = (uint32_t)offsetof(WAMusicListOptions__storage_, providersArray),
         .flags = GPBFieldRepeated,
         .dataType = GPBDataTypeMessage,
       },
       {
         .name = "discover",
-        .dataTypeSpecific.clazz = GPBObjCClass(MusicListOptions_Discover),
-        .number = MusicListOptions_FieldNumber_Discover,
+        .dataTypeSpecific.clazz = GPBObjCClass(WAMusicListOptions_Discover),
+        .number = WAMusicListOptions_FieldNumber_Discover,
         .hasIndex = 0,
-        .offset = (uint32_t)offsetof(MusicListOptions__storage_, discover),
+        .offset = (uint32_t)offsetof(WAMusicListOptions__storage_, discover),
         .flags = GPBFieldOptional,
         .dataType = GPBDataTypeMessage,
       },
       {
         .name = "search",
-        .dataTypeSpecific.clazz = GPBObjCClass(MusicListOptions_Search),
-        .number = MusicListOptions_FieldNumber_Search,
+        .dataTypeSpecific.clazz = GPBObjCClass(WAMusicListOptions_Search),
+        .number = WAMusicListOptions_FieldNumber_Search,
         .hasIndex = 1,
-        .offset = (uint32_t)offsetof(MusicListOptions__storage_, search),
+        .offset = (uint32_t)offsetof(WAMusicListOptions__storage_, search),
         .flags = GPBFieldOptional,
         .dataType = GPBDataTypeMessage,
       },
     };
     GPBDescriptor *localDescriptor =
-        [GPBDescriptor allocDescriptorForClass:GPBObjCClass(MusicListOptions)
+        [GPBDescriptor allocDescriptorForClass:GPBObjCClass(WAMusicListOptions)
                                    messageName:@"ListOptions"
-                               fileDescription:&MusicRoot_FileDescription
+                               fileDescription:&WAMusicMusicRoot_FileDescription
                                         fields:fields
                                     fieldCount:(uint32_t)(sizeof(fields) / sizeof(GPBMessageFieldDescription))
-                                   storageSize:sizeof(MusicListOptions__storage_)
+                                   storageSize:sizeof(WAMusicListOptions__storage_)
                                          flags:(GPBDescriptorInitializationFlags)(GPBDescriptorInitializationFlag_UsesClassRefs | GPBDescriptorInitializationFlag_Proto3OptionalKnown | GPBDescriptorInitializationFlag_ClosedEnumSupportKnown)];
     #if defined(DEBUG) && DEBUG
       NSAssert(descriptor == nil, @"Startup recursed!");
@@ -231,16 +231,16 @@ typedef struct MusicListOptions__storage_ {
 
 @end
 
-#pragma mark - MusicListOptions_Discover
+#pragma mark - WAMusicListOptions_Discover
 
-@implementation MusicListOptions_Discover
+@implementation WAMusicListOptions_Discover
 
 @dynamic categoriesArray, categoriesArray_Count;
 
-typedef struct MusicListOptions_Discover__storage_ {
+typedef struct WAMusicListOptions_Discover__storage_ {
   uint32_t _has_storage_[1];
   NSMutableArray *categoriesArray;
-} MusicListOptions_Discover__storage_;
+} WAMusicListOptions_Discover__storage_;
 
 // This method is threadsafe because it is initially called
 // in +initialize for each subclass.
@@ -251,23 +251,23 @@ typedef struct MusicListOptions_Discover__storage_ {
     static GPBMessageFieldDescription fields[] = {
       {
         .name = "categoriesArray",
-        .dataTypeSpecific.clazz = GPBObjCClass(MusicEntry),
-        .number = MusicListOptions_Discover_FieldNumber_CategoriesArray,
+        .dataTypeSpecific.clazz = GPBObjCClass(WAMusicEntry),
+        .number = WAMusicListOptions_Discover_FieldNumber_CategoriesArray,
         .hasIndex = GPBNoHasBit,
-        .offset = (uint32_t)offsetof(MusicListOptions_Discover__storage_, categoriesArray),
+        .offset = (uint32_t)offsetof(WAMusicListOptions_Discover__storage_, categoriesArray),
         .flags = GPBFieldRepeated,
         .dataType = GPBDataTypeMessage,
       },
     };
     GPBDescriptor *localDescriptor =
-        [GPBDescriptor allocDescriptorForClass:GPBObjCClass(MusicListOptions_Discover)
+        [GPBDescriptor allocDescriptorForClass:GPBObjCClass(WAMusicListOptions_Discover)
                                    messageName:@"Discover"
-                               fileDescription:&MusicRoot_FileDescription
+                               fileDescription:&WAMusicMusicRoot_FileDescription
                                         fields:fields
                                     fieldCount:(uint32_t)(sizeof(fields) / sizeof(GPBMessageFieldDescription))
-                                   storageSize:sizeof(MusicListOptions_Discover__storage_)
+                                   storageSize:sizeof(WAMusicListOptions_Discover__storage_)
                                          flags:(GPBDescriptorInitializationFlags)(GPBDescriptorInitializationFlag_UsesClassRefs | GPBDescriptorInitializationFlag_Proto3OptionalKnown | GPBDescriptorInitializationFlag_ClosedEnumSupportKnown)];
-    [localDescriptor setupContainingMessageClass:GPBObjCClass(MusicListOptions)];
+    [localDescriptor setupContainingMessageClass:GPBObjCClass(WAMusicListOptions)];
     #if defined(DEBUG) && DEBUG
       NSAssert(descriptor == nil, @"Startup recursed!");
     #endif  // DEBUG
@@ -278,16 +278,16 @@ typedef struct MusicListOptions_Discover__storage_ {
 
 @end
 
-#pragma mark - MusicListOptions_Search
+#pragma mark - WAMusicListOptions_Search
 
-@implementation MusicListOptions_Search
+@implementation WAMusicListOptions_Search
 
 @dynamic scopesArray, scopesArray_Count;
 
-typedef struct MusicListOptions_Search__storage_ {
+typedef struct WAMusicListOptions_Search__storage_ {
   uint32_t _has_storage_[1];
   NSMutableArray *scopesArray;
-} MusicListOptions_Search__storage_;
+} WAMusicListOptions_Search__storage_;
 
 // This method is threadsafe because it is initially called
 // in +initialize for each subclass.
@@ -299,22 +299,22 @@ typedef struct MusicListOptions_Search__storage_ {
       {
         .name = "scopesArray",
         .dataTypeSpecific.clazz = Nil,
-        .number = MusicListOptions_Search_FieldNumber_ScopesArray,
+        .number = WAMusicListOptions_Search_FieldNumber_ScopesArray,
         .hasIndex = GPBNoHasBit,
-        .offset = (uint32_t)offsetof(MusicListOptions_Search__storage_, scopesArray),
+        .offset = (uint32_t)offsetof(WAMusicListOptions_Search__storage_, scopesArray),
         .flags = GPBFieldRepeated,
         .dataType = GPBDataTypeString,
       },
     };
     GPBDescriptor *localDescriptor =
-        [GPBDescriptor allocDescriptorForClass:GPBObjCClass(MusicListOptions_Search)
+        [GPBDescriptor allocDescriptorForClass:GPBObjCClass(WAMusicListOptions_Search)
                                    messageName:@"Search"
-                               fileDescription:&MusicRoot_FileDescription
+                               fileDescription:&WAMusicMusicRoot_FileDescription
                                         fields:fields
                                     fieldCount:(uint32_t)(sizeof(fields) / sizeof(GPBMessageFieldDescription))
-                                   storageSize:sizeof(MusicListOptions_Search__storage_)
+                                   storageSize:sizeof(WAMusicListOptions_Search__storage_)
                                          flags:(GPBDescriptorInitializationFlags)(GPBDescriptorInitializationFlag_UsesClassRefs | GPBDescriptorInitializationFlag_Proto3OptionalKnown | GPBDescriptorInitializationFlag_ClosedEnumSupportKnown)];
-    [localDescriptor setupContainingMessageClass:GPBObjCClass(MusicListOptions)];
+    [localDescriptor setupContainingMessageClass:GPBObjCClass(WAMusicListOptions)];
     #if defined(DEBUG) && DEBUG
       NSAssert(descriptor == nil, @"Startup recursed!");
     #endif  // DEBUG
@@ -325,18 +325,18 @@ typedef struct MusicListOptions_Search__storage_ {
 
 @end
 
-#pragma mark - MusicEntry
+#pragma mark - WAMusicEntry
 
-@implementation MusicEntry
+@implementation WAMusicEntry
 
 @dynamic id_p;
 @dynamic name;
 
-typedef struct MusicEntry__storage_ {
+typedef struct WAMusicEntry__storage_ {
   uint32_t _has_storage_[1];
   NSString *id_p;
   NSString *name;
-} MusicEntry__storage_;
+} WAMusicEntry__storage_;
 
 // This method is threadsafe because it is initially called
 // in +initialize for each subclass.
@@ -348,29 +348,29 @@ typedef struct MusicEntry__storage_ {
       {
         .name = "id_p",
         .dataTypeSpecific.clazz = Nil,
-        .number = MusicEntry_FieldNumber_Id_p,
+        .number = WAMusicEntry_FieldNumber_Id_p,
         .hasIndex = 0,
-        .offset = (uint32_t)offsetof(MusicEntry__storage_, id_p),
+        .offset = (uint32_t)offsetof(WAMusicEntry__storage_, id_p),
         .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldClearHasIvarOnZero),
         .dataType = GPBDataTypeString,
       },
       {
         .name = "name",
         .dataTypeSpecific.clazz = Nil,
-        .number = MusicEntry_FieldNumber_Name,
+        .number = WAMusicEntry_FieldNumber_Name,
         .hasIndex = 1,
-        .offset = (uint32_t)offsetof(MusicEntry__storage_, name),
+        .offset = (uint32_t)offsetof(WAMusicEntry__storage_, name),
         .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldClearHasIvarOnZero),
         .dataType = GPBDataTypeString,
       },
     };
     GPBDescriptor *localDescriptor =
-        [GPBDescriptor allocDescriptorForClass:GPBObjCClass(MusicEntry)
+        [GPBDescriptor allocDescriptorForClass:GPBObjCClass(WAMusicEntry)
                                    messageName:@"Entry"
-                               fileDescription:&MusicRoot_FileDescription
+                               fileDescription:&WAMusicMusicRoot_FileDescription
                                         fields:fields
                                     fieldCount:(uint32_t)(sizeof(fields) / sizeof(GPBMessageFieldDescription))
-                                   storageSize:sizeof(MusicEntry__storage_)
+                                   storageSize:sizeof(WAMusicEntry__storage_)
                                          flags:(GPBDescriptorInitializationFlags)(GPBDescriptorInitializationFlag_UsesClassRefs | GPBDescriptorInitializationFlag_Proto3OptionalKnown | GPBDescriptorInitializationFlag_ClosedEnumSupportKnown)];
     #if defined(DEBUG) && DEBUG
       NSAssert(descriptor == nil, @"Startup recursed!");
@@ -382,9 +382,9 @@ typedef struct MusicEntry__storage_ {
 
 @end
 
-#pragma mark - MusicTrackDetails
+#pragma mark - WAMusicTrackDetails
 
-@implementation MusicTrackDetails
+@implementation WAMusicTrackDetails
 
 @dynamic id_p;
 @dynamic title;
@@ -398,20 +398,20 @@ typedef struct MusicEntry__storage_ {
 @dynamic hasHlsManifestURL, hlsManifestURL;
 @dynamic relatedTracksArray, relatedTracksArray_Count;
 
-typedef struct MusicTrackDetails__storage_ {
+typedef struct WAMusicTrackDetails__storage_ {
   uint32_t _has_storage_[1];
   int32_t views;
   NSString *id_p;
   NSString *title;
   NSString *description_p;
-  MusicAuthor *author;
+  WAMusicAuthor *author;
   NSMutableArray *formatsArray;
   NSString *thumbnail;
   NSString *dashManifestURL;
   NSString *hlsManifestURL;
   NSMutableArray *relatedTracksArray;
   double duration;
-} MusicTrackDetails__storage_;
+} WAMusicTrackDetails__storage_;
 
 // This method is threadsafe because it is initially called
 // in +initialize for each subclass.
@@ -423,110 +423,110 @@ typedef struct MusicTrackDetails__storage_ {
       {
         .name = "id_p",
         .dataTypeSpecific.clazz = Nil,
-        .number = MusicTrackDetails_FieldNumber_Id_p,
+        .number = WAMusicTrackDetails_FieldNumber_Id_p,
         .hasIndex = 0,
-        .offset = (uint32_t)offsetof(MusicTrackDetails__storage_, id_p),
+        .offset = (uint32_t)offsetof(WAMusicTrackDetails__storage_, id_p),
         .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldClearHasIvarOnZero),
         .dataType = GPBDataTypeString,
       },
       {
         .name = "title",
         .dataTypeSpecific.clazz = Nil,
-        .number = MusicTrackDetails_FieldNumber_Title,
+        .number = WAMusicTrackDetails_FieldNumber_Title,
         .hasIndex = 1,
-        .offset = (uint32_t)offsetof(MusicTrackDetails__storage_, title),
+        .offset = (uint32_t)offsetof(WAMusicTrackDetails__storage_, title),
         .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldClearHasIvarOnZero),
         .dataType = GPBDataTypeString,
       },
       {
         .name = "description_p",
         .dataTypeSpecific.clazz = Nil,
-        .number = MusicTrackDetails_FieldNumber_Description_p,
+        .number = WAMusicTrackDetails_FieldNumber_Description_p,
         .hasIndex = 2,
-        .offset = (uint32_t)offsetof(MusicTrackDetails__storage_, description_p),
+        .offset = (uint32_t)offsetof(WAMusicTrackDetails__storage_, description_p),
         .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldClearHasIvarOnZero),
         .dataType = GPBDataTypeString,
       },
       {
         .name = "author",
-        .dataTypeSpecific.clazz = GPBObjCClass(MusicAuthor),
-        .number = MusicTrackDetails_FieldNumber_Author,
+        .dataTypeSpecific.clazz = GPBObjCClass(WAMusicAuthor),
+        .number = WAMusicTrackDetails_FieldNumber_Author,
         .hasIndex = 3,
-        .offset = (uint32_t)offsetof(MusicTrackDetails__storage_, author),
+        .offset = (uint32_t)offsetof(WAMusicTrackDetails__storage_, author),
         .flags = GPBFieldOptional,
         .dataType = GPBDataTypeMessage,
       },
       {
         .name = "formatsArray",
-        .dataTypeSpecific.clazz = GPBObjCClass(MusicTrackDetails_Format),
-        .number = MusicTrackDetails_FieldNumber_FormatsArray,
+        .dataTypeSpecific.clazz = GPBObjCClass(WAMusicTrackDetails_Format),
+        .number = WAMusicTrackDetails_FieldNumber_FormatsArray,
         .hasIndex = GPBNoHasBit,
-        .offset = (uint32_t)offsetof(MusicTrackDetails__storage_, formatsArray),
+        .offset = (uint32_t)offsetof(WAMusicTrackDetails__storage_, formatsArray),
         .flags = GPBFieldRepeated,
         .dataType = GPBDataTypeMessage,
       },
       {
         .name = "thumbnail",
         .dataTypeSpecific.clazz = Nil,
-        .number = MusicTrackDetails_FieldNumber_Thumbnail,
+        .number = WAMusicTrackDetails_FieldNumber_Thumbnail,
         .hasIndex = 4,
-        .offset = (uint32_t)offsetof(MusicTrackDetails__storage_, thumbnail),
+        .offset = (uint32_t)offsetof(WAMusicTrackDetails__storage_, thumbnail),
         .flags = GPBFieldOptional,
         .dataType = GPBDataTypeString,
       },
       {
         .name = "duration",
         .dataTypeSpecific.clazz = Nil,
-        .number = MusicTrackDetails_FieldNumber_Duration,
+        .number = WAMusicTrackDetails_FieldNumber_Duration,
         .hasIndex = 5,
-        .offset = (uint32_t)offsetof(MusicTrackDetails__storage_, duration),
+        .offset = (uint32_t)offsetof(WAMusicTrackDetails__storage_, duration),
         .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldClearHasIvarOnZero),
         .dataType = GPBDataTypeDouble,
       },
       {
         .name = "views",
         .dataTypeSpecific.clazz = Nil,
-        .number = MusicTrackDetails_FieldNumber_Views,
+        .number = WAMusicTrackDetails_FieldNumber_Views,
         .hasIndex = 6,
-        .offset = (uint32_t)offsetof(MusicTrackDetails__storage_, views),
+        .offset = (uint32_t)offsetof(WAMusicTrackDetails__storage_, views),
         .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldClearHasIvarOnZero),
         .dataType = GPBDataTypeInt32,
       },
       {
         .name = "dashManifestURL",
         .dataTypeSpecific.clazz = Nil,
-        .number = MusicTrackDetails_FieldNumber_DashManifestURL,
+        .number = WAMusicTrackDetails_FieldNumber_DashManifestURL,
         .hasIndex = 7,
-        .offset = (uint32_t)offsetof(MusicTrackDetails__storage_, dashManifestURL),
+        .offset = (uint32_t)offsetof(WAMusicTrackDetails__storage_, dashManifestURL),
         .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom),
         .dataType = GPBDataTypeString,
       },
       {
         .name = "hlsManifestURL",
         .dataTypeSpecific.clazz = Nil,
-        .number = MusicTrackDetails_FieldNumber_HlsManifestURL,
+        .number = WAMusicTrackDetails_FieldNumber_HlsManifestURL,
         .hasIndex = 8,
-        .offset = (uint32_t)offsetof(MusicTrackDetails__storage_, hlsManifestURL),
+        .offset = (uint32_t)offsetof(WAMusicTrackDetails__storage_, hlsManifestURL),
         .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom),
         .dataType = GPBDataTypeString,
       },
       {
         .name = "relatedTracksArray",
-        .dataTypeSpecific.clazz = GPBObjCClass(MusicTrack),
-        .number = MusicTrackDetails_FieldNumber_RelatedTracksArray,
+        .dataTypeSpecific.clazz = GPBObjCClass(WAMusicTrack),
+        .number = WAMusicTrackDetails_FieldNumber_RelatedTracksArray,
         .hasIndex = GPBNoHasBit,
-        .offset = (uint32_t)offsetof(MusicTrackDetails__storage_, relatedTracksArray),
+        .offset = (uint32_t)offsetof(WAMusicTrackDetails__storage_, relatedTracksArray),
         .flags = GPBFieldRepeated,
         .dataType = GPBDataTypeMessage,
       },
     };
     GPBDescriptor *localDescriptor =
-        [GPBDescriptor allocDescriptorForClass:GPBObjCClass(MusicTrackDetails)
+        [GPBDescriptor allocDescriptorForClass:GPBObjCClass(WAMusicTrackDetails)
                                    messageName:@"TrackDetails"
-                               fileDescription:&MusicRoot_FileDescription
+                               fileDescription:&WAMusicMusicRoot_FileDescription
                                         fields:fields
                                     fieldCount:(uint32_t)(sizeof(fields) / sizeof(GPBMessageFieldDescription))
-                                   storageSize:sizeof(MusicTrackDetails__storage_)
+                                   storageSize:sizeof(WAMusicTrackDetails__storage_)
                                          flags:(GPBDescriptorInitializationFlags)(GPBDescriptorInitializationFlag_UsesClassRefs | GPBDescriptorInitializationFlag_Proto3OptionalKnown | GPBDescriptorInitializationFlag_ClosedEnumSupportKnown)];
     #if !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
       static const char *extraTextFormatInfo =
@@ -543,9 +543,9 @@ typedef struct MusicTrackDetails__storage_ {
 
 @end
 
-#pragma mark - MusicTrackDetails_Format
+#pragma mark - WAMusicTrackDetails_Format
 
-@implementation MusicTrackDetails_Format
+@implementation WAMusicTrackDetails_Format
 
 @dynamic id_p;
 @dynamic URL;
@@ -553,14 +553,14 @@ typedef struct MusicTrackDetails__storage_ {
 @dynamic hasMetadata, metadata;
 @dynamic hasMimeType, mimeType;
 
-typedef struct MusicTrackDetails_Format__storage_ {
+typedef struct WAMusicTrackDetails_Format__storage_ {
   uint32_t _has_storage_[1];
   NSString *id_p;
   NSString *URL;
   NSString *quality;
   GPBStruct *metadata;
   NSString *mimeType;
-} MusicTrackDetails_Format__storage_;
+} WAMusicTrackDetails_Format__storage_;
 
 // This method is threadsafe because it is initially called
 // in +initialize for each subclass.
@@ -572,63 +572,63 @@ typedef struct MusicTrackDetails_Format__storage_ {
       {
         .name = "id_p",
         .dataTypeSpecific.clazz = Nil,
-        .number = MusicTrackDetails_Format_FieldNumber_Id_p,
+        .number = WAMusicTrackDetails_Format_FieldNumber_Id_p,
         .hasIndex = 0,
-        .offset = (uint32_t)offsetof(MusicTrackDetails_Format__storage_, id_p),
+        .offset = (uint32_t)offsetof(WAMusicTrackDetails_Format__storage_, id_p),
         .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldClearHasIvarOnZero),
         .dataType = GPBDataTypeString,
       },
       {
         .name = "URL",
         .dataTypeSpecific.clazz = Nil,
-        .number = MusicTrackDetails_Format_FieldNumber_URL,
+        .number = WAMusicTrackDetails_Format_FieldNumber_URL,
         .hasIndex = 1,
-        .offset = (uint32_t)offsetof(MusicTrackDetails_Format__storage_, URL),
+        .offset = (uint32_t)offsetof(WAMusicTrackDetails_Format__storage_, URL),
         .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
         .dataType = GPBDataTypeString,
       },
       {
         .name = "quality",
         .dataTypeSpecific.clazz = Nil,
-        .number = MusicTrackDetails_Format_FieldNumber_Quality,
+        .number = WAMusicTrackDetails_Format_FieldNumber_Quality,
         .hasIndex = 2,
-        .offset = (uint32_t)offsetof(MusicTrackDetails_Format__storage_, quality),
+        .offset = (uint32_t)offsetof(WAMusicTrackDetails_Format__storage_, quality),
         .flags = GPBFieldOptional,
         .dataType = GPBDataTypeString,
       },
       {
         .name = "metadata",
         .dataTypeSpecific.clazz = GPBObjCClass(GPBStruct),
-        .number = MusicTrackDetails_Format_FieldNumber_Metadata,
+        .number = WAMusicTrackDetails_Format_FieldNumber_Metadata,
         .hasIndex = 3,
-        .offset = (uint32_t)offsetof(MusicTrackDetails_Format__storage_, metadata),
+        .offset = (uint32_t)offsetof(WAMusicTrackDetails_Format__storage_, metadata),
         .flags = GPBFieldOptional,
         .dataType = GPBDataTypeMessage,
       },
       {
         .name = "mimeType",
         .dataTypeSpecific.clazz = Nil,
-        .number = MusicTrackDetails_Format_FieldNumber_MimeType,
+        .number = WAMusicTrackDetails_Format_FieldNumber_MimeType,
         .hasIndex = 4,
-        .offset = (uint32_t)offsetof(MusicTrackDetails_Format__storage_, mimeType),
+        .offset = (uint32_t)offsetof(WAMusicTrackDetails_Format__storage_, mimeType),
         .flags = GPBFieldOptional,
         .dataType = GPBDataTypeString,
       },
     };
     GPBDescriptor *localDescriptor =
-        [GPBDescriptor allocDescriptorForClass:GPBObjCClass(MusicTrackDetails_Format)
+        [GPBDescriptor allocDescriptorForClass:GPBObjCClass(WAMusicTrackDetails_Format)
                                    messageName:@"Format"
-                               fileDescription:&MusicRoot_FileDescription
+                               fileDescription:&WAMusicMusicRoot_FileDescription
                                         fields:fields
                                     fieldCount:(uint32_t)(sizeof(fields) / sizeof(GPBMessageFieldDescription))
-                                   storageSize:sizeof(MusicTrackDetails_Format__storage_)
+                                   storageSize:sizeof(WAMusicTrackDetails_Format__storage_)
                                          flags:(GPBDescriptorInitializationFlags)(GPBDescriptorInitializationFlag_UsesClassRefs | GPBDescriptorInitializationFlag_Proto3OptionalKnown | GPBDescriptorInitializationFlag_ClosedEnumSupportKnown)];
     #if !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
       static const char *extraTextFormatInfo =
         "\001\002!!!\000";
       [localDescriptor setupExtraTextInfo:extraTextFormatInfo];
     #endif  // !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
-    [localDescriptor setupContainingMessageClass:GPBObjCClass(MusicTrackDetails)];
+    [localDescriptor setupContainingMessageClass:GPBObjCClass(WAMusicTrackDetails)];
     #if defined(DEBUG) && DEBUG
       NSAssert(descriptor == nil, @"Startup recursed!");
     #endif  // DEBUG
@@ -639,16 +639,16 @@ typedef struct MusicTrackDetails_Format__storage_ {
 
 @end
 
-#pragma mark - MusicTranscript
+#pragma mark - WAMusicTranscript
 
-@implementation MusicTranscript
+@implementation WAMusicTranscript
 
 @dynamic segmentsArray, segmentsArray_Count;
 
-typedef struct MusicTranscript__storage_ {
+typedef struct WAMusicTranscript__storage_ {
   uint32_t _has_storage_[1];
   NSMutableArray *segmentsArray;
-} MusicTranscript__storage_;
+} WAMusicTranscript__storage_;
 
 // This method is threadsafe because it is initially called
 // in +initialize for each subclass.
@@ -659,21 +659,21 @@ typedef struct MusicTranscript__storage_ {
     static GPBMessageFieldDescription fields[] = {
       {
         .name = "segmentsArray",
-        .dataTypeSpecific.clazz = GPBObjCClass(MusicTranscript_Segment),
-        .number = MusicTranscript_FieldNumber_SegmentsArray,
+        .dataTypeSpecific.clazz = GPBObjCClass(WAMusicTranscript_Segment),
+        .number = WAMusicTranscript_FieldNumber_SegmentsArray,
         .hasIndex = GPBNoHasBit,
-        .offset = (uint32_t)offsetof(MusicTranscript__storage_, segmentsArray),
+        .offset = (uint32_t)offsetof(WAMusicTranscript__storage_, segmentsArray),
         .flags = GPBFieldRepeated,
         .dataType = GPBDataTypeMessage,
       },
     };
     GPBDescriptor *localDescriptor =
-        [GPBDescriptor allocDescriptorForClass:GPBObjCClass(MusicTranscript)
+        [GPBDescriptor allocDescriptorForClass:GPBObjCClass(WAMusicTranscript)
                                    messageName:@"Transcript"
-                               fileDescription:&MusicRoot_FileDescription
+                               fileDescription:&WAMusicMusicRoot_FileDescription
                                         fields:fields
                                     fieldCount:(uint32_t)(sizeof(fields) / sizeof(GPBMessageFieldDescription))
-                                   storageSize:sizeof(MusicTranscript__storage_)
+                                   storageSize:sizeof(WAMusicTranscript__storage_)
                                          flags:(GPBDescriptorInitializationFlags)(GPBDescriptorInitializationFlag_UsesClassRefs | GPBDescriptorInitializationFlag_Proto3OptionalKnown | GPBDescriptorInitializationFlag_ClosedEnumSupportKnown)];
     #if defined(DEBUG) && DEBUG
       NSAssert(descriptor == nil, @"Startup recursed!");
@@ -685,20 +685,20 @@ typedef struct MusicTranscript__storage_ {
 
 @end
 
-#pragma mark - MusicTranscript_Segment
+#pragma mark - WAMusicTranscript_Segment
 
-@implementation MusicTranscript_Segment
+@implementation WAMusicTranscript_Segment
 
 @dynamic text;
 @dynamic offset;
 @dynamic duration;
 
-typedef struct MusicTranscript_Segment__storage_ {
+typedef struct WAMusicTranscript_Segment__storage_ {
   uint32_t _has_storage_[1];
   int32_t offset;
   int32_t duration;
   NSString *text;
-} MusicTranscript_Segment__storage_;
+} WAMusicTranscript_Segment__storage_;
 
 // This method is threadsafe because it is initially called
 // in +initialize for each subclass.
@@ -710,40 +710,40 @@ typedef struct MusicTranscript_Segment__storage_ {
       {
         .name = "text",
         .dataTypeSpecific.clazz = Nil,
-        .number = MusicTranscript_Segment_FieldNumber_Text,
+        .number = WAMusicTranscript_Segment_FieldNumber_Text,
         .hasIndex = 0,
-        .offset = (uint32_t)offsetof(MusicTranscript_Segment__storage_, text),
+        .offset = (uint32_t)offsetof(WAMusicTranscript_Segment__storage_, text),
         .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldClearHasIvarOnZero),
         .dataType = GPBDataTypeString,
       },
       {
         .name = "offset",
         .dataTypeSpecific.clazz = Nil,
-        .number = MusicTranscript_Segment_FieldNumber_Offset,
+        .number = WAMusicTranscript_Segment_FieldNumber_Offset,
         .hasIndex = 1,
-        .offset = (uint32_t)offsetof(MusicTranscript_Segment__storage_, offset),
+        .offset = (uint32_t)offsetof(WAMusicTranscript_Segment__storage_, offset),
         .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldClearHasIvarOnZero),
         .dataType = GPBDataTypeInt32,
       },
       {
         .name = "duration",
         .dataTypeSpecific.clazz = Nil,
-        .number = MusicTranscript_Segment_FieldNumber_Duration,
+        .number = WAMusicTranscript_Segment_FieldNumber_Duration,
         .hasIndex = 2,
-        .offset = (uint32_t)offsetof(MusicTranscript_Segment__storage_, duration),
+        .offset = (uint32_t)offsetof(WAMusicTranscript_Segment__storage_, duration),
         .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldClearHasIvarOnZero),
         .dataType = GPBDataTypeInt32,
       },
     };
     GPBDescriptor *localDescriptor =
-        [GPBDescriptor allocDescriptorForClass:GPBObjCClass(MusicTranscript_Segment)
+        [GPBDescriptor allocDescriptorForClass:GPBObjCClass(WAMusicTranscript_Segment)
                                    messageName:@"Segment"
-                               fileDescription:&MusicRoot_FileDescription
+                               fileDescription:&WAMusicMusicRoot_FileDescription
                                         fields:fields
                                     fieldCount:(uint32_t)(sizeof(fields) / sizeof(GPBMessageFieldDescription))
-                                   storageSize:sizeof(MusicTranscript_Segment__storage_)
+                                   storageSize:sizeof(WAMusicTranscript_Segment__storage_)
                                          flags:(GPBDescriptorInitializationFlags)(GPBDescriptorInitializationFlag_UsesClassRefs | GPBDescriptorInitializationFlag_Proto3OptionalKnown | GPBDescriptorInitializationFlag_ClosedEnumSupportKnown)];
-    [localDescriptor setupContainingMessageClass:GPBObjCClass(MusicTranscript)];
+    [localDescriptor setupContainingMessageClass:GPBObjCClass(WAMusicTranscript)];
     #if defined(DEBUG) && DEBUG
       NSAssert(descriptor == nil, @"Startup recursed!");
     #endif  // DEBUG
@@ -754,20 +754,20 @@ typedef struct MusicTranscript_Segment__storage_ {
 
 @end
 
-#pragma mark - MusicAuthor
+#pragma mark - WAMusicAuthor
 
-@implementation MusicAuthor
+@implementation WAMusicAuthor
 
 @dynamic id_p;
 @dynamic name;
 @dynamic hasThumbnail, thumbnail;
 
-typedef struct MusicAuthor__storage_ {
+typedef struct WAMusicAuthor__storage_ {
   uint32_t _has_storage_[1];
   NSString *id_p;
   NSString *name;
   NSString *thumbnail;
-} MusicAuthor__storage_;
+} WAMusicAuthor__storage_;
 
 // This method is threadsafe because it is initially called
 // in +initialize for each subclass.
@@ -779,38 +779,38 @@ typedef struct MusicAuthor__storage_ {
       {
         .name = "id_p",
         .dataTypeSpecific.clazz = Nil,
-        .number = MusicAuthor_FieldNumber_Id_p,
+        .number = WAMusicAuthor_FieldNumber_Id_p,
         .hasIndex = 0,
-        .offset = (uint32_t)offsetof(MusicAuthor__storage_, id_p),
+        .offset = (uint32_t)offsetof(WAMusicAuthor__storage_, id_p),
         .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldClearHasIvarOnZero),
         .dataType = GPBDataTypeString,
       },
       {
         .name = "name",
         .dataTypeSpecific.clazz = Nil,
-        .number = MusicAuthor_FieldNumber_Name,
+        .number = WAMusicAuthor_FieldNumber_Name,
         .hasIndex = 1,
-        .offset = (uint32_t)offsetof(MusicAuthor__storage_, name),
+        .offset = (uint32_t)offsetof(WAMusicAuthor__storage_, name),
         .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldClearHasIvarOnZero),
         .dataType = GPBDataTypeString,
       },
       {
         .name = "thumbnail",
         .dataTypeSpecific.clazz = Nil,
-        .number = MusicAuthor_FieldNumber_Thumbnail,
+        .number = WAMusicAuthor_FieldNumber_Thumbnail,
         .hasIndex = 2,
-        .offset = (uint32_t)offsetof(MusicAuthor__storage_, thumbnail),
+        .offset = (uint32_t)offsetof(WAMusicAuthor__storage_, thumbnail),
         .flags = GPBFieldOptional,
         .dataType = GPBDataTypeString,
       },
     };
     GPBDescriptor *localDescriptor =
-        [GPBDescriptor allocDescriptorForClass:GPBObjCClass(MusicAuthor)
+        [GPBDescriptor allocDescriptorForClass:GPBObjCClass(WAMusicAuthor)
                                    messageName:@"Author"
-                               fileDescription:&MusicRoot_FileDescription
+                               fileDescription:&WAMusicMusicRoot_FileDescription
                                         fields:fields
                                     fieldCount:(uint32_t)(sizeof(fields) / sizeof(GPBMessageFieldDescription))
-                                   storageSize:sizeof(MusicAuthor__storage_)
+                                   storageSize:sizeof(WAMusicAuthor__storage_)
                                          flags:(GPBDescriptorInitializationFlags)(GPBDescriptorInitializationFlag_UsesClassRefs | GPBDescriptorInitializationFlag_Proto3OptionalKnown | GPBDescriptorInitializationFlag_ClosedEnumSupportKnown)];
     #if defined(DEBUG) && DEBUG
       NSAssert(descriptor == nil, @"Startup recursed!");
@@ -822,9 +822,9 @@ typedef struct MusicAuthor__storage_ {
 
 @end
 
-#pragma mark - MusicTrack
+#pragma mark - WAMusicTrack
 
-@implementation MusicTrack
+@implementation WAMusicTrack
 
 @dynamic id_p;
 @dynamic title;
@@ -832,14 +832,14 @@ typedef struct MusicAuthor__storage_ {
 @dynamic hasAuthor, author;
 @dynamic hasThumbnail, thumbnail;
 
-typedef struct MusicTrack__storage_ {
+typedef struct WAMusicTrack__storage_ {
   uint32_t _has_storage_[1];
   NSString *id_p;
   NSString *title;
   NSString *kind;
-  MusicAuthor *author;
+  WAMusicAuthor *author;
   NSString *thumbnail;
-} MusicTrack__storage_;
+} WAMusicTrack__storage_;
 
 // This method is threadsafe because it is initially called
 // in +initialize for each subclass.
@@ -851,56 +851,56 @@ typedef struct MusicTrack__storage_ {
       {
         .name = "id_p",
         .dataTypeSpecific.clazz = Nil,
-        .number = MusicTrack_FieldNumber_Id_p,
+        .number = WAMusicTrack_FieldNumber_Id_p,
         .hasIndex = 0,
-        .offset = (uint32_t)offsetof(MusicTrack__storage_, id_p),
+        .offset = (uint32_t)offsetof(WAMusicTrack__storage_, id_p),
         .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldClearHasIvarOnZero),
         .dataType = GPBDataTypeString,
       },
       {
         .name = "title",
         .dataTypeSpecific.clazz = Nil,
-        .number = MusicTrack_FieldNumber_Title,
+        .number = WAMusicTrack_FieldNumber_Title,
         .hasIndex = 1,
-        .offset = (uint32_t)offsetof(MusicTrack__storage_, title),
+        .offset = (uint32_t)offsetof(WAMusicTrack__storage_, title),
         .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldClearHasIvarOnZero),
         .dataType = GPBDataTypeString,
       },
       {
         .name = "kind",
         .dataTypeSpecific.clazz = Nil,
-        .number = MusicTrack_FieldNumber_Kind,
+        .number = WAMusicTrack_FieldNumber_Kind,
         .hasIndex = 2,
-        .offset = (uint32_t)offsetof(MusicTrack__storage_, kind),
+        .offset = (uint32_t)offsetof(WAMusicTrack__storage_, kind),
         .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldClearHasIvarOnZero),
         .dataType = GPBDataTypeString,
       },
       {
         .name = "author",
-        .dataTypeSpecific.clazz = GPBObjCClass(MusicAuthor),
-        .number = MusicTrack_FieldNumber_Author,
+        .dataTypeSpecific.clazz = GPBObjCClass(WAMusicAuthor),
+        .number = WAMusicTrack_FieldNumber_Author,
         .hasIndex = 3,
-        .offset = (uint32_t)offsetof(MusicTrack__storage_, author),
+        .offset = (uint32_t)offsetof(WAMusicTrack__storage_, author),
         .flags = GPBFieldOptional,
         .dataType = GPBDataTypeMessage,
       },
       {
         .name = "thumbnail",
         .dataTypeSpecific.clazz = Nil,
-        .number = MusicTrack_FieldNumber_Thumbnail,
+        .number = WAMusicTrack_FieldNumber_Thumbnail,
         .hasIndex = 4,
-        .offset = (uint32_t)offsetof(MusicTrack__storage_, thumbnail),
+        .offset = (uint32_t)offsetof(WAMusicTrack__storage_, thumbnail),
         .flags = GPBFieldOptional,
         .dataType = GPBDataTypeString,
       },
     };
     GPBDescriptor *localDescriptor =
-        [GPBDescriptor allocDescriptorForClass:GPBObjCClass(MusicTrack)
+        [GPBDescriptor allocDescriptorForClass:GPBObjCClass(WAMusicTrack)
                                    messageName:@"Track"
-                               fileDescription:&MusicRoot_FileDescription
+                               fileDescription:&WAMusicMusicRoot_FileDescription
                                         fields:fields
                                     fieldCount:(uint32_t)(sizeof(fields) / sizeof(GPBMessageFieldDescription))
-                                   storageSize:sizeof(MusicTrack__storage_)
+                                   storageSize:sizeof(WAMusicTrack__storage_)
                                          flags:(GPBDescriptorInitializationFlags)(GPBDescriptorInitializationFlag_UsesClassRefs | GPBDescriptorInitializationFlag_Proto3OptionalKnown | GPBDescriptorInitializationFlag_ClosedEnumSupportKnown)];
     #if defined(DEBUG) && DEBUG
       NSAssert(descriptor == nil, @"Startup recursed!");
@@ -912,18 +912,18 @@ typedef struct MusicTrack__storage_ {
 
 @end
 
-#pragma mark - MusicListTracks
+#pragma mark - WAMusicListTracks
 
-@implementation MusicListTracks
+@implementation WAMusicListTracks
 
 @dynamic itemsArray, itemsArray_Count;
 @dynamic hasContinuation, continuation;
 
-typedef struct MusicListTracks__storage_ {
+typedef struct WAMusicListTracks__storage_ {
   uint32_t _has_storage_[1];
   NSMutableArray *itemsArray;
   NSString *continuation;
-} MusicListTracks__storage_;
+} WAMusicListTracks__storage_;
 
 // This method is threadsafe because it is initially called
 // in +initialize for each subclass.
@@ -934,30 +934,30 @@ typedef struct MusicListTracks__storage_ {
     static GPBMessageFieldDescription fields[] = {
       {
         .name = "itemsArray",
-        .dataTypeSpecific.clazz = GPBObjCClass(MusicTrack),
-        .number = MusicListTracks_FieldNumber_ItemsArray,
+        .dataTypeSpecific.clazz = GPBObjCClass(WAMusicTrack),
+        .number = WAMusicListTracks_FieldNumber_ItemsArray,
         .hasIndex = GPBNoHasBit,
-        .offset = (uint32_t)offsetof(MusicListTracks__storage_, itemsArray),
+        .offset = (uint32_t)offsetof(WAMusicListTracks__storage_, itemsArray),
         .flags = GPBFieldRepeated,
         .dataType = GPBDataTypeMessage,
       },
       {
         .name = "continuation",
         .dataTypeSpecific.clazz = Nil,
-        .number = MusicListTracks_FieldNumber_Continuation,
+        .number = WAMusicListTracks_FieldNumber_Continuation,
         .hasIndex = 0,
-        .offset = (uint32_t)offsetof(MusicListTracks__storage_, continuation),
+        .offset = (uint32_t)offsetof(WAMusicListTracks__storage_, continuation),
         .flags = GPBFieldOptional,
         .dataType = GPBDataTypeString,
       },
     };
     GPBDescriptor *localDescriptor =
-        [GPBDescriptor allocDescriptorForClass:GPBObjCClass(MusicListTracks)
+        [GPBDescriptor allocDescriptorForClass:GPBObjCClass(WAMusicListTracks)
                                    messageName:@"ListTracks"
-                               fileDescription:&MusicRoot_FileDescription
+                               fileDescription:&WAMusicMusicRoot_FileDescription
                                         fields:fields
                                     fieldCount:(uint32_t)(sizeof(fields) / sizeof(GPBMessageFieldDescription))
-                                   storageSize:sizeof(MusicListTracks__storage_)
+                                   storageSize:sizeof(WAMusicListTracks__storage_)
                                          flags:(GPBDescriptorInitializationFlags)(GPBDescriptorInitializationFlag_UsesClassRefs | GPBDescriptorInitializationFlag_Proto3OptionalKnown | GPBDescriptorInitializationFlag_ClosedEnumSupportKnown)];
     #if defined(DEBUG) && DEBUG
       NSAssert(descriptor == nil, @"Startup recursed!");
@@ -969,16 +969,16 @@ typedef struct MusicListTracks__storage_ {
 
 @end
 
-#pragma mark - MusicListSuggestions
+#pragma mark - WAMusicListSuggestions
 
-@implementation MusicListSuggestions
+@implementation WAMusicListSuggestions
 
 @dynamic suggestionsArray, suggestionsArray_Count;
 
-typedef struct MusicListSuggestions__storage_ {
+typedef struct WAMusicListSuggestions__storage_ {
   uint32_t _has_storage_[1];
   NSMutableArray *suggestionsArray;
-} MusicListSuggestions__storage_;
+} WAMusicListSuggestions__storage_;
 
 // This method is threadsafe because it is initially called
 // in +initialize for each subclass.
@@ -990,20 +990,20 @@ typedef struct MusicListSuggestions__storage_ {
       {
         .name = "suggestionsArray",
         .dataTypeSpecific.clazz = Nil,
-        .number = MusicListSuggestions_FieldNumber_SuggestionsArray,
+        .number = WAMusicListSuggestions_FieldNumber_SuggestionsArray,
         .hasIndex = GPBNoHasBit,
-        .offset = (uint32_t)offsetof(MusicListSuggestions__storage_, suggestionsArray),
+        .offset = (uint32_t)offsetof(WAMusicListSuggestions__storage_, suggestionsArray),
         .flags = GPBFieldRepeated,
         .dataType = GPBDataTypeString,
       },
     };
     GPBDescriptor *localDescriptor =
-        [GPBDescriptor allocDescriptorForClass:GPBObjCClass(MusicListSuggestions)
+        [GPBDescriptor allocDescriptorForClass:GPBObjCClass(WAMusicListSuggestions)
                                    messageName:@"ListSuggestions"
-                               fileDescription:&MusicRoot_FileDescription
+                               fileDescription:&WAMusicMusicRoot_FileDescription
                                         fields:fields
                                     fieldCount:(uint32_t)(sizeof(fields) / sizeof(GPBMessageFieldDescription))
-                                   storageSize:sizeof(MusicListSuggestions__storage_)
+                                   storageSize:sizeof(WAMusicListSuggestions__storage_)
                                          flags:(GPBDescriptorInitializationFlags)(GPBDescriptorInitializationFlag_UsesClassRefs | GPBDescriptorInitializationFlag_Proto3OptionalKnown | GPBDescriptorInitializationFlag_ClosedEnumSupportKnown)];
     #if defined(DEBUG) && DEBUG
       NSAssert(descriptor == nil, @"Startup recursed!");

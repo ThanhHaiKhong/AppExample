@@ -35,26 +35,26 @@
 // Forward declarations of Objective-C classes that we can use as
 // static values in struct initializers.
 // We don't use [Foo class] because it is not a static value.
-GPBObjCClassDeclaration(EngineVersion);
+GPBObjCClassDeclaration(WAEngineVersion);
 
-#pragma mark - EngineRoot
+#pragma mark - WAEngineEngineRoot
 
-@implementation EngineRoot
+@implementation WAEngineEngineRoot
 
 // No extensions in the file and no imports or none of the imports (direct or
 // indirect) defined extensions, so no need to generate +extensionRegistry.
 
 @end
 
-static GPBFileDescription EngineRoot_FileDescription = {
+static GPBFileDescription WAEngineEngineRoot_FileDescription = {
   .package = "asyncify.engine",
-  .prefix = "Engine",
+  .prefix = "WAEngine",
   .syntax = GPBFileSyntaxProto3
 };
 
-#pragma mark - Enum EngineCallID
+#pragma mark - Enum WAEngineCallID
 
-GPBEnumDescriptor *EngineCallID_EnumDescriptor(void) {
+GPBEnumDescriptor *WAEngineCallID_EnumDescriptor(void) {
   static _Atomic(GPBEnumDescriptor*) descriptor = nil;
   if (!descriptor) {
     GPB_DEBUG_CHECK_RUNTIME_VERSIONS();
@@ -62,16 +62,16 @@ GPBEnumDescriptor *EngineCallID_EnumDescriptor(void) {
         "CallIdUnspecified\000CallIdGetVersion\000CallI"
         "dInitialize\000";
     static const int32_t values[] = {
-        EngineCallID_CallIdUnspecified,
-        EngineCallID_CallIdGetVersion,
-        EngineCallID_CallIdInitialize,
+        WAEngineCallID_CallIdUnspecified,
+        WAEngineCallID_CallIdGetVersion,
+        WAEngineCallID_CallIdInitialize,
     };
     GPBEnumDescriptor *worker =
-        [GPBEnumDescriptor allocDescriptorForName:GPBNSStringifySymbol(EngineCallID)
+        [GPBEnumDescriptor allocDescriptorForName:GPBNSStringifySymbol(WAEngineCallID)
                                        valueNames:valueNames
                                            values:values
                                             count:(uint32_t)(sizeof(values) / sizeof(int32_t))
-                                     enumVerifier:EngineCallID_IsValidValue
+                                     enumVerifier:WAEngineCallID_IsValidValue
                                             flags:GPBEnumDescriptorInitializationFlag_None];
     GPBEnumDescriptor *expected = nil;
     if (!atomic_compare_exchange_strong(&descriptor, &expected, worker)) {
@@ -81,20 +81,20 @@ GPBEnumDescriptor *EngineCallID_EnumDescriptor(void) {
   return descriptor;
 }
 
-BOOL EngineCallID_IsValidValue(int32_t value__) {
+BOOL WAEngineCallID_IsValidValue(int32_t value__) {
   switch (value__) {
-    case EngineCallID_CallIdUnspecified:
-    case EngineCallID_CallIdGetVersion:
-    case EngineCallID_CallIdInitialize:
+    case WAEngineCallID_CallIdUnspecified:
+    case WAEngineCallID_CallIdGetVersion:
+    case WAEngineCallID_CallIdInitialize:
       return YES;
     default:
       return NO;
   }
 }
 
-#pragma mark - EngineVersion
+#pragma mark - WAEngineVersion
 
-@implementation EngineVersion
+@implementation WAEngineVersion
 
 @dynamic id_p;
 @dynamic name;
@@ -104,16 +104,16 @@ BOOL EngineCallID_IsValidValue(int32_t value__) {
 @dynamic hasNext, next;
 @dynamic hasReleaseDate, releaseDate;
 
-typedef struct EngineVersion__storage_ {
+typedef struct WAEngineVersion__storage_ {
   uint32_t _has_storage_[1];
   NSString *id_p;
   NSString *name;
   NSString *etag;
   NSString *sha;
   NSString *URL;
-  EngineVersion *next;
+  WAEngineVersion *next;
   NSString *releaseDate;
-} EngineVersion__storage_;
+} WAEngineVersion__storage_;
 
 // This method is threadsafe because it is initially called
 // in +initialize for each subclass.
@@ -125,74 +125,74 @@ typedef struct EngineVersion__storage_ {
       {
         .name = "id_p",
         .dataTypeSpecific.clazz = Nil,
-        .number = EngineVersion_FieldNumber_Id_p,
+        .number = WAEngineVersion_FieldNumber_Id_p,
         .hasIndex = 0,
-        .offset = (uint32_t)offsetof(EngineVersion__storage_, id_p),
+        .offset = (uint32_t)offsetof(WAEngineVersion__storage_, id_p),
         .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldClearHasIvarOnZero),
         .dataType = GPBDataTypeString,
       },
       {
         .name = "name",
         .dataTypeSpecific.clazz = Nil,
-        .number = EngineVersion_FieldNumber_Name,
+        .number = WAEngineVersion_FieldNumber_Name,
         .hasIndex = 1,
-        .offset = (uint32_t)offsetof(EngineVersion__storage_, name),
+        .offset = (uint32_t)offsetof(WAEngineVersion__storage_, name),
         .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldClearHasIvarOnZero),
         .dataType = GPBDataTypeString,
       },
       {
         .name = "etag",
         .dataTypeSpecific.clazz = Nil,
-        .number = EngineVersion_FieldNumber_Etag,
+        .number = WAEngineVersion_FieldNumber_Etag,
         .hasIndex = 2,
-        .offset = (uint32_t)offsetof(EngineVersion__storage_, etag),
+        .offset = (uint32_t)offsetof(WAEngineVersion__storage_, etag),
         .flags = GPBFieldOptional,
         .dataType = GPBDataTypeString,
       },
       {
         .name = "sha",
         .dataTypeSpecific.clazz = Nil,
-        .number = EngineVersion_FieldNumber_Sha,
+        .number = WAEngineVersion_FieldNumber_Sha,
         .hasIndex = 3,
-        .offset = (uint32_t)offsetof(EngineVersion__storage_, sha),
+        .offset = (uint32_t)offsetof(WAEngineVersion__storage_, sha),
         .flags = GPBFieldOptional,
         .dataType = GPBDataTypeString,
       },
       {
         .name = "URL",
         .dataTypeSpecific.clazz = Nil,
-        .number = EngineVersion_FieldNumber_URL,
+        .number = WAEngineVersion_FieldNumber_URL,
         .hasIndex = 4,
-        .offset = (uint32_t)offsetof(EngineVersion__storage_, URL),
+        .offset = (uint32_t)offsetof(WAEngineVersion__storage_, URL),
         .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom),
         .dataType = GPBDataTypeString,
       },
       {
         .name = "next",
-        .dataTypeSpecific.clazz = GPBObjCClass(EngineVersion),
-        .number = EngineVersion_FieldNumber_Next,
+        .dataTypeSpecific.clazz = GPBObjCClass(WAEngineVersion),
+        .number = WAEngineVersion_FieldNumber_Next,
         .hasIndex = 5,
-        .offset = (uint32_t)offsetof(EngineVersion__storage_, next),
+        .offset = (uint32_t)offsetof(WAEngineVersion__storage_, next),
         .flags = GPBFieldOptional,
         .dataType = GPBDataTypeMessage,
       },
       {
         .name = "releaseDate",
         .dataTypeSpecific.clazz = Nil,
-        .number = EngineVersion_FieldNumber_ReleaseDate,
+        .number = WAEngineVersion_FieldNumber_ReleaseDate,
         .hasIndex = 6,
-        .offset = (uint32_t)offsetof(EngineVersion__storage_, releaseDate),
+        .offset = (uint32_t)offsetof(WAEngineVersion__storage_, releaseDate),
         .flags = GPBFieldOptional,
         .dataType = GPBDataTypeString,
       },
     };
     GPBDescriptor *localDescriptor =
-        [GPBDescriptor allocDescriptorForClass:GPBObjCClass(EngineVersion)
+        [GPBDescriptor allocDescriptorForClass:GPBObjCClass(WAEngineVersion)
                                    messageName:@"Version"
-                               fileDescription:&EngineRoot_FileDescription
+                               fileDescription:&WAEngineEngineRoot_FileDescription
                                         fields:fields
                                     fieldCount:(uint32_t)(sizeof(fields) / sizeof(GPBMessageFieldDescription))
-                                   storageSize:sizeof(EngineVersion__storage_)
+                                   storageSize:sizeof(WAEngineVersion__storage_)
                                          flags:(GPBDescriptorInitializationFlags)(GPBDescriptorInitializationFlag_UsesClassRefs | GPBDescriptorInitializationFlag_Proto3OptionalKnown | GPBDescriptorInitializationFlag_ClosedEnumSupportKnown)];
     #if !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
       static const char *extraTextFormatInfo =

@@ -69,14 +69,16 @@ public struct WasmContainerView<ContentView: View>: View {
             case let .done(version):
                 contentView(version)
             case let .failed(error):
-                VStack {
-                    Text(error.localizedDescription)
-                        .font(.body)
-                        .padding()
-                    Button("Retry") {
-                        self.updater.state = .initializing
+                ScrollView {
+                    VStack {
+                        Text(error.localizedDescription)
+                            .font(.body)
+                            .padding()
+                        Button("Retry") {
+                            self.updater.state = .initializing
+                        }
+                        .buttonStyle(.borderedProminent)
                     }
-                    .buttonStyle(.borderedProminent)
                 }
             }
         }

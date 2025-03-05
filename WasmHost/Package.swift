@@ -11,8 +11,8 @@ let ffiTargets: [PackageDescription.Target] = [
 #else
 let ffiTargets: [PackageDescription.Target] = [
     .binaryTarget(name: "mffi",
-                  url: "https://wasm.sfo3.cdn.digitaloceanspaces.com/l7mobile.xcframework.zip",
-                  checksum: "ff288901ee0afb91904703754474ba367c5a07ef0d1f9f30e62816da5e6200f4"),
+                  url: "https://wasm.sfo3.cdn.digitaloceanspaces.com/l7mobile2.xcframework.zip",
+                  checksum: "37f4d64f734adb4e123755c46c5a9f692b0fbecb64570103340c76240d0458e6"),
 ]
 #endif
 
@@ -23,13 +23,10 @@ let package = Package(
     ],
     products: [
         .library(name: "AsyncWasm", targets: ["AsyncWasm"]),
-        .library(name: "AsyncWasmKit", targets: ["AsyncWasmKit"]),
         .library(name: "AsyncWasmObjC", targets: ["AsyncWasmObjC"]),
-        .library(name: "MobileFFI", targets: ["MobileFFI"]),
         .library(name: "WasmObjCProtobuf", targets: ["WasmObjCProtobuf"]),
         .library(name: "WasmSwiftProtobuf", targets: ["WasmSwiftProtobuf"]),
         .library(name: "MusicWasm", targets: ["MusicWasm"]),
-        .library(name: "MusicWasmUI", type: .dynamic, targets: ["MusicWasmUI"])
     ],
     dependencies: [
         .package(url: "https://github.com/swiftwasm/WasmKit.git", from: "0.1.0"),
@@ -114,24 +111,27 @@ let package = Package(
                 "WasmSwiftProtobuf"
             ]
         ),
-        .testTarget(name: "AsyncWasmTests",
-                    dependencies: ["AsyncWasm"],
-                    resources: [
-                        .copy("Resources/music.wasm"),
-                    ]),
-        .testTarget(name: "MusicWasmTests",
-                    dependencies: ["MusicWasm"],
-                    resources: [
-                        .copy("Resources/music.wasm"),
-                    ]),
-        .testTarget(name: "MusicWasmObjCTests",
-                    dependencies: [
-                        "WasmObjCProtobuf",
-                        "AsyncWasmObjC",
-                        "MusicWasm"
-                    ],
-                    resources: [
-                        .copy("Resources/music.wasm"),
-                    ])
+        .testTarget(
+            name: "AsyncWasmTests",
+            dependencies: ["AsyncWasm"],
+            resources: [
+                .copy("Resources/music.wasm"),
+            ]),
+        .testTarget(
+            name: "MusicWasmTests",
+            dependencies: ["MusicWasm"],
+            resources: [
+                .copy("Resources/music.wasm"),
+            ]),
+        .testTarget(
+            name: "MusicWasmObjCTests",
+            dependencies: [
+                "WasmObjCProtobuf",
+                "AsyncWasmObjC",
+                "MusicWasm"
+            ],
+            resources: [
+                .copy("Resources/music.wasm"),
+            ])
     ]
 )

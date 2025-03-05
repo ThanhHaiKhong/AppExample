@@ -495,7 +495,9 @@ public protocol AsyncifyWasmProtocol: AnyObject {
     
     func call(cmd: Data) async throws  -> Data
     
-    func start() async throws 
+    func release() async 
+    
+    func start(path: String, opts: Options?) async throws 
     
 }
 open class AsyncifyWasm: AsyncifyWasmProtocol, @unchecked Sendable {
@@ -534,21 +536,12 @@ open class AsyncifyWasm: AsyncifyWasmProtocol, @unchecked Sendable {
     public func uniffiClonePointer() -> UnsafeMutableRawPointer {
         return try! rustCall { uniffi_asyncify_wasm_fn_clone_asyncifywasm(self.pointer, $0) }
     }
-public convenience init(path: String, opts: Options?)async throws  {
+public convenience init() {
     let pointer =
-        try  await uniffiRustCallAsync(
-            rustFutureFunc: {
-                uniffi_asyncify_wasm_fn_constructor_asyncifywasm_new(FfiConverterString.lower(path),FfiConverterOptionTypeOptions.lower(opts)
-                )
-            },
-            pollFunc: ffi_asyncify_wasm_rust_future_poll_pointer,
-            completeFunc: ffi_asyncify_wasm_rust_future_complete_pointer,
-            freeFunc: ffi_asyncify_wasm_rust_future_free_pointer,
-            liftFunc: FfiConverterTypeAsyncifyWasm_lift,
-            errorHandler: FfiConverterTypeAsyncifyWasmError.lift
-        )
-        
-        .uniffiClonePointer()
+        try! rustCall() {
+    uniffi_asyncify_wasm_fn_constructor_asyncifywasm_new($0
+    )
+}
     self.init(unsafeFromRawPointer: pointer)
 }
 
@@ -580,13 +573,31 @@ open func call(cmd: Data)async throws  -> Data  {
         )
 }
     
-open func start()async throws   {
+open func release()async   {
+    return
+        try!  await uniffiRustCallAsync(
+            rustFutureFunc: {
+                uniffi_asyncify_wasm_fn_method_asyncifywasm_release(
+                    self.uniffiClonePointer()
+                    
+                )
+            },
+            pollFunc: ffi_asyncify_wasm_rust_future_poll_void,
+            completeFunc: ffi_asyncify_wasm_rust_future_complete_void,
+            freeFunc: ffi_asyncify_wasm_rust_future_free_void,
+            liftFunc: { $0 },
+            errorHandler: nil
+            
+        )
+}
+    
+open func start(path: String, opts: Options?)async throws   {
     return
         try  await uniffiRustCallAsync(
             rustFutureFunc: {
                 uniffi_asyncify_wasm_fn_method_asyncifywasm_start(
-                    self.uniffiClonePointer()
-                    
+                    self.uniffiClonePointer(),
+                    FfiConverterString.lower(path),FfiConverterOptionTypeOptions.lower(opts)
                 )
             },
             pollFunc: ffi_asyncify_wasm_rust_future_poll_void,
@@ -655,11 +666,13 @@ public func FfiConverterTypeAsyncifyWasm_lower(_ value: AsyncifyWasm) -> UnsafeM
 
 public struct Options {
     public var wasm: WasmOptions
+    public var update: UpdateOptions?
 
     // Default memberwise initializers are never public by default, so we
     // declare one manually.
-    public init(wasm: WasmOptions) {
+    public init(wasm: WasmOptions, update: UpdateOptions?) {
         self.wasm = wasm
+        self.update = update
     }
 }
 
@@ -673,11 +686,15 @@ extension Options: Equatable, Hashable {
         if lhs.wasm != rhs.wasm {
             return false
         }
+        if lhs.update != rhs.update {
+            return false
+        }
         return true
     }
 
     public func hash(into hasher: inout Hasher) {
         hasher.combine(wasm)
+        hasher.combine(update)
     }
 }
 
@@ -690,12 +707,14 @@ public struct FfiConverterTypeOptions: FfiConverterRustBuffer {
     public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> Options {
         return
             try Options(
-                wasm: FfiConverterTypeWasmOptions.read(from: &buf)
+                wasm: FfiConverterTypeWasmOptions.read(from: &buf), 
+                update: FfiConverterOptionTypeUpdateOptions.read(from: &buf)
         )
     }
 
     public static func write(_ value: Options, into buf: inout [UInt8]) {
         FfiConverterTypeWasmOptions.write(value.wasm, into: &buf)
+        FfiConverterOptionTypeUpdateOptions.write(value.update, into: &buf)
     }
 }
 
@@ -712,6 +731,88 @@ public func FfiConverterTypeOptions_lift(_ buf: RustBuffer) throws -> Options {
 #endif
 public func FfiConverterTypeOptions_lower(_ value: Options) -> RustBuffer {
     return FfiConverterTypeOptions.lower(value)
+}
+
+
+public struct UpdateOptions {
+    /**
+     * dir to storage
+     */
+    public var bundleDir: String
+    /**
+     * Check update interval
+     */
+    public var checkInterval: UInt64?
+
+    // Default memberwise initializers are never public by default, so we
+    // declare one manually.
+    public init(
+        /**
+         * dir to storage
+         */bundleDir: String, 
+        /**
+         * Check update interval
+         */checkInterval: UInt64?) {
+        self.bundleDir = bundleDir
+        self.checkInterval = checkInterval
+    }
+}
+
+#if compiler(>=6)
+extension UpdateOptions: Sendable {}
+#endif
+
+
+extension UpdateOptions: Equatable, Hashable {
+    public static func ==(lhs: UpdateOptions, rhs: UpdateOptions) -> Bool {
+        if lhs.bundleDir != rhs.bundleDir {
+            return false
+        }
+        if lhs.checkInterval != rhs.checkInterval {
+            return false
+        }
+        return true
+    }
+
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(bundleDir)
+        hasher.combine(checkInterval)
+    }
+}
+
+
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public struct FfiConverterTypeUpdateOptions: FfiConverterRustBuffer {
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> UpdateOptions {
+        return
+            try UpdateOptions(
+                bundleDir: FfiConverterString.read(from: &buf), 
+                checkInterval: FfiConverterOptionUInt64.read(from: &buf)
+        )
+    }
+
+    public static func write(_ value: UpdateOptions, into buf: inout [UInt8]) {
+        FfiConverterString.write(value.bundleDir, into: &buf)
+        FfiConverterOptionUInt64.write(value.checkInterval, into: &buf)
+    }
+}
+
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public func FfiConverterTypeUpdateOptions_lift(_ buf: RustBuffer) throws -> UpdateOptions {
+    return try FfiConverterTypeUpdateOptions.lift(buf)
+}
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public func FfiConverterTypeUpdateOptions_lower(_ value: UpdateOptions) -> RustBuffer {
+    return FfiConverterTypeUpdateOptions.lower(value)
 }
 
 
@@ -969,14 +1070,17 @@ public enum WasmOptions {
          * Default is `pulley64`
          */target: String?, 
         /**
-         * Default is 4GB
+         * Default is 100MB
          */memoryReversation: UInt64?, 
         /**
-         * Default is 2GB
+         * Default is 50MB
          */memoryReversationForGrowth: UInt64?, 
         /**
          * By default, linear memory will not be limited.
-         */storeMemorySize: UInt64?
+         */storeMemorySize: UInt64?, 
+        /**
+         * Default is 10,000
+         */storeMaxInstance: UInt64?
     )
 }
 
@@ -995,7 +1099,7 @@ public struct FfiConverterTypeWasmOptions: FfiConverterRustBuffer {
         let variant: Int32 = try readInt(&buf)
         switch variant {
         
-        case 1: return .wasmtime(target: try FfiConverterOptionString.read(from: &buf), memoryReversation: try FfiConverterOptionUInt64.read(from: &buf), memoryReversationForGrowth: try FfiConverterOptionUInt64.read(from: &buf), storeMemorySize: try FfiConverterOptionUInt64.read(from: &buf)
+        case 1: return .wasmtime(target: try FfiConverterOptionString.read(from: &buf), memoryReversation: try FfiConverterOptionUInt64.read(from: &buf), memoryReversationForGrowth: try FfiConverterOptionUInt64.read(from: &buf), storeMemorySize: try FfiConverterOptionUInt64.read(from: &buf), storeMaxInstance: try FfiConverterOptionUInt64.read(from: &buf)
         )
         
         default: throw UniffiInternalError.unexpectedEnumCase
@@ -1006,12 +1110,13 @@ public struct FfiConverterTypeWasmOptions: FfiConverterRustBuffer {
         switch value {
         
         
-        case let .wasmtime(target,memoryReversation,memoryReversationForGrowth,storeMemorySize):
+        case let .wasmtime(target,memoryReversation,memoryReversationForGrowth,storeMemorySize,storeMaxInstance):
             writeInt(&buf, Int32(1))
             FfiConverterOptionString.write(target, into: &buf)
             FfiConverterOptionUInt64.write(memoryReversation, into: &buf)
             FfiConverterOptionUInt64.write(memoryReversationForGrowth, into: &buf)
             FfiConverterOptionUInt64.write(storeMemorySize, into: &buf)
+            FfiConverterOptionUInt64.write(storeMaxInstance, into: &buf)
             
         }
     }
@@ -1108,6 +1213,30 @@ fileprivate struct FfiConverterOptionTypeOptions: FfiConverterRustBuffer {
         }
     }
 }
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+fileprivate struct FfiConverterOptionTypeUpdateOptions: FfiConverterRustBuffer {
+    typealias SwiftType = UpdateOptions?
+
+    public static func write(_ value: SwiftType, into buf: inout [UInt8]) {
+        guard let value = value else {
+            writeInt(&buf, Int8(0))
+            return
+        }
+        writeInt(&buf, Int8(1))
+        FfiConverterTypeUpdateOptions.write(value, into: &buf)
+    }
+
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> SwiftType {
+        switch try readInt(&buf) as Int8 {
+        case 0: return nil
+        case 1: return try FfiConverterTypeUpdateOptions.read(from: &buf)
+        default: throw UniffiInternalError.unexpectedOptionalTag
+        }
+    }
+}
 private let UNIFFI_RUST_FUTURE_POLL_READY: Int8 = 0
 private let UNIFFI_RUST_FUTURE_POLL_MAYBE_READY: Int8 = 1
 
@@ -1173,10 +1302,13 @@ private let initializationResult: InitializationResult = {
     if (uniffi_asyncify_wasm_checksum_method_asyncifywasm_call() != 2879) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_asyncify_wasm_checksum_method_asyncifywasm_start() != 31743) {
+    if (uniffi_asyncify_wasm_checksum_method_asyncifywasm_release() != 330) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_asyncify_wasm_checksum_constructor_asyncifywasm_new() != 17261) {
+    if (uniffi_asyncify_wasm_checksum_method_asyncifywasm_start() != 24159) {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if (uniffi_asyncify_wasm_checksum_constructor_asyncifywasm_new() != 48304) {
         return InitializationResult.apiChecksumMismatch
     }
 
