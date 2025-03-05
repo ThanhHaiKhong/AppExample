@@ -4,6 +4,7 @@
 import Foundation
 import AsyncWasm
 import MusicWasm
+import WasmSwiftProtobuf
 
 @objc public protocol MusicWasmManagerDelegate: AnyObject {
     func wasmEngineDidUpdate(_ newEngine: MusicWasmEngine)
@@ -161,7 +162,7 @@ public class MusicWasmManager: NSObject, @unchecked Sendable {
                 do {
                     try fileManager.createDirectory(at: wasmDirectory, withIntermediateDirectories: true, attributes: nil)
                 } catch {
-                    continuation.resume(throwing: error) // Trả về lỗi nếu tạo thư mục thất bại
+                    continuation.resume(throwing: error)
                     return
                 }
             }
@@ -169,6 +170,7 @@ public class MusicWasmManager: NSObject, @unchecked Sendable {
             let destinationURL = wasmDirectory.appendingPathComponent(url.lastPathComponent)
             
             let task = URLSession.shared.downloadTask(with: url) { tempURL, response, error in
+                let fileManager = FileManager()
                 if let error = error {
                     continuation.resume(throwing: error)
                     return
@@ -186,7 +188,6 @@ public class MusicWasmManager: NSObject, @unchecked Sendable {
                     try fileManager.moveItem(at: tempURL, to: destinationURL)
                     print("📄 Downloaded wasm file to: \(destinationURL.path)")
                     
-                    // Trả về đường dẫn file đã tải xuống
                     continuation.resume(returning: destinationURL.path)
                 } catch {
                     continuation.resume(throwing: error)

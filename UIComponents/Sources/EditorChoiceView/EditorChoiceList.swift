@@ -6,8 +6,8 @@
 //
 
 import ComposableArchitecture
-import TCADependencies
-import SwiftUI
+import RemoteConfigClient
+import Foundation
 
 @Reducer
 public struct EditorChoiceList: Sendable {

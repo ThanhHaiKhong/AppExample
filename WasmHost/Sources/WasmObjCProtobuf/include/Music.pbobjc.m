@@ -551,6 +551,7 @@ typedef struct MusicTrackDetails__storage_ {
 @dynamic URL;
 @dynamic hasQuality, quality;
 @dynamic hasMetadata, metadata;
+@dynamic hasMimeType, mimeType;
 
 typedef struct MusicTrackDetails_Format__storage_ {
   uint32_t _has_storage_[1];
@@ -558,6 +559,7 @@ typedef struct MusicTrackDetails_Format__storage_ {
   NSString *URL;
   NSString *quality;
   GPBStruct *metadata;
+  NSString *mimeType;
 } MusicTrackDetails_Format__storage_;
 
 // This method is threadsafe because it is initially called
@@ -602,6 +604,15 @@ typedef struct MusicTrackDetails_Format__storage_ {
         .offset = (uint32_t)offsetof(MusicTrackDetails_Format__storage_, metadata),
         .flags = GPBFieldOptional,
         .dataType = GPBDataTypeMessage,
+      },
+      {
+        .name = "mimeType",
+        .dataTypeSpecific.clazz = Nil,
+        .number = MusicTrackDetails_Format_FieldNumber_MimeType,
+        .hasIndex = 4,
+        .offset = (uint32_t)offsetof(MusicTrackDetails_Format__storage_, mimeType),
+        .flags = GPBFieldOptional,
+        .dataType = GPBDataTypeString,
       },
     };
     GPBDescriptor *localDescriptor =

@@ -110,27 +110,6 @@ GPB_FINAL @interface EngineVersion : GPBMessage
 
 @end
 
-#pragma mark - EngineVoid
-
-GPB_FINAL @interface EngineVoid : GPBMessage
-
-@end
-
-#pragma mark - EngineError
-
-typedef GPB_ENUM(EngineError_FieldNumber) {
-  EngineError_FieldNumber_Code = 1,
-  EngineError_FieldNumber_Reason = 2,
-};
-
-GPB_FINAL @interface EngineError : GPBMessage
-
-@property(nonatomic, readwrite) int32_t code;
-
-@property(nonatomic, readwrite, copy, null_resettable) NSString *reason;
-
-@end
-
 NS_ASSUME_NONNULL_END
 
 CF_EXTERN_C_END

@@ -61,8 +61,8 @@ let package = Package(
             name: "EditorChoiceView",
             dependencies: [
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
+                .product(name: "RemoteConfigClient", package: "TCADependencies"),
                 "Kingfisher",
-                "TCADependencies",
                 "UIConstants",
                 "UIModifiers"
             ]

@@ -6,6 +6,7 @@
 //
 import Foundation
 import SwiftProtobuf
+import WasmSwiftProtobuf
 #if canImport(UIKit)
 import UIKit
 #endif
@@ -51,10 +52,12 @@ extension AsyncifyCommand {
         self.options.bundleID = Bundle.main.bundleIdentifier ?? ""
 #if canImport(UIKit)
         self.options.deviceID = UIDevice.current.identifierForVendor?.uuidString ?? ""
+        self.options.platform = "\(UIDevice.current.systemName) \(UIDevice.current.systemVersion)"
 #endif
         self.options.countryCode = Locale.current.identifier
         self.options.languageCode = Locale.current.languageCode ?? "en"
         self.options.regionCode = Locale.current.regionCode ?? "US"
         self.options.appVersion = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? ("Unknown")
+        
     }
 }

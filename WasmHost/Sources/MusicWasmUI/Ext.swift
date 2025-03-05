@@ -8,7 +8,7 @@ import AsyncWasm
 import SwiftUI
 import MusicWasm
 import OSLog
-import WasmKit
+import WasmSwiftProtobuf
 
 extension EngineVersion: Identifiable {}
 
@@ -17,7 +17,7 @@ extension MusicTrack: Identifiable {}
 extension EngineVersion {
     public var isEmbedded: Bool { self.url.hasSuffix("embedded.wasm")}
 }
-extension MusicWasm.MusicTrack {
+extension MusicTrack {
     public var isPlaylist: Bool { self.kind.hasSuffix("#playlist") }
 }
 

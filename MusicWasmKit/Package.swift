@@ -18,11 +18,11 @@ let package = Package(
         .target(
             name: "MusicWasmKit",
             dependencies: [
+                .product(name: "MusicWasm", package: "WasmHost"),
+                .product(name: "MusicWasmUI", package: "WasmHost"),
                 .product(name: "AsyncWasm", package: "WasmHost"),
                 .product(name: "AsyncWasmObjC", package: "WasmHost"),
-                .product(name: "MusicWasm", package: "WasmHost"),
-                .product(name: "MusicWasmProtobuf", package: "WasmHost"),
-                .product(name: "MusicWasmUI", package: "WasmHost"),
+                .product(name: "WasmObjCProtobuf", package: "WasmHost"),
             ]
         ),
     ]

@@ -8,7 +8,6 @@
 import ComposableArchitecture
 import TCAInitializableReducer
 import GoogleMobileAds
-import SwiftUI
 
 @Reducer
 public struct Banner: TCAInitializableReducer, Sendable {

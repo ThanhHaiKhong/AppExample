@@ -7,7 +7,15 @@
 
 import Foundation
 import CryptoKit
+import WasmSwiftProtobuf
 
+func backoff(attempts: Int) -> TimeInterval {
+    if attempts > 13 {
+        return 2 * 60
+    }
+    let delay = pow(Double(attempts), M_E) * 0.1
+    return delay
+}
 actor WebSocketManager {
     
     class Connection {
@@ -19,7 +27,6 @@ actor WebSocketManager {
         var state = State.connecting
         var receive: (Data?) throws -> Void = {_ in }
         let lock = NSLock()
-        let logger = WALogger(subsystem: "ws", category: "conn")
         init(req: URLRequest) {
             self.req = req
         }
@@ -27,7 +34,7 @@ actor WebSocketManager {
             var attempts = 0
             while self.state != .connected {
                 attempts += 1
-                logger.debug("wait connenction to send data")
+                debugPrint("wait connenction to send data")
                 try await Task.sleep(nanoseconds: UInt64(backoff(attempts: attempts) * 1e9))
             }
             return try await withCheckedThrowingContinuation { continuation in
@@ -44,7 +51,7 @@ actor WebSocketManager {
         func connect(session: URLSession) throws {
             self.lock.lock()
             defer { self.lock.unlock()}
-            logger.debug("connecting")
+            debugPrint("connecting")
             self.state = .connecting
             self.task = session.webSocketTask(with: req)
             self.task?.resume()
@@ -56,7 +63,7 @@ actor WebSocketManager {
                     self.attempts = 0
                     self.state = .connected
                     self.lock.unlock()
-                    self.logger.debug("connected")
+                    debugPrint("connected")
                 }
             })
         }
@@ -71,7 +78,7 @@ actor WebSocketManager {
                         case .data(let data):
                             try self.receive(data)
                         @unknown default:
-                            self.logger.debug("Unknown message format received")
+                            debugPrint("Unknown message format received")
                         }
                         self.listen()
                     case .failure(let error):
@@ -88,7 +95,7 @@ actor WebSocketManager {
             self.lock.lock()
             attempts += 1
             self.lock.unlock()
-            self.logger.debug("[ws] \(attempts) retry for \(error.localizedDescription)")
+            debugPrint("[ws] \(attempts) retry for \(error.localizedDescription)")
             Thread.sleep(forTimeInterval: backoff(attempts: attempts))
             self.disconnect()
             if let session {

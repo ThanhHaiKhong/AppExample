@@ -221,6 +221,7 @@ typedef GPB_ENUM(MusicTrackDetails_Format_FieldNumber) {
   MusicTrackDetails_Format_FieldNumber_URL = 2,
   MusicTrackDetails_Format_FieldNumber_Quality = 3,
   MusicTrackDetails_Format_FieldNumber_Metadata = 4,
+  MusicTrackDetails_Format_FieldNumber_MimeType = 5,
 };
 
 GPB_FINAL @interface MusicTrackDetails_Format : GPBMessage
@@ -236,6 +237,10 @@ GPB_FINAL @interface MusicTrackDetails_Format : GPBMessage
 @property(nonatomic, readwrite, strong, null_resettable) GPBStruct *metadata;
 /** Test to see if @c metadata has been set. */
 @property(nonatomic, readwrite) BOOL hasMetadata;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *mimeType;
+/** Test to see if @c mimeType has been set. */
+@property(nonatomic, readwrite) BOOL hasMimeType;
 
 @end
 

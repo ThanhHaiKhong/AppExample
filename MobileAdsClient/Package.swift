@@ -34,6 +34,7 @@ let package = Package(
             dependencies: [
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
                 .product(name: "GoogleMobileAds", package: "swift-package-manager-google-mobile-ads"),
+                "MobileAdsClient",
             ]
         ),
         .target(

@@ -35,9 +35,7 @@
 // Forward declarations of Objective-C classes that we can use as
 // static values in struct initializers.
 // We don't use [Foo class] because it is not a static value.
-GPBObjCClassDeclaration(EngineError);
 GPBObjCClassDeclaration(EngineVersion);
-GPBObjCClassDeclaration(EngineVoid);
 
 #pragma mark - EngineRoot
 
@@ -201,96 +199,6 @@ typedef struct EngineVersion__storage_ {
         "\001\005!!!\000";
       [localDescriptor setupExtraTextInfo:extraTextFormatInfo];
     #endif  // !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
-    #if defined(DEBUG) && DEBUG
-      NSAssert(descriptor == nil, @"Startup recursed!");
-    #endif  // DEBUG
-    descriptor = localDescriptor;
-  }
-  return descriptor;
-}
-
-@end
-
-#pragma mark - EngineVoid
-
-@implementation EngineVoid
-
-
-typedef struct EngineVoid__storage_ {
-  uint32_t _has_storage_[1];
-} EngineVoid__storage_;
-
-// This method is threadsafe because it is initially called
-// in +initialize for each subclass.
-+ (GPBDescriptor *)descriptor {
-  static GPBDescriptor *descriptor = nil;
-  if (!descriptor) {
-    GPB_DEBUG_CHECK_RUNTIME_VERSIONS();
-    GPBDescriptor *localDescriptor =
-        [GPBDescriptor allocDescriptorForClass:GPBObjCClass(EngineVoid)
-                                   messageName:@"Void"
-                               fileDescription:&EngineRoot_FileDescription
-                                        fields:NULL
-                                    fieldCount:0
-                                   storageSize:sizeof(EngineVoid__storage_)
-                                         flags:(GPBDescriptorInitializationFlags)(GPBDescriptorInitializationFlag_UsesClassRefs | GPBDescriptorInitializationFlag_Proto3OptionalKnown | GPBDescriptorInitializationFlag_ClosedEnumSupportKnown)];
-    #if defined(DEBUG) && DEBUG
-      NSAssert(descriptor == nil, @"Startup recursed!");
-    #endif  // DEBUG
-    descriptor = localDescriptor;
-  }
-  return descriptor;
-}
-
-@end
-
-#pragma mark - EngineError
-
-@implementation EngineError
-
-@dynamic code;
-@dynamic reason;
-
-typedef struct EngineError__storage_ {
-  uint32_t _has_storage_[1];
-  int32_t code;
-  NSString *reason;
-} EngineError__storage_;
-
-// This method is threadsafe because it is initially called
-// in +initialize for each subclass.
-+ (GPBDescriptor *)descriptor {
-  static GPBDescriptor *descriptor = nil;
-  if (!descriptor) {
-    GPB_DEBUG_CHECK_RUNTIME_VERSIONS();
-    static GPBMessageFieldDescription fields[] = {
-      {
-        .name = "code",
-        .dataTypeSpecific.clazz = Nil,
-        .number = EngineError_FieldNumber_Code,
-        .hasIndex = 0,
-        .offset = (uint32_t)offsetof(EngineError__storage_, code),
-        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldClearHasIvarOnZero),
-        .dataType = GPBDataTypeInt32,
-      },
-      {
-        .name = "reason",
-        .dataTypeSpecific.clazz = Nil,
-        .number = EngineError_FieldNumber_Reason,
-        .hasIndex = 1,
-        .offset = (uint32_t)offsetof(EngineError__storage_, reason),
-        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldClearHasIvarOnZero),
-        .dataType = GPBDataTypeString,
-      },
-    };
-    GPBDescriptor *localDescriptor =
-        [GPBDescriptor allocDescriptorForClass:GPBObjCClass(EngineError)
-                                   messageName:@"Error"
-                               fileDescription:&EngineRoot_FileDescription
-                                        fields:fields
-                                    fieldCount:(uint32_t)(sizeof(fields) / sizeof(GPBMessageFieldDescription))
-                                   storageSize:sizeof(EngineError__storage_)
-                                         flags:(GPBDescriptorInitializationFlags)(GPBDescriptorInitializationFlag_UsesClassRefs | GPBDescriptorInitializationFlag_Proto3OptionalKnown | GPBDescriptorInitializationFlag_ClosedEnumSupportKnown)];
     #if defined(DEBUG) && DEBUG
       NSAssert(descriptor == nil, @"Startup recursed!");
     #endif  // DEBUG

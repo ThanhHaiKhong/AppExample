@@ -16,6 +16,7 @@ let package = Package(
         .singleTargetLibrary("InAppPurchaseClient"),
         .singleTargetLibrary("ImageMagickClient"),
         .singleTargetLibrary("SequenceImageClient"),
+        .singleTargetLibrary("RemoteConfigClient"),
         .singleTargetLibrary("Zipper"),
     ],
     dependencies: [

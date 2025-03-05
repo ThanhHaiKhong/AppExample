@@ -7,12 +7,11 @@
 import Foundation
 import SwiftProtobuf
 import UniformTypeIdentifiers
+import WasmSwiftProtobuf
 import WasmKit
 #if canImport(JavaScriptCore)
     import JavaScriptCore
 #endif
-
-extension EngineCallID: CallerID {}
 
 extension WAFuture {
     ///  Process future
@@ -27,7 +26,7 @@ extension WAFuture {
         let memory = instance.exports[memory: "memory"]!
         let cmd = try AsyncifyCommand(
             serializedBytes: memory.data(fromByteOffset: data, len: Int(len)))
-        try WALogger.host.debug("[\(outPtr.hex)] delegate \(cmd.jsonString())")
+        try debugPrint("[\(outPtr.hex)] delegate \(cmd.jsonString())")
         // required delegate action
         guard case let .delegate(act) = cmd.data else { fatalError() }
         let offset = try await {
@@ -162,7 +161,7 @@ extension WAFuture {
                 ), to: outPtr
             )
 
-            WALogger.host.debug("[\(outPtr.hex)] callbacking \(argsPtr.hex)")
+            debugPrint("[\(outPtr.hex)] callbacking \(argsPtr.hex)")
         } else {
             let f = WAFuture(
                 data: offsetPtr,
@@ -174,7 +173,7 @@ extension WAFuture {
             )
             try memory.copy(from: f, to: outPtr)
 
-            WALogger.host.debug("[\(outPtr.hex)] updated out to \(f)")
+            debugPrint("[\(outPtr.hex)] updated out to \(f)")
         }
 
         return [argsPtr, offsetPtr]

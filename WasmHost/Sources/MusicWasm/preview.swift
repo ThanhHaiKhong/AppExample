@@ -6,8 +6,7 @@
 //
 import Foundation
 import AsyncWasm
-import SwiftProtobuf
-import WasmKit
+import WasmSwiftProtobuf
 
 #if DEBUG
 public func preview(url: URL) async throws -> MusicWasmProtocol {
@@ -66,7 +65,6 @@ class PreviewWasmEngine: MusicWasmProtocol {
         try await simulate()
         return try MusicListTracks(jsonString: "")
     }
-    var instance: WasmKit.Instance { fatalError() }
     
     required init(file: URL) throws {
         fatalError()

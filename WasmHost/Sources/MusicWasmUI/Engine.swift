@@ -7,8 +7,8 @@
 import AsyncWasm
 import SwiftUI
 import MusicWasm
+import WasmSwiftProtobuf
 import OSLog
-import WasmKit
 
 public struct WasmBuilder {
     public var music: @Sendable (_ url: URL) async throws -> MusicWasmProtocol = {_ in fatalError() }

@@ -7,7 +7,7 @@
 
 #import "MusicWasmObjCTests.h"
 @import AsyncWasmObjC;
-@import MusicWasmProtobuf;
+@import WasmObjCProtobuf;
 @import MusicWasm;
 @implementation MusicWasmObjCTests {
     AsyncWasmEngine *_sut;
@@ -20,14 +20,14 @@
 }
 
 -(void)testGetVersion {
-    XCTestExpectation *getConfigureExpectation = [self expectationWithDescription:@"get version"];
+    XCTestExpectation *exp = [self expectationWithDescription:@"get version"];
     [self->_sut performSelector:@selector(versionWithCompletionHandler:)
                            args: @[]
                           clazz:EngineVersion.class
               completionHandler:^(EngineVersion* _Nullable version, NSError * _Nullable error) {
         XCTAssertNil(error);
         XCTAssertNotNil(version);
-        [getConfigureExpectation fulfill];
+        [exp fulfill];
     }];
     [self waitForExpectationsWithTimeout:5 handler:^(NSError *error) {
         
@@ -44,12 +44,13 @@
     XCTestExpectation *exp = [self expectationWithDescription:@"search with keyword"];
     NSArray *args = [NSArray arrayWithObjects:@"i known", @"all", @"", nil];
     [self->_sut performSelector:@selector(searchWithKeyword:scope:continuation:completionHandler:)
-                           args: args
+                           args:args
                           clazz:MusicListTracks.class
               completionHandler:^(MusicListTracks* _Nullable ret, NSError * _Nullable error) {
         XCTAssertNil(error);
         XCTAssertNotNil(ret);
         XCTAssertNotEqual(ret.itemsArray.count, 0);
+        NSLog(@"found %lu results", (unsigned long)ret.itemsArray_Count);
         [exp fulfill];
     }];
     [self waitForExpectationsWithTimeout:60 handler:^(NSError *error) {
@@ -61,15 +62,88 @@
     XCTestExpectation *exp = [self expectationWithDescription:@"suggestion with query"];
     NSArray *args = [NSArray arrayWithObjects:@"i known", nil];
     [self->_sut performSelector:@selector(suggestionWithKeyword:completionHandler:)
-                           args: args
+                           args:args
                           clazz:MusicListSuggestions.class
               completionHandler:^(MusicListSuggestions* _Nullable ret, NSError * _Nullable error) {
         XCTAssertNil(error);
         XCTAssertNotNil(ret);
         XCTAssertNotEqual(ret.suggestionsArray.count, 0);
+        NSLog(@"found %lu suggestions", (unsigned long)ret.suggestionsArray_Count);
         [exp fulfill];
     }];
     [self waitForExpectationsWithTimeout:10 handler:^(NSError *error) {
+        
+    }];
+}
+-(void)testGetTrending {
+    [self setMusicOptions];
+    XCTestExpectation *exp = [self expectationWithDescription:@"get discover"];
+    NSArray *args = [NSArray arrayWithObjects:@"1", @"", nil];
+    [self->_sut performSelector:@selector(getDiscoverWithCategory:continuation:completionHandler:)
+                           args:args
+                          clazz:MusicListTracks.class
+              completionHandler:^(MusicListTracks* _Nullable ret, NSError * _Nullable error) {
+        XCTAssertNil(error);
+        XCTAssertNotNil(ret);
+        XCTAssertNotEqual(ret.itemsArray.count, 0);
+        NSLog(@"found %lu tracks", (unsigned long)ret.itemsArray_Count);
+        [exp fulfill];
+    }];
+    [self waitForExpectationsWithTimeout:60 handler:^(NSError *error) {
+        
+    }];
+}
+-(void)testGetMusicOptions {
+    [self setMusicOptions];
+    XCTestExpectation *exp = [self expectationWithDescription:@"get music options"];
+    [self->_sut performSelector:@selector(optionsWithCompletionHandler:)
+                           args:@[]
+                          clazz:MusicListOptions.class
+              completionHandler:^(MusicListOptions* _Nullable ret, NSError * _Nullable error) {
+        XCTAssertNil(error);
+        XCTAssertNotNil(ret);
+        XCTAssertNotEqual(ret.providersArray_Count, 0);
+        NSLog(@"found %lu provider", (unsigned long)ret.providersArray_Count);
+        [exp fulfill];
+    }];
+    [self waitForExpectationsWithTimeout:200 handler:^(NSError *error) {
+        
+    }];
+}
+-(void)testGetDetails {
+    [self setMusicOptions];
+    XCTestExpectation *exp = [self expectationWithDescription:@"get details track"];
+    NSArray *args = [NSArray arrayWithObjects:@"kPa7bsKwL-c", nil];
+    [self->_sut performSelector:@selector(detailsWithVideoId:completionHandler:)
+                           args:args
+                          clazz:MusicTrackDetails.class
+              completionHandler:^(MusicTrackDetails* _Nullable ret, NSError * _Nullable error) {
+        XCTAssertNil(error);
+        XCTAssertNotNil(ret);
+        XCTAssert([ret.id_p isEqualToString:@"kPa7bsKwL-c"]);
+        XCTAssertNotEqual(ret.formatsArray.count, 0);
+        NSLog(@"found %lu formats", (unsigned long)ret.formatsArray_Count);
+        [exp fulfill];
+    }];
+    [self waitForExpectationsWithTimeout:200 handler:^(NSError *error) {
+        
+    }];
+}
+-(void)testGetMixPlaylistDetails {
+    [self setMusicOptions];
+    XCTestExpectation *exp = [self expectationWithDescription:@"get mixed playlist"];
+    NSArray *args = [NSArray arrayWithObjects:@"RDEMp7_432lokhimq4eaoILwZA", @"", nil];
+    [self->_sut performSelector:@selector(trackWithPlaylistId:continuation:completionHandler:)
+                           args:args
+                          clazz:MusicListTracks.class
+              completionHandler:^(MusicListTracks* _Nullable ret, NSError * _Nullable error) {
+        XCTAssertNil(error);
+        XCTAssertNotNil(ret);
+        XCTAssertNotEqual(ret.itemsArray.count, 0);
+        NSLog(@"found %lu tracks", (unsigned long)ret.itemsArray_Count);
+        [exp fulfill];
+    }];
+    [self waitForExpectationsWithTimeout:200 handler:^(NSError *error) {
         
     }];
 }

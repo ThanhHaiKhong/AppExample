@@ -15,9 +15,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "AsyncWasmObjC"
-               BuildableName = "AsyncWasmObjC"
-               BlueprintName = "AsyncWasmObjC"
+               BlueprintIdentifier = "SlidingRuler"
+               BuildableName = "SlidingRuler"
+               BlueprintName = "SlidingRuler"
                ReferencedContainer = "container:">
             </BuildableReference>
          </BuildActionEntry>
@@ -50,9 +50,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "AsyncWasmObjC"
-            BuildableName = "AsyncWasmObjC"
-            BlueprintName = "AsyncWasmObjC"
+            BlueprintIdentifier = "SlidingRuler"
+            BuildableName = "SlidingRuler"
+            BlueprintName = "SlidingRuler"
             ReferencedContainer = "container:">
          </BuildableReference>
       </MacroExpansion>

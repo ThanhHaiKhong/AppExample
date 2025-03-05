@@ -6,7 +6,6 @@
 //
 
 import ComposableArchitecture
-import MobileAdsClient
 import GoogleMobileAds
 import SwiftUI
 

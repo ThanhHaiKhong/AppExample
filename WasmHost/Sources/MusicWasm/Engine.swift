@@ -7,7 +7,7 @@
 import AsyncWasm
 import Foundation
 import SwiftProtobuf
-import WasmKit
+import WasmSwiftProtobuf
 
 extension MusicCallID: CallerID {}
 
@@ -34,7 +34,7 @@ public extension MusicWasmEngine {
             attempts += 1
             let val: MusicTrackDetails = try await cast(await details(vid: vid))
             if val.formats.isEmpty {
-                debugPrint("retrying...")
+                WALogger.host.debug("[\(vid)] \(attempts) retrying...")
                 try await Task.sleep(nanoseconds: UInt64(backoff(attempts: attempts) * 1_000_000_000))
                 continue
             }

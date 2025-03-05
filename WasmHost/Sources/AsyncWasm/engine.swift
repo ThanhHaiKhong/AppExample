@@ -6,7 +6,7 @@
 //
 import Foundation
 import SwiftProtobuf
-import WasmKit
+import WasmSwiftProtobuf
 
 public protocol AsyncWasmProtocol {
     var url: URL { get }
@@ -46,7 +46,6 @@ public extension AsyncWasmProtocol {
         var cmd = cmd
         cmd.options.contentType = contentType
         cmd.options.premium = premium
-        cmd.options.extra = Google_Protobuf_Struct(fields: [:])
         for (k, v) in copts {
             if let val = String(data: v, encoding: .utf8) {
                 cmd.options.extra[k] = Google_Protobuf_Value(stringValue: val)
@@ -80,34 +79,6 @@ public extension AsyncWasmProtocol {
     }
 }
 
-class AsyncWasmInstance: NSObject {
-    let _wasm: _AsyncWasm
-    var _initialized = false
-
-    public let url: URL
-    @objc
-    public var premium: Bool = false
-    @objc
-    public var copts: [String: Data] = [:]
-    let initialize: () async throws -> Data
-    required init(file: URL, initialize: @escaping () async throws -> Data) throws {
-        self.initialize = initialize
-        url = file
-        _wasm = try _AsyncWasm(path: file.path)
-    }
-    
-    func call(_ data: Data) async throws -> Data {
-        if !_initialized {
-            _initialized = true
-            _ = try await self.initialize()
-        }
-        return try await _wasm.call(data)
-    }
-    func release() async {
-        await _wasm.release()
-    }
-}
-
 public extension AsyncWasmProtocol {
     func version() async throws -> EngineVersion {
         var ret: EngineVersion = try await cast(await version())
@@ -115,7 +86,6 @@ public extension AsyncWasmProtocol {
         return ret
     }
 }
-
 @objc
 open class AsyncWasmEngine: NSObject, AsyncWasmProtocol {
     @objc
@@ -123,28 +93,25 @@ open class AsyncWasmEngine: NSObject, AsyncWasmProtocol {
     @objc
     public var premium: Bool = false {
         didSet {
-            if _wasm != nil {
-                _wasm.premium = premium
-            }
+            _wasm?.premium = premium
         }
     }
     @objc
     public var copts: [String : Data] = [:] {
         didSet {
-            if _wasm != nil {
-                _wasm.copts = copts
-            }
+            _wasm?.copts = copts
         }
     }
     
-    lazy var wasmer: () async throws -> AsyncWasmInstance = {
+    func wasmer() async throws -> WasmInstance {
         defer { WALogger.host.debug("loaded engine at \(self.url)") }
-        return try AsyncWasmInstance(file: self.url) { [weak self] in
+        return try await DefaultWasmInstance(file: self.url) {
+            [weak self] in
             let caller = try AsyncifyCommand.Call(id: EngineCallID.initialize)
             return try await self?.grpc_call(AsyncifyCommand(call: caller)) ?? Data()
         }
     }
-    private var _wasm: AsyncWasmInstance!
+    private var _wasm: WasmInstance?
     
     @objc
     public required init(file: URL) throws {
@@ -155,14 +122,14 @@ open class AsyncWasmEngine: NSObject, AsyncWasmProtocol {
     private func reinit() async throws {
         await self._wasm?.release()
         self._wasm = try await wasmer()
-        self._wasm.premium = premium
-        self._wasm.copts = copts
+        self._wasm?.premium = premium
+        self._wasm?.copts = copts
     }
-    func wasm() async throws -> AsyncWasmInstance {
+    func wasm() async throws -> WasmInstance {
         if (_wasm == nil) {
             try await self.reinit()
         }
-        return _wasm
+        return _wasm!
     }
     @objc(callWithData:completionHandler:)
     public func call(_ data: Data) async throws -> Data {
@@ -179,7 +146,7 @@ open class AsyncWasmEngine: NSObject, AsyncWasmProtocol {
         do {
             return try await body()
         } catch {
-            if error is WasmKit.Trap {
+            if try await self.wasm().rebuildWhen(error: error) {
                 try await self.reinit()
             }
             throw error

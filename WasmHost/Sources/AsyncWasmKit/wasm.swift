@@ -35,9 +35,9 @@ actor WasmTaskManager {
 }
 
 
-class _AsyncWasm {
+public class AsyncifyWasm {
     let instance: Instance
-    init(path: String) throws {
+    public init(path: String) throws {
         let module = try parseWasm(filePath: FilePath(path))
         let engine = Engine()
         let store = Store(engine: engine)
@@ -51,7 +51,18 @@ class _AsyncWasm {
                 assert(args.count == 2)
                 let memory = caller.instance!.exports[memory: "memory"]!
                 let msg = memory.string(fromByteOffset: args[0].i32, len: Int(args[1].i32)) ?? ""
-                WALogger.guest.debug(msg)
+                debugPrint(msg)
+                return []
+            }
+        ))
+        imports.define(module: "asyncify", name: "epoch_time", Function(
+            store: store,
+            parameters: [.i32],
+            body: { caller, args in
+                assert(args.count == 1)
+                let outPtr = args[0].i32
+                let memory = caller.instance!.exports[memory: "memory"]!
+                try memory.copy(from: "\(Date().timeIntervalSince1970)".to_wa(in: caller.instance!), to: outPtr)
                 return []
             }
         ))
@@ -60,7 +71,7 @@ class _AsyncWasm {
             parameters: [.i32],
             body: { _, args in
                 assert(args.count == 2)
-                WALogger.guest.debug("sleeping \(args[0].i32) us")
+                debugPrint("sleeping \(args[0].i32) us")
                 usleep(args[0].i32)
                 return []
             }
@@ -91,7 +102,7 @@ class _AsyncWasm {
                     let input = memory.load(fromByteOffset: args[1].i32, as: WAFuture.self)
                     let sema = DispatchSemaphore(value: 0)
                     Task.detached {
-                        WALogger.host.debug("[\(outPtr.hex)] started")
+                        debugPrint("[\(outPtr.hex)] started")
                         defer {
                             sema.signal()
                         }
@@ -104,7 +115,7 @@ class _AsyncWasm {
                         } catch {}
                     }
                     sema.wait()
-                    WALogger.host.debug("[\(outPtr.hex)] finished")
+                    debugPrint("[\(outPtr.hex)] finished")
                     return []
                 }
             }
@@ -134,13 +145,13 @@ class _AsyncWasm {
                             index: outPtr
                         ), to: outPtr
                     )
-                    WALogger.host.debug("[\(outPtr.hex)] enqueue task \(args.map { $0.i32.hex })")
-                    WALogger.host.debug("[\(outPtr.hex)] input <\(args[2].i32.hex)> \(input.debugDescription)")
+                    debugPrint("[\(outPtr.hex)] enqueue task \(args.map { $0.i32.hex })")
+                    debugPrint("[\(outPtr.hex)] input <\(args[2].i32.hex)> \(input.debugDescription)")
                     WasmTaskManager.shared.run(Task(priority: .background) {
                         // - store tasks with key `outPtr`
-                        WALogger.host.debug("[\(outPtr.hex)] async started")
+                        debugPrint("[\(outPtr.hex)] async started")
                         defer {
-                            WALogger.host.debug("[\(outPtr.hex)] async finished")
+                            debugPrint("[\(outPtr.hex)] async finished")
                         }
                         let deallocator = caller.instance!.exports[function: "release"]!
                         let memory = caller.instance!.exports[memory: "memory"]!
@@ -158,7 +169,7 @@ class _AsyncWasm {
                         var val: Data
                         // wasm call another async `get` function
                         if result.callback != 0 && result.index != 0 {
-                            WALogger.host.debug("[\(outPtr.hex)] call child \(result.index.hex)")
+                            debugPrint("[\(outPtr.hex)] call child \(result.index.hex)")
                             val = try await WasmTaskManager.shared.tasks[result.index]!.value
                         } else {
                             val = result.data(in: memory)
@@ -175,7 +186,7 @@ class _AsyncWasm {
                             try deallocator([.i32(argsPtr[0])])
                             try deallocator([.i32(argsPtr[1])])
                         } catch {}
-                        WALogger.host.debug("[\(outPtr.hex)] dequeue task")
+                        debugPrint("[\(outPtr.hex)] dequeue task")
                         return val
                     }, key: outPtr)
                     return []
@@ -189,7 +200,7 @@ class _AsyncWasm {
     /// call with input to caller wasm
     /// caller:
     /// - args: ouput, input_ptr, input_len
-    func call(_ data: Data) async throws -> Data {
+    public func call(_ data: Data) async throws -> Data {
         let caller = instance.exports[function: "call"]!
         let allocator = instance.exports[function: "allocate"]!
         let deallocator = instance.exports[function: "release"]!
@@ -215,11 +226,11 @@ class _AsyncWasm {
         return result.data(in: memory)
     }
 
-    func release() async {
+    public func release() async {
         await WasmTaskManager.shared.release()
     }
 
     deinit {
-        WALogger.host.debug("wasm deinit")
+        debugPrint("wasm deinit")
     }
 }

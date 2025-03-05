@@ -102,7 +102,7 @@ extension Effect {
     ) -> Self {
         withEscapedDependencies { escaped in
             .run(priority: priority) { send in
-                await try escaped.yield {
+                await escaped.yield {
                     do {
                         let adManager = DependencyValues._current.mobileAdsClient
                         

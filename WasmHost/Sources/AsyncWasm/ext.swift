@@ -5,6 +5,9 @@
 //  Created by L7Studio on 18/2/25.
 //
 import Foundation
+import WasmSwiftProtobuf
+
+extension EngineCallID: CallerID {}
 
 public func backoff(attempts: Int) -> TimeInterval {
     if attempts > 13 {
@@ -12,12 +15,6 @@ public func backoff(attempts: Int) -> TimeInterval {
     }
     let delay = pow(Double(attempts), M_E) * 0.1
     return delay
-}
-
-extension UInt32 {
-    var hex: String {
-        "0x" + String(self, radix: 16)
-    }
 }
 
 extension String {

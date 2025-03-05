@@ -3,6 +3,19 @@
 
 import PackageDescription
 
+#if FFI_DEBUG
+let ffiTargets: [PackageDescription.Target] = [
+    .binaryTarget(name: "mffi",
+                  path: "../../../target/ios/mffi_asyncify_wasm.xcframework.zip"),
+]
+#else
+let ffiTargets: [PackageDescription.Target] = [
+    .binaryTarget(name: "mffi",
+                  url: "https://wasm.sfo3.cdn.digitaloceanspaces.com/l7mobile.xcframework.zip",
+                  checksum: "ff288901ee0afb91904703754474ba367c5a07ef0d1f9f30e62816da5e6200f4"),
+]
+#endif
+
 let package = Package(
     name: "WasmHost",
     platforms: [
@@ -10,23 +23,39 @@ let package = Package(
     ],
     products: [
         .library(name: "AsyncWasm", targets: ["AsyncWasm"]),
+        .library(name: "AsyncWasmKit", targets: ["AsyncWasmKit"]),
         .library(name: "AsyncWasmObjC", targets: ["AsyncWasmObjC"]),
+        .library(name: "MobileFFI", targets: ["MobileFFI"]),
+        .library(name: "WasmObjCProtobuf", targets: ["WasmObjCProtobuf"]),
+        .library(name: "WasmSwiftProtobuf", targets: ["WasmSwiftProtobuf"]),
         .library(name: "MusicWasm", targets: ["MusicWasm"]),
-        .library(name: "MusicWasmUI", targets: ["MusicWasmUI"]),
-        .library(name: "MusicWasmProtobuf", targets: ["MusicWasmProtobuf"])
+        .library(name: "MusicWasmUI", type: .dynamic, targets: ["MusicWasmUI"])
     ],
     dependencies: [
         .package(url: "https://github.com/swiftwasm/WasmKit.git", from: "0.1.0"),
-        .package(url: "https://github.com/apple/swift-protobuf.git", from: "1.22.0")
+        .package(url: "https://github.com/apple/swift-protobuf.git", from: "1.22.0"),
+        .package(url: "https://github.com/CocoaLumberjack/CocoaLumberjack.git", from: "3.8.0")
     ],
-    targets: [
-        // Targets are the basic building blocks of a package, defining a module or a test suite.
-        // Targets can depend on other targets in this package and products from dependencies.
+    targets: ffiTargets + [
+        .target(
+            name: "WasmSwiftProtobuf",
+            dependencies: [
+                .product(name: "SwiftProtobuf", package: "swift-protobuf")
+            ]
+        ),
+        .target(
+            name: "AsyncWasmKit",
+            dependencies: [
+                .product(name: "WasmKit", package: "WasmKit"),
+                "WasmSwiftProtobuf",
+            ]
+        ),
         .target(
             name: "AsyncWasm",
             dependencies: [
-                .product(name: "WasmKit", package: "WasmKit"),
-                .product(name: "SwiftProtobuf", package: "swift-protobuf")
+                .product(name: "CocoaLumberjackSwift", package: "CocoaLumberjack"),
+                "WasmSwiftProtobuf",
+                "MobileFFI"
             ]
         ),
         .target(
@@ -69,13 +98,20 @@ let package = Package(
             publicHeadersPath: "include"
         ),
         .target(
-            name: "MusicWasmProtobuf",
+            name: "WasmObjCProtobuf",
             dependencies: [
                 "Protobuf",
             ],
             publicHeadersPath: "include",
             cSettings: [
                 .unsafeFlags(["-fno-objc-arc"])
+            ]
+        ),
+        .target(
+            name: "MobileFFI",
+            dependencies: [
+                "mffi",
+                "WasmSwiftProtobuf"
             ]
         ),
         .testTarget(name: "AsyncWasmTests",
@@ -90,7 +126,7 @@ let package = Package(
                     ]),
         .testTarget(name: "MusicWasmObjCTests",
                     dependencies: [
-                        "MusicWasmProtobuf",
+                        "WasmObjCProtobuf",
                         "AsyncWasmObjC",
                         "MusicWasm"
                     ],

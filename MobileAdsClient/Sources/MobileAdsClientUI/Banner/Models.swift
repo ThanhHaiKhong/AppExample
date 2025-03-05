@@ -6,7 +6,6 @@
 //
 
 import GoogleMobileAds
-import Foundation
 import SwiftUI
 
 // MARK: - AdvertisableType

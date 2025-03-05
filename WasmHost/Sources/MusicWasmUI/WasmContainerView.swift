@@ -7,6 +7,7 @@
 import AsyncWasm
 import OSLog
 import SwiftUI
+import WasmSwiftProtobuf
 
 @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
 public struct WasmContainerView<ContentView: View>: View {
@@ -74,20 +75,15 @@ public struct WasmContainerView<ContentView: View>: View {
                         .padding()
                     Button("Retry") {
                         self.updater.state = .initializing
-                        Task.detached {
-                            await checkUpdate()
-                        }
                     }
                     .buttonStyle(.borderedProminent)
                 }
             }
         }
-        .onChange(of: scenePhase) {  newPhase in
+        .onChange(of: scenePhase) { newPhase in
             if newPhase == .active {
                 if case .initializing = updater.state { return }
-                Task.detached {
-                    await checkUpdate()
-                }
+                self.updater.state = .initializing
             }
         }
         .toolbar {
