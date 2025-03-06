@@ -30,7 +30,7 @@ public struct PhotoFetcher: Sendable {
                 options.deliveryMode = .opportunistic
                 options.resizeMode = .fast
                 options.isNetworkAccessAllowed = true
-                options.isSynchronous = true
+                options.isSynchronous = false
                 
                 PHCachingImageManager.default().requestImage(for: asset, targetSize: targetSize, contentMode: .aspectFill, options: options) { image, info in
                     guard let info = info, info[PHImageResultIsDegradedKey] as? Bool == false else {
@@ -51,6 +51,31 @@ public struct PhotoFetcher: Sendable {
         }
     }
     
+    public var artworkImage: @Sendable (_ localIdentifier: String, _ targetSize: CGSize) async -> UIImage? = { localIdentifier, targetSize in
+        await withCheckedContinuation { continuation in
+            let fetchResult = PHAsset.fetchAssets(withLocalIdentifiers: [localIdentifier], options: nil)
+            guard let asset = fetchResult.firstObject else {
+                continuation.resume(returning: nil)
+                return
+            }
+
+            let options = PHImageRequestOptions()
+            options.isSynchronous = false
+            options.deliveryMode = .highQualityFormat
+            options.resizeMode = .exact
+            options.isNetworkAccessAllowed = true
+
+            PHImageManager.default().requestImage(
+                for: asset,
+                targetSize: targetSize,
+                contentMode: .aspectFill,
+                options: options
+            ) { image, _ in
+                continuation.resume(returning: image)
+            }
+        }
+    }
+    
     public var filePathURL: @Sendable (_ localIdentifier: String) async -> URL? = { localIdentifier in
         let results = PHAsset.fetchAssets(withLocalIdentifiers: [localIdentifier], options: nil)
         guard let asset = results.firstObject else { return nil }
@@ -64,12 +89,15 @@ public struct PhotoFetcher: Sendable {
         return await withTaskGroup(of: URL?.self) { group in
             for asset in assets {
                 group.addTask {
+                    /*
                     do {
                         return try await asset.fileURL()
                     } catch {
                         print("⚠️ Không thể lấy fileURL cho asset \(asset.localIdentifier): \(error)")
                         return nil
                     }
+                    */
+                    return await asset.getFilePath()
                 }
             }
 

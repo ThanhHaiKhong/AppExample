@@ -20,6 +20,8 @@ let package = Package(
             dependencies: [
                 .product(name: "MusicWasm", package: "WasmHost"),
                 .product(name: "AsyncWasm", package: "WasmHost"),
+                .product(name: "AsyncWasmObjC", package: "WasmHost"),
+                .product(name: "WasmObjCProtobuf", package: "WasmHost"),
             ]
         ),
     ]

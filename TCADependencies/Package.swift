@@ -9,14 +9,12 @@ let package = Package(
         .iOS(.v15)
     ],
     products: [
+        .singleTargetLibrary("InAppPurchaseClient"),
+        .singleTargetLibrary("PhotoLibraryClient"),
+        .singleTargetLibrary("RemoteConfigClient"),
         .singleTargetLibrary("TCADependencies"),
         .singleTargetLibrary("PhotoPermission"),
         .singleTargetLibrary("PhotoFetcher"),
-        .singleTargetLibrary("PhotoLibraryClient"),
-        .singleTargetLibrary("InAppPurchaseClient"),
-        .singleTargetLibrary("ImageMagickClient"),
-        .singleTargetLibrary("SequenceImageClient"),
-        .singleTargetLibrary("RemoteConfigClient"),
         .singleTargetLibrary("Zipper"),
     ],
     dependencies: [
@@ -31,30 +29,12 @@ let package = Package(
         .target(
             name: "TCADependencies",
             dependencies: [
-                "PhotoPermission",
-                "PhotoFetcher",
+                "InAppPurchaseClient",
                 "PhotoLibraryClient",
                 "RemoteConfigClient",
-                "ImageMagickClient",
+                "PhotoPermission",
+                "PhotoFetcher",
                 "Zipper",
-                "SequenceImageClient",
-                "InAppPurchaseClient",
-            ]
-        ),
-        .target(
-            name: "ImageMagickClient",
-            dependencies: [
-                .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
-                "PHAssetExtensions",
-                "ImageMagick"
-            ]
-        ),
-        .target(
-            name: "SequenceImageClient",
-            dependencies: [
-                .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
-                "PHAssetExtensions",
-                "ImageMagick"
             ]
         ),
         .target(

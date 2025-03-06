@@ -26,13 +26,16 @@ extension PHAsset {
         get async {
             var fileName: String? = self.value(forKey: "filename") as? String
             if fileName != nil {
+                #if DEBUG
+                print("PHASSET FILENAME: \(fileName!)")
+                #endif
                 return fileName
             }
             
             if let resource = PHAssetResource.assetResources(for: self).first {
                 fileName = resource.originalFilename
             }
-            
+            print("PHASSET ORIGINAL_FILENAME: \(fileName!)")
             return fileName
         }
     }
@@ -123,6 +126,7 @@ extension PHAsset {
     
     private func getImagePath() async -> URL? {
         let fileURL = await fileTemporaryURL()
+        
         if FileManager.default.fileExists(atPath: fileURL.path) {
             return fileURL
         } else {

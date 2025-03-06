@@ -2,6 +2,9 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:ImageMagickClient">
+   </FileRef>
+   <FileRef
       location = "group:MusicWasmKit">
    </FileRef>
    <FileRef

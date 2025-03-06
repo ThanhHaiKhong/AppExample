@@ -13,9 +13,29 @@ import SwiftUI
 
 @available(iOS 16.0, *)
 public struct EditorChoiceCardView: View {
+    
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+    @Environment(\.verticalSizeClass) private var verticalSizeClass
+    
     private let store: StoreOf<EditorChoiceCard>
     private let edgePadding: CGFloat = 12
     private let artworkSize: CGFloat = 40
+    private var width: CGFloat {
+        switch (horizontalSizeClass, verticalSizeClass) {
+        case (.compact, .regular):
+            return screenSize.width - UIConstants.Padding.horizontal * 2
+            
+        case (.regular, .regular):
+            return (screenSize.width - UIConstants.Padding.horizontal * 2 - UIConstants.Spacing.inner) / 2
+            
+        default:
+            return screenSize.width - UIConstants.Padding.horizontal * 2
+        }
+    }
+    
+    private var height: CGFloat {
+        width / 1.4
+    }
     
     public init(store: StoreOf<EditorChoiceCard>) {
         self.store = store
@@ -25,7 +45,7 @@ public struct EditorChoiceCardView: View {
         WithPerceptionTracking {
             RoundedRectangle(cornerRadius: UIConstants.Layers.cornerRadius)
                 .fill(.thinMaterial)
-                .frame(width: screenSize.width - UIConstants.Padding.horizontal * 2, height: (screenSize.width - UIConstants.Padding.horizontal * 2) / 1.4)
+                .frame(width: width, height: height)
                 .overlay {
                     KFImage(store.item.artworkURL)
                         .resizable()

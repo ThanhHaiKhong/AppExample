@@ -19,7 +19,7 @@ let ffiTargets: [PackageDescription.Target] = [
 let package = Package(
     name: "WasmHost",
     platforms: [
-        .macOS(.v11), .iOS(.v14),
+        .macOS(.v11), .iOS(.v14), .watchOS(.v7), .tvOS(.v14)
     ],
     products: [
         .library(name: "AsyncWasm", targets: ["AsyncWasm"]),
