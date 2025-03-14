@@ -14,10 +14,12 @@ public class Constants: NSObject {
     public enum Error: Int, LocalizedError {
         case requiredRecreateEngineError = 50000
         case maximumRetryExceededError
+        case missingSharedPrefereceError
         public var errorDescription: String? {
             switch self {
             case .requiredRecreateEngineError: "recreate the engine to use."
             case .maximumRetryExceededError: "maximum retry count exceeded"
+            case .missingSharedPrefereceError: "missing shared preference"
             }
         }
         

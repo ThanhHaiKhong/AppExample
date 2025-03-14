@@ -60,9 +60,7 @@ public struct PhotoFetcher: Sendable {
             }
 
             let options = PHImageRequestOptions()
-            options.isSynchronous = false
-            options.deliveryMode = .highQualityFormat
-            options.resizeMode = .exact
+            options.isSynchronous = true
             options.isNetworkAccessAllowed = true
 
             PHImageManager.default().requestImage(

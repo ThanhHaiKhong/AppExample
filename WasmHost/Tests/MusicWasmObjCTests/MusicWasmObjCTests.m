@@ -17,9 +17,11 @@
     NSURL *file = [SWIFTPM_MODULE_BUNDLE URLForResource:@"music" withExtension:@"wasm"];
     NSError * error = nil;
     self->_sut = [[MusicWasmEngine alloc] initWithFile:file error:&error];
+
 }
 
 -(void)testGetVersion {
+    [self waitForEngineStarted];
     XCTestExpectation *exp = [self expectationWithDescription:@"get version"];
     [self->_sut performSelector:@selector(versionWithCompletionHandler:)
                            args: @[]
@@ -27,13 +29,23 @@
               completionHandler:^(WAEngineVersion* _Nullable version, NSError * _Nullable error) {
         XCTAssertNil(error);
         XCTAssertNotNil(version);
+        NSLog(@"found version: %@", [version debugDescription]);
         [exp fulfill];
     }];
     [self waitForExpectationsWithTimeout:5 handler:^(NSError *error) {
         
     }];
 }
+-(void)waitForEngineStarted {
+    XCTestExpectation *exp = [self expectationWithDescription:@"success start"];
+    [self->_sut startWithCompletionHandler:^(NSError * _Nullable error) {
+        XCTAssertNil(error);
+        [exp fulfill];
+    }];
+    [self waitForExpectations:@[exp] timeout:60];
+}
 -(void)setMusicOptions {
+    [self waitForEngineStarted];
     WAMusicOptions *opts = [[WAMusicOptions alloc] init];
     opts.provider = @"youtube";
     self->_sut.copts = @{@"music": [opts data]};
@@ -42,6 +54,7 @@
 -(void)testSearch {
     [self setMusicOptions];
     XCTestExpectation *exp = [self expectationWithDescription:@"search with keyword"];
+  
     NSArray *args = [NSArray arrayWithObjects:@"i known", @"all", @"", nil];
     [self->_sut performSelector:@selector(searchWithKeyword:scope:continuation:completionHandler:)
                            args:args

@@ -9,11 +9,14 @@ import AsyncWasm
 import WasmSwiftProtobuf
 
 #if DEBUG
-public func preview(url: URL) async throws -> MusicWasmProtocol {
-    try PreviewWasmEngine(file: url)
+public func preview() async throws -> MusicWasmProtocol {
+     PreviewWasmEngine()
 }
 
 class PreviewWasmEngine: MusicWasmProtocol {
+  
+    var delegate: (any AsyncWasm.WasmInstanceDelegate)?
+    
     var error: Error?
     
     func initialize() async throws -> Data {
@@ -24,9 +27,9 @@ class PreviewWasmEngine: MusicWasmProtocol {
         MusicListOptions()
     }
     
-    var premium: Bool
+    var premium: Bool = false
     
-    var copts: [String : Data]
+    var copts: [String : Data] = [:]
     
     func suggestion(keyword: String) async throws -> MusicListSuggestions {
         fatalError()
@@ -36,12 +39,19 @@ class PreviewWasmEngine: MusicWasmProtocol {
         fatalError()
     }
     
-    var url: URL { fatalError() }
-    
+    var url: URL?
+    required init() {
+        fatalError()
+    }
+    required init(file: URL?) throws {
+        self.url = file
+    }
     func version() async throws -> Data {
         fatalError()
     }
-    
+    func start() async throws {
+        fatalError()
+    }
     func call(_ data: Data) async throws -> Data {
         fatalError()
     }
@@ -65,10 +75,7 @@ class PreviewWasmEngine: MusicWasmProtocol {
         try await simulate()
         return try MusicListTracks(jsonString: "")
     }
-    
-    required init(file: URL) throws {
-        fatalError()
-    }
+
     private func simulate() async throws {
         try await Task.sleep(nanoseconds: UInt64.random(in: 0..<5) * 1_000_000_000)
     }

@@ -20,8 +20,8 @@ public protocol MusicWasmProtocol: AsyncWasmProtocol {
     func discover(category: String, continuation: String?) async throws -> MusicListTracks
 }
 
-public func music(url: URL) async throws -> MusicWasmProtocol {
-    try MusicWasmEngine(file: url)
+public func music() async throws -> MusicWasmProtocol {
+    MusicWasmEngine()
 }
 
 public extension MusicWasmEngine {

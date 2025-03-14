@@ -432,6 +432,22 @@ fileprivate struct FfiConverterUInt64: FfiConverterPrimitive {
 #if swift(>=5.8)
 @_documentation(visibility: private)
 #endif
+fileprivate struct FfiConverterDouble: FfiConverterPrimitive {
+    typealias FfiType = Double
+    typealias SwiftType = Double
+
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> Double {
+        return try lift(readDouble(&buf))
+    }
+
+    public static func write(_ value: Double, into buf: inout [UInt8]) {
+        writeDouble(&buf, lower(value))
+    }
+}
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
 fileprivate struct FfiConverterString: FfiConverter {
     typealias SwiftType = String
     typealias FfiType = RustBuffer
@@ -495,9 +511,10 @@ public protocol AsyncifyWasmProtocol: AnyObject {
     
     func call(cmd: Data) async throws  -> Data
     
-    func release() async 
-    
-    func start(path: String, opts: Options?) async throws 
+    /**
+     * Start engine with specified wasm file path and options
+     */
+    func start(path: String?, opts: Options?) async throws 
     
 }
 open class AsyncifyWasm: AsyncifyWasmProtocol, @unchecked Sendable {
@@ -573,31 +590,16 @@ open func call(cmd: Data)async throws  -> Data  {
         )
 }
     
-open func release()async   {
-    return
-        try!  await uniffiRustCallAsync(
-            rustFutureFunc: {
-                uniffi_asyncify_wasm_fn_method_asyncifywasm_release(
-                    self.uniffiClonePointer()
-                    
-                )
-            },
-            pollFunc: ffi_asyncify_wasm_rust_future_poll_void,
-            completeFunc: ffi_asyncify_wasm_rust_future_complete_void,
-            freeFunc: ffi_asyncify_wasm_rust_future_free_void,
-            liftFunc: { $0 },
-            errorHandler: nil
-            
-        )
-}
-    
-open func start(path: String, opts: Options?)async throws   {
+    /**
+     * Start engine with specified wasm file path and options
+     */
+open func start(path: String?, opts: Options?)async throws   {
     return
         try  await uniffiRustCallAsync(
             rustFutureFunc: {
                 uniffi_asyncify_wasm_fn_method_asyncifywasm_start(
                     self.uniffiClonePointer(),
-                    FfiConverterString.lower(path),FfiConverterOptionTypeOptions.lower(opts)
+                    FfiConverterOptionString.lower(path),FfiConverterOptionTypeOptions.lower(opts)
                 )
             },
             pollFunc: ffi_asyncify_wasm_rust_future_poll_void,
@@ -664,39 +666,331 @@ public func FfiConverterTypeAsyncifyWasm_lower(_ value: AsyncifyWasm) -> UnsafeM
 
 
 
+
+
+public protocol AsyncifyWasmProvider: AnyObject {
+    
+    func flowOptions() throws  -> FlowOptions
+    
+    func updateOptions() throws  -> UpdateOptions
+    
+    func stateChanged(state: EngineState) 
+    
+    func setSharedPreference(key: String, value: Data) 
+    
+    func getSharedPreference(key: String)  -> Data?
+    
+}
+open class AsyncifyWasmProviderImpl: AsyncifyWasmProvider, @unchecked Sendable {
+    fileprivate let pointer: UnsafeMutableRawPointer!
+
+    /// Used to instantiate a [FFIObject] without an actual pointer, for fakes in tests, mostly.
+#if swift(>=5.8)
+    @_documentation(visibility: private)
+#endif
+    public struct NoPointer {
+        public init() {}
+    }
+
+    // TODO: We'd like this to be `private` but for Swifty reasons,
+    // we can't implement `FfiConverter` without making this `required` and we can't
+    // make it `required` without making it `public`.
+    required public init(unsafeFromRawPointer pointer: UnsafeMutableRawPointer) {
+        self.pointer = pointer
+    }
+
+    // This constructor can be used to instantiate a fake object.
+    // - Parameter noPointer: Placeholder value so we can have a constructor separate from the default empty one that may be implemented for classes extending [FFIObject].
+    //
+    // - Warning:
+    //     Any object instantiated with this constructor cannot be passed to an actual Rust-backed object. Since there isn't a backing [Pointer] the FFI lower functions will crash.
+#if swift(>=5.8)
+    @_documentation(visibility: private)
+#endif
+    public init(noPointer: NoPointer) {
+        self.pointer = nil
+    }
+
+#if swift(>=5.8)
+    @_documentation(visibility: private)
+#endif
+    public func uniffiClonePointer() -> UnsafeMutableRawPointer {
+        return try! rustCall { uniffi_asyncify_wasm_fn_clone_asyncifywasmprovider(self.pointer, $0) }
+    }
+    // No primary constructor declared for this class.
+
+    deinit {
+        guard let pointer = pointer else {
+            return
+        }
+
+        try! rustCall { uniffi_asyncify_wasm_fn_free_asyncifywasmprovider(pointer, $0) }
+    }
+
+    
+
+    
+open func flowOptions()throws  -> FlowOptions  {
+    return try  FfiConverterTypeFlowOptions_lift(try rustCallWithError(FfiConverterTypeAsyncifyWasmError_lift) {
+    uniffi_asyncify_wasm_fn_method_asyncifywasmprovider_flow_options(self.uniffiClonePointer(),$0
+    )
+})
+}
+    
+open func updateOptions()throws  -> UpdateOptions  {
+    return try  FfiConverterTypeUpdateOptions_lift(try rustCallWithError(FfiConverterTypeAsyncifyWasmError_lift) {
+    uniffi_asyncify_wasm_fn_method_asyncifywasmprovider_update_options(self.uniffiClonePointer(),$0
+    )
+})
+}
+    
+open func stateChanged(state: EngineState)  {try! rustCall() {
+    uniffi_asyncify_wasm_fn_method_asyncifywasmprovider_state_changed(self.uniffiClonePointer(),
+        FfiConverterTypeEngineState_lower(state),$0
+    )
+}
+}
+    
+open func setSharedPreference(key: String, value: Data)  {try! rustCall() {
+    uniffi_asyncify_wasm_fn_method_asyncifywasmprovider_set_shared_preference(self.uniffiClonePointer(),
+        FfiConverterString.lower(key),
+        FfiConverterData.lower(value),$0
+    )
+}
+}
+    
+open func getSharedPreference(key: String) -> Data?  {
+    return try!  FfiConverterOptionData.lift(try! rustCall() {
+    uniffi_asyncify_wasm_fn_method_asyncifywasmprovider_get_shared_preference(self.uniffiClonePointer(),
+        FfiConverterString.lower(key),$0
+    )
+})
+}
+    
+
+}
+// Magic number for the Rust proxy to call using the same mechanism as every other method,
+// to free the callback once it's dropped by Rust.
+private let IDX_CALLBACK_FREE: Int32 = 0
+// Callback return codes
+private let UNIFFI_CALLBACK_SUCCESS: Int32 = 0
+private let UNIFFI_CALLBACK_ERROR: Int32 = 1
+private let UNIFFI_CALLBACK_UNEXPECTED_ERROR: Int32 = 2
+
+// Put the implementation in a struct so we don't pollute the top-level namespace
+fileprivate struct UniffiCallbackInterfaceAsyncifyWasmProvider {
+
+    // Create the VTable using a series of closures.
+    // Swift automatically converts these into C callback functions.
+    //
+    // This creates 1-element array, since this seems to be the only way to construct a const
+    // pointer that we can pass to the Rust code.
+    static let vtable: [UniffiVTableCallbackInterfaceAsyncifyWasmProvider] = [UniffiVTableCallbackInterfaceAsyncifyWasmProvider(
+        flowOptions: { (
+            uniffiHandle: UInt64,
+            uniffiOutReturn: UnsafeMutablePointer<RustBuffer>,
+            uniffiCallStatus: UnsafeMutablePointer<RustCallStatus>
+        ) in
+            let makeCall = {
+                () throws -> FlowOptions in
+                guard let uniffiObj = try? FfiConverterTypeAsyncifyWasmProvider.handleMap.get(handle: uniffiHandle) else {
+                    throw UniffiInternalError.unexpectedStaleHandle
+                }
+                return try uniffiObj.flowOptions(
+                )
+            }
+
+            
+            let writeReturn = { uniffiOutReturn.pointee = FfiConverterTypeFlowOptions_lower($0) }
+            uniffiTraitInterfaceCallWithError(
+                callStatus: uniffiCallStatus,
+                makeCall: makeCall,
+                writeReturn: writeReturn,
+                lowerError: FfiConverterTypeAsyncifyWasmError_lower
+            )
+        },
+        updateOptions: { (
+            uniffiHandle: UInt64,
+            uniffiOutReturn: UnsafeMutablePointer<RustBuffer>,
+            uniffiCallStatus: UnsafeMutablePointer<RustCallStatus>
+        ) in
+            let makeCall = {
+                () throws -> UpdateOptions in
+                guard let uniffiObj = try? FfiConverterTypeAsyncifyWasmProvider.handleMap.get(handle: uniffiHandle) else {
+                    throw UniffiInternalError.unexpectedStaleHandle
+                }
+                return try uniffiObj.updateOptions(
+                )
+            }
+
+            
+            let writeReturn = { uniffiOutReturn.pointee = FfiConverterTypeUpdateOptions_lower($0) }
+            uniffiTraitInterfaceCallWithError(
+                callStatus: uniffiCallStatus,
+                makeCall: makeCall,
+                writeReturn: writeReturn,
+                lowerError: FfiConverterTypeAsyncifyWasmError_lower
+            )
+        },
+        stateChanged: { (
+            uniffiHandle: UInt64,
+            state: RustBuffer,
+            uniffiOutReturn: UnsafeMutableRawPointer,
+            uniffiCallStatus: UnsafeMutablePointer<RustCallStatus>
+        ) in
+            let makeCall = {
+                () throws -> () in
+                guard let uniffiObj = try? FfiConverterTypeAsyncifyWasmProvider.handleMap.get(handle: uniffiHandle) else {
+                    throw UniffiInternalError.unexpectedStaleHandle
+                }
+                return uniffiObj.stateChanged(
+                     state: try FfiConverterTypeEngineState_lift(state)
+                )
+            }
+
+            
+            let writeReturn = { () }
+            uniffiTraitInterfaceCall(
+                callStatus: uniffiCallStatus,
+                makeCall: makeCall,
+                writeReturn: writeReturn
+            )
+        },
+        setSharedPreference: { (
+            uniffiHandle: UInt64,
+            key: RustBuffer,
+            value: RustBuffer,
+            uniffiOutReturn: UnsafeMutableRawPointer,
+            uniffiCallStatus: UnsafeMutablePointer<RustCallStatus>
+        ) in
+            let makeCall = {
+                () throws -> () in
+                guard let uniffiObj = try? FfiConverterTypeAsyncifyWasmProvider.handleMap.get(handle: uniffiHandle) else {
+                    throw UniffiInternalError.unexpectedStaleHandle
+                }
+                return uniffiObj.setSharedPreference(
+                     key: try FfiConverterString.lift(key),
+                     value: try FfiConverterData.lift(value)
+                )
+            }
+
+            
+            let writeReturn = { () }
+            uniffiTraitInterfaceCall(
+                callStatus: uniffiCallStatus,
+                makeCall: makeCall,
+                writeReturn: writeReturn
+            )
+        },
+        getSharedPreference: { (
+            uniffiHandle: UInt64,
+            key: RustBuffer,
+            uniffiOutReturn: UnsafeMutablePointer<RustBuffer>,
+            uniffiCallStatus: UnsafeMutablePointer<RustCallStatus>
+        ) in
+            let makeCall = {
+                () throws -> Data? in
+                guard let uniffiObj = try? FfiConverterTypeAsyncifyWasmProvider.handleMap.get(handle: uniffiHandle) else {
+                    throw UniffiInternalError.unexpectedStaleHandle
+                }
+                return uniffiObj.getSharedPreference(
+                     key: try FfiConverterString.lift(key)
+                )
+            }
+
+            
+            let writeReturn = { uniffiOutReturn.pointee = FfiConverterOptionData.lower($0) }
+            uniffiTraitInterfaceCall(
+                callStatus: uniffiCallStatus,
+                makeCall: makeCall,
+                writeReturn: writeReturn
+            )
+        },
+        uniffiFree: { (uniffiHandle: UInt64) -> () in
+            let result = try? FfiConverterTypeAsyncifyWasmProvider.handleMap.remove(handle: uniffiHandle)
+            if result == nil {
+                print("Uniffi callback interface AsyncifyWasmProvider: handle missing in uniffiFree")
+            }
+        }
+    )]
+}
+
+private func uniffiCallbackInitAsyncifyWasmProvider() {
+    uniffi_asyncify_wasm_fn_init_callback_vtable_asyncifywasmprovider(UniffiCallbackInterfaceAsyncifyWasmProvider.vtable)
+}
+
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public struct FfiConverterTypeAsyncifyWasmProvider: FfiConverter {
+    fileprivate static let handleMap = UniffiHandleMap<AsyncifyWasmProvider>()
+
+    typealias FfiType = UnsafeMutableRawPointer
+    typealias SwiftType = AsyncifyWasmProvider
+
+    public static func lift(_ pointer: UnsafeMutableRawPointer) throws -> AsyncifyWasmProvider {
+        return AsyncifyWasmProviderImpl(unsafeFromRawPointer: pointer)
+    }
+
+    public static func lower(_ value: AsyncifyWasmProvider) -> UnsafeMutableRawPointer {
+        guard let ptr = UnsafeMutableRawPointer(bitPattern: UInt(truncatingIfNeeded: handleMap.insert(obj: value))) else {
+            fatalError("Cast to UnsafeMutableRawPointer failed")
+        }
+        return ptr
+    }
+
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> AsyncifyWasmProvider {
+        let v: UInt64 = try readInt(&buf)
+        // The Rust code won't compile if a pointer won't fit in a UInt64.
+        // We have to go via `UInt` because that's the thing that's the size of a pointer.
+        let ptr = UnsafeMutableRawPointer(bitPattern: UInt(truncatingIfNeeded: v))
+        if (ptr == nil) {
+            throw UniffiInternalError.unexpectedNullPointer
+        }
+        return try lift(ptr!)
+    }
+
+    public static func write(_ value: AsyncifyWasmProvider, into buf: inout [UInt8]) {
+        // This fiddling is because `Int` is the thing that's the same size as a pointer.
+        // The Rust code won't compile if a pointer won't fit in a `UInt64`.
+        writeInt(&buf, UInt64(bitPattern: Int64(Int(bitPattern: lower(value)))))
+    }
+}
+
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public func FfiConverterTypeAsyncifyWasmProvider_lift(_ pointer: UnsafeMutableRawPointer) throws -> AsyncifyWasmProvider {
+    return try FfiConverterTypeAsyncifyWasmProvider.lift(pointer)
+}
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public func FfiConverterTypeAsyncifyWasmProvider_lower(_ value: AsyncifyWasmProvider) -> UnsafeMutableRawPointer {
+    return FfiConverterTypeAsyncifyWasmProvider.lower(value)
+}
+
+
+
+
 public struct Options {
-    public var wasm: WasmOptions
-    public var update: UpdateOptions?
+    public var wasm: WasmOptions?
+    public var provider: AsyncifyWasmProvider?
 
     // Default memberwise initializers are never public by default, so we
     // declare one manually.
-    public init(wasm: WasmOptions, update: UpdateOptions?) {
+    public init(wasm: WasmOptions?, provider: AsyncifyWasmProvider?) {
         self.wasm = wasm
-        self.update = update
+        self.provider = provider
     }
 }
 
 #if compiler(>=6)
 extension Options: Sendable {}
 #endif
-
-
-extension Options: Equatable, Hashable {
-    public static func ==(lhs: Options, rhs: Options) -> Bool {
-        if lhs.wasm != rhs.wasm {
-            return false
-        }
-        if lhs.update != rhs.update {
-            return false
-        }
-        return true
-    }
-
-    public func hash(into hasher: inout Hasher) {
-        hasher.combine(wasm)
-        hasher.combine(update)
-    }
-}
 
 
 
@@ -707,14 +1001,14 @@ public struct FfiConverterTypeOptions: FfiConverterRustBuffer {
     public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> Options {
         return
             try Options(
-                wasm: FfiConverterTypeWasmOptions.read(from: &buf), 
-                update: FfiConverterOptionTypeUpdateOptions.read(from: &buf)
+                wasm: FfiConverterOptionTypeWasmOptions.read(from: &buf), 
+                provider: FfiConverterOptionTypeAsyncifyWasmProvider.read(from: &buf)
         )
     }
 
     public static func write(_ value: Options, into buf: inout [UInt8]) {
-        FfiConverterTypeWasmOptions.write(value.wasm, into: &buf)
-        FfiConverterOptionTypeUpdateOptions.write(value.update, into: &buf)
+        FfiConverterOptionTypeWasmOptions.write(value.wasm, into: &buf)
+        FfiConverterOptionTypeAsyncifyWasmProvider.write(value.provider, into: &buf)
     }
 }
 
@@ -1063,6 +1357,110 @@ extension AsyncifyWasmError: Foundation.LocalizedError {
 // Note that we don't yet support `indirect` for enums.
 // See https://github.com/mozilla/uniffi-rs/issues/396 for further discussion.
 
+public enum EngineState {
+    
+    case stopped
+    case starting
+    case updating(Double
+    )
+    case reload(EngineVersion
+    )
+    case running(EngineVersion
+    )
+    case releasing
+}
+
+
+#if compiler(>=6)
+extension EngineState: Sendable {}
+#endif
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public struct FfiConverterTypeEngineState: FfiConverterRustBuffer {
+    typealias SwiftType = EngineState
+
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> EngineState {
+        let variant: Int32 = try readInt(&buf)
+        switch variant {
+        
+        case 1: return .stopped
+        
+        case 2: return .starting
+        
+        case 3: return .updating(try FfiConverterDouble.read(from: &buf)
+        )
+        
+        case 4: return .reload(try FfiConverterTypeEngineVersion.read(from: &buf)
+        )
+        
+        case 5: return .running(try FfiConverterTypeEngineVersion.read(from: &buf)
+        )
+        
+        case 6: return .releasing
+        
+        default: throw UniffiInternalError.unexpectedEnumCase
+        }
+    }
+
+    public static func write(_ value: EngineState, into buf: inout [UInt8]) {
+        switch value {
+        
+        
+        case .stopped:
+            writeInt(&buf, Int32(1))
+        
+        
+        case .starting:
+            writeInt(&buf, Int32(2))
+        
+        
+        case let .updating(v1):
+            writeInt(&buf, Int32(3))
+            FfiConverterDouble.write(v1, into: &buf)
+            
+        
+        case let .reload(v1):
+            writeInt(&buf, Int32(4))
+            FfiConverterTypeEngineVersion.write(v1, into: &buf)
+            
+        
+        case let .running(v1):
+            writeInt(&buf, Int32(5))
+            FfiConverterTypeEngineVersion.write(v1, into: &buf)
+            
+        
+        case .releasing:
+            writeInt(&buf, Int32(6))
+        
+        }
+    }
+}
+
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public func FfiConverterTypeEngineState_lift(_ buf: RustBuffer) throws -> EngineState {
+    return try FfiConverterTypeEngineState.lift(buf)
+}
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public func FfiConverterTypeEngineState_lower(_ value: EngineState) -> RustBuffer {
+    return FfiConverterTypeEngineState.lower(value)
+}
+
+
+extension EngineState: Equatable, Hashable {}
+
+
+
+// Note that we don't yet support `indirect` for enums.
+// See https://github.com/mozilla/uniffi-rs/issues/396 for further discussion.
+
 public enum WasmOptions {
     
     case wasmtime(
@@ -1079,8 +1477,8 @@ public enum WasmOptions {
          * By default, linear memory will not be limited.
          */storeMemorySize: UInt64?, 
         /**
-         * Default is 10,000
-         */storeMaxInstance: UInt64?
+         * Default is 1
+         */instancePoolSize: UInt64?
     )
 }
 
@@ -1099,7 +1497,7 @@ public struct FfiConverterTypeWasmOptions: FfiConverterRustBuffer {
         let variant: Int32 = try readInt(&buf)
         switch variant {
         
-        case 1: return .wasmtime(target: try FfiConverterOptionString.read(from: &buf), memoryReversation: try FfiConverterOptionUInt64.read(from: &buf), memoryReversationForGrowth: try FfiConverterOptionUInt64.read(from: &buf), storeMemorySize: try FfiConverterOptionUInt64.read(from: &buf), storeMaxInstance: try FfiConverterOptionUInt64.read(from: &buf)
+        case 1: return .wasmtime(target: try FfiConverterOptionString.read(from: &buf), memoryReversation: try FfiConverterOptionUInt64.read(from: &buf), memoryReversationForGrowth: try FfiConverterOptionUInt64.read(from: &buf), storeMemorySize: try FfiConverterOptionUInt64.read(from: &buf), instancePoolSize: try FfiConverterOptionUInt64.read(from: &buf)
         )
         
         default: throw UniffiInternalError.unexpectedEnumCase
@@ -1110,13 +1508,13 @@ public struct FfiConverterTypeWasmOptions: FfiConverterRustBuffer {
         switch value {
         
         
-        case let .wasmtime(target,memoryReversation,memoryReversationForGrowth,storeMemorySize,storeMaxInstance):
+        case let .wasmtime(target,memoryReversation,memoryReversationForGrowth,storeMemorySize,instancePoolSize):
             writeInt(&buf, Int32(1))
             FfiConverterOptionString.write(target, into: &buf)
             FfiConverterOptionUInt64.write(memoryReversation, into: &buf)
             FfiConverterOptionUInt64.write(memoryReversationForGrowth, into: &buf)
             FfiConverterOptionUInt64.write(storeMemorySize, into: &buf)
-            FfiConverterOptionUInt64.write(storeMaxInstance, into: &buf)
+            FfiConverterOptionUInt64.write(instancePoolSize, into: &buf)
             
         }
     }
@@ -1193,6 +1591,54 @@ fileprivate struct FfiConverterOptionString: FfiConverterRustBuffer {
 #if swift(>=5.8)
 @_documentation(visibility: private)
 #endif
+fileprivate struct FfiConverterOptionData: FfiConverterRustBuffer {
+    typealias SwiftType = Data?
+
+    public static func write(_ value: SwiftType, into buf: inout [UInt8]) {
+        guard let value = value else {
+            writeInt(&buf, Int8(0))
+            return
+        }
+        writeInt(&buf, Int8(1))
+        FfiConverterData.write(value, into: &buf)
+    }
+
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> SwiftType {
+        switch try readInt(&buf) as Int8 {
+        case 0: return nil
+        case 1: return try FfiConverterData.read(from: &buf)
+        default: throw UniffiInternalError.unexpectedOptionalTag
+        }
+    }
+}
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+fileprivate struct FfiConverterOptionTypeAsyncifyWasmProvider: FfiConverterRustBuffer {
+    typealias SwiftType = AsyncifyWasmProvider?
+
+    public static func write(_ value: SwiftType, into buf: inout [UInt8]) {
+        guard let value = value else {
+            writeInt(&buf, Int8(0))
+            return
+        }
+        writeInt(&buf, Int8(1))
+        FfiConverterTypeAsyncifyWasmProvider.write(value, into: &buf)
+    }
+
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> SwiftType {
+        switch try readInt(&buf) as Int8 {
+        case 0: return nil
+        case 1: return try FfiConverterTypeAsyncifyWasmProvider.read(from: &buf)
+        default: throw UniffiInternalError.unexpectedOptionalTag
+        }
+    }
+}
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
 fileprivate struct FfiConverterOptionTypeOptions: FfiConverterRustBuffer {
     typealias SwiftType = Options?
 
@@ -1217,8 +1663,8 @@ fileprivate struct FfiConverterOptionTypeOptions: FfiConverterRustBuffer {
 #if swift(>=5.8)
 @_documentation(visibility: private)
 #endif
-fileprivate struct FfiConverterOptionTypeUpdateOptions: FfiConverterRustBuffer {
-    typealias SwiftType = UpdateOptions?
+fileprivate struct FfiConverterOptionTypeWasmOptions: FfiConverterRustBuffer {
+    typealias SwiftType = WasmOptions?
 
     public static func write(_ value: SwiftType, into buf: inout [UInt8]) {
         guard let value = value else {
@@ -1226,17 +1672,105 @@ fileprivate struct FfiConverterOptionTypeUpdateOptions: FfiConverterRustBuffer {
             return
         }
         writeInt(&buf, Int8(1))
-        FfiConverterTypeUpdateOptions.write(value, into: &buf)
+        FfiConverterTypeWasmOptions.write(value, into: &buf)
     }
 
     public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> SwiftType {
         switch try readInt(&buf) as Int8 {
         case 0: return nil
-        case 1: return try FfiConverterTypeUpdateOptions.read(from: &buf)
+        case 1: return try FfiConverterTypeWasmOptions.read(from: &buf)
         default: throw UniffiInternalError.unexpectedOptionalTag
         }
     }
 }
+
+
+/**
+ * Typealias from the type name used in the UDL file to the builtin type.  This
+ * is needed because the UDL type name is used in function/method signatures.
+ */
+public typealias EngineVersion = Data
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public struct FfiConverterTypeEngineVersion: FfiConverter {
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> EngineVersion {
+        return try FfiConverterData.read(from: &buf)
+    }
+
+    public static func write(_ value: EngineVersion, into buf: inout [UInt8]) {
+        return FfiConverterData.write(value, into: &buf)
+    }
+
+    public static func lift(_ value: RustBuffer) throws -> EngineVersion {
+        return try FfiConverterData.lift(value)
+    }
+
+    public static func lower(_ value: EngineVersion) -> RustBuffer {
+        return FfiConverterData.lower(value)
+    }
+}
+
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public func FfiConverterTypeEngineVersion_lift(_ value: RustBuffer) throws -> EngineVersion {
+    return try FfiConverterTypeEngineVersion.lift(value)
+}
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public func FfiConverterTypeEngineVersion_lower(_ value: EngineVersion) -> RustBuffer {
+    return FfiConverterTypeEngineVersion.lower(value)
+}
+
+
+
+/**
+ * Typealias from the type name used in the UDL file to the builtin type.  This
+ * is needed because the UDL type name is used in function/method signatures.
+ */
+public typealias FlowOptions = Data
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public struct FfiConverterTypeFlowOptions: FfiConverter {
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> FlowOptions {
+        return try FfiConverterData.read(from: &buf)
+    }
+
+    public static func write(_ value: FlowOptions, into buf: inout [UInt8]) {
+        return FfiConverterData.write(value, into: &buf)
+    }
+
+    public static func lift(_ value: RustBuffer) throws -> FlowOptions {
+        return try FfiConverterData.lift(value)
+    }
+
+    public static func lower(_ value: FlowOptions) -> RustBuffer {
+        return FfiConverterData.lower(value)
+    }
+}
+
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public func FfiConverterTypeFlowOptions_lift(_ value: RustBuffer) throws -> FlowOptions {
+    return try FfiConverterTypeFlowOptions.lift(value)
+}
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public func FfiConverterTypeFlowOptions_lower(_ value: FlowOptions) -> RustBuffer {
+    return FfiConverterTypeFlowOptions.lower(value)
+}
+
 private let UNIFFI_RUST_FUTURE_POLL_READY: Int8 = 0
 private let UNIFFI_RUST_FUTURE_POLL_MAYBE_READY: Int8 = 1
 
@@ -1302,16 +1836,29 @@ private let initializationResult: InitializationResult = {
     if (uniffi_asyncify_wasm_checksum_method_asyncifywasm_call() != 2879) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_asyncify_wasm_checksum_method_asyncifywasm_release() != 330) {
+    if (uniffi_asyncify_wasm_checksum_method_asyncifywasm_start() != 1002) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_asyncify_wasm_checksum_method_asyncifywasm_start() != 24159) {
+    if (uniffi_asyncify_wasm_checksum_method_asyncifywasmprovider_flow_options() != 10786) {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if (uniffi_asyncify_wasm_checksum_method_asyncifywasmprovider_update_options() != 465) {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if (uniffi_asyncify_wasm_checksum_method_asyncifywasmprovider_state_changed() != 47016) {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if (uniffi_asyncify_wasm_checksum_method_asyncifywasmprovider_set_shared_preference() != 18886) {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if (uniffi_asyncify_wasm_checksum_method_asyncifywasmprovider_get_shared_preference() != 14187) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_asyncify_wasm_checksum_constructor_asyncifywasm_new() != 48304) {
         return InitializationResult.apiChecksumMismatch
     }
 
+    uniffiCallbackInitAsyncifyWasmProvider()
     return InitializationResult.ok
 }()
 

@@ -11,11 +11,9 @@ import WasmSwiftProtobuf
 
 @available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
 public struct WasmContainerView<ContentView: View>: View {
-    @Environment(\.scenePhase) private var scenePhase
     @Bindable var engine: WasmEngine
     @ViewBuilder var contentView: (EngineVersion) -> ContentView
     @Environment(\.wasmBuilder) var builder
-    var updater: Updater { engine.updater }
     public enum Mode { case manual, automatic}
     let mode: Mode
     public init(engine: WasmEngine,
@@ -27,47 +25,24 @@ public struct WasmContainerView<ContentView: View>: View {
     }
     public var body: some View {
         VStack {
-            switch updater.state {
-            case .initializing:
+            switch engine.state {
+            case .stopped, .starting:
                 ProgressView()
-                    .task {
-                        await checkUpdate()
-                    }
-            case let .initialized(version):
-                VStack {
-                    Button("Continue with \(version.next.name)") {
-                        Task.detached {
-                            try await updater.download(version: version.next)
-                        }
-                    }
-                    .buttonStyle(.borderedProminent)
-                    .padding()
-                    .toolbar {
-                        ToolbarItem(placement: .primaryAction) {
-                            Button("Skip with \(version.name)") {
-                                Task.detached {
-                                    try await updater.download(version: version)
-                                }
-                            }
-                        }
-                    }
-                    Button("Reset", role: .destructive) {
-                        Task.detached {
-                            try await engine.remove(for: version)
-                            await MainActor.run {
-                                self.updater.state = .initializing
-                            }
-                        }
-                    }
-                }
-            case let .downloading(ver, val):
+            case let .updating(val):
                 ProgressView(value: val) {
-                    Text("Downloading \(ver.name) ...")
+                    Text("Downloading ...")
                 }
                 .progressViewStyle(.linear)
                 .padding()
-            case let .done(version):
+            case let .reload(ver):
+                ProgressView() {
+                    Text("Reloading \(ver.name)...")
+                }
+                .padding()
+            case let .running(version):
                 contentView(version)
+            case .releasing:
+                EmptyView()
             case let .failed(error):
                 ScrollView {
                     VStack {
@@ -75,71 +50,20 @@ public struct WasmContainerView<ContentView: View>: View {
                             .font(.body)
                             .padding()
                         Button("Retry") {
-                            self.updater.state = .initializing
+                            
                         }
                         .buttonStyle(.borderedProminent)
                     }
                 }
             }
         }
-        .onChange(of: scenePhase) { newPhase in
-            if newPhase == .active {
-                if case .initializing = updater.state { return }
-                self.updater.state = .initializing
-            }
-        }
-        .toolbar {
-            if case let .done(version) = updater.state {
-                ToolbarItem(placement: .primaryAction) {
-                    NavigationLink {
-                        SettingsView(engine: engine, version: version)
-                    } label: {
-                        Image(systemName: "gear")
-                    }
-                }
+        .task {
+            do {
+                try await self.engine.load(with: builder)
+            } catch {
+                self.engine.state = .failed(error)
             }
         }
     }
-    
-    func checkUpdate() async {
-        do {
-            // load selected or embedded
-            try await engine.load(with: builder, version: nil)
-            let version = try await engine.checkUpdate()
-            try await updater.initialize(version: version)
-            if version.hasNext {
-                if case .automatic = mode {
-                    Task.detached {
-                        try await updater.download(version: version.next)
-                    }
-                } else {
-                    updater.state = .initialized(version)
-                }
-            } else {
-                updater.state = .done(version)
-            }
-        } catch is CancellationError {
-        } catch {
-            updater.state = .failed(error)
-        }
-    }
-}
-@available(iOS 17, macOS 14, tvOS 17, watchOS 10, *)
-struct SettingsView: View {
-    @Environment(\.dismiss) var dismiss
-    @Bindable var engine: WasmEngine
-    let version: EngineVersion
-    var body: some View {
-        List {
-            Button("Reset", role: .destructive) {
-                Task {
-                    try await engine.remove(for: version)
-                    await MainActor.run {
-                        self.engine.updater.state = .initializing
-                        dismiss()
-                    }
-                }
-            }
-        }
-    }
+
 }

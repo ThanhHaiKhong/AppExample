@@ -6,7 +6,7 @@ import PackageDescription
 let package = Package(
     name: "MusicWasmKit",
     platforms: [
-        .iOS(.v15)
+        .iOS(.v15), .watchOS(.v7)
     ],
     products: [
         .singleTargetLibrary("MusicWasmKit"),

@@ -28,6 +28,30 @@ public class MusicWasmManager: NSObject, @unchecked Sendable {
         super.init()
     }
     
+    public func autoInitialize() {
+        initializeWasmEngine()
+    }
+    
+    private func initializeWasmEngine() {
+        Task {
+            do {
+                if let engine = try await MusicWasm.music() as? MusicWasmEngine {
+                    wasmEngine = engine
+                    if let wasmEngine {
+                        try await wasmEngine.start()
+                        var options = MusicOptions()
+                        options.provider = "youtube"
+                        wasmEngine.copts["music"] = try options.serializedData()
+                    }
+                    notifyUpdate()
+                    print("✅ WasmEngine updated.")
+                }
+            } catch {
+                print("⚠️ Error initializing WasmEngine: \(error)")
+            }
+        }
+    }
+    
     public func initialize(withWasmPath path: String) {
         self.wasmPath = path
         setupWasmFile()
@@ -82,6 +106,7 @@ public class MusicWasmManager: NSObject, @unchecked Sendable {
     }
     
     private func updateWasmEngine() {
+        /*
         guard let wasmPath = wasmPath else {
             print("⚠️ Error: Wasm path is not set!")
             return
@@ -100,6 +125,25 @@ public class MusicWasmManager: NSObject, @unchecked Sendable {
             notifyUpdate()
         } catch {
             print("⚠️ Error initializing WasmEngine: \(error)")
+        }
+        */
+        
+        Task {
+            do {
+                if let engine = try await MusicWasm.music() as? MusicWasmEngine {
+                    wasmEngine = engine
+                    if let wasmEngine {
+                        try await wasmEngine.start()
+                        var options = MusicOptions()
+                        options.provider = "youtube"
+                        wasmEngine.copts["music"] = try options.serializedData()
+                    }
+                    notifyUpdate()
+                    print("✅ WasmEngine updated.")
+                }
+            } catch {
+                print("⚠️ Error initializing WasmEngine: \(error)")
+            }
         }
     }
     

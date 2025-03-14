@@ -16,6 +16,7 @@ let package = Package(
         .singleTargetLibrary("BlurView"),
         .singleTargetLibrary("EditorChoiceView"),
         .singleTargetLibrary("SettingsView"),
+        .singleTargetLibrary("ModalTransition"),
     ],
     dependencies: [
         .package(url: "https://github.com/pointfreeco/swift-composable-architecture.git", branch: "main"),
@@ -36,6 +37,7 @@ let package = Package(
                 "BlurView",
                 "EditorChoiceView",
                 "SettingsView",
+                "ModalTransition"
             ]
         ),
         .target(
@@ -74,6 +76,12 @@ let package = Package(
                 "UIConstants",
                 "UIModifiers",
                 "BlurView"
+            ]
+        ),
+        .target(
+            name: "ModalTransition",
+            dependencies: [
+                
             ]
         )
     ]

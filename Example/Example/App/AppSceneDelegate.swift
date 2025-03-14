@@ -11,6 +11,7 @@ import NotificationsClientUI
 import Combine
 import SwiftUI
 import UIKit
+import ModalTransition
 
 class AppSceneDelegate: UIResponder, UIWindowSceneDelegate {
     public var window: UIWindow?
@@ -25,23 +26,22 @@ class AppSceneDelegate: UIResponder, UIWindowSceneDelegate {
                 Subscriptions()
             }
         ))
-        */
+        
+        let hostingViewController = UIHostingController(rootView: NotificationView(store: Store(
+            initialState: Notifications.State()) {
+                Notifications()
+            }
+        ))
         
         let hostingViewController = UIHostingController(rootView: GoogleAdsView(store: Store(
             initialState: GoogleAds.State()) {
                 GoogleAds()
             }
         ))
-        
-        /*
-        let hostingViewController = UIHostingController(rootView: NotificationView(store: Store(
-            initialState: Notifications.State()) {
-                Notifications()
-            }
-        ))
         */
+        
         let window = AppUIWindow(windowScene: windowScene)
-        window.rootViewController = hostingViewController
+        window.rootViewController = PhotoViewController()
         window.makeKeyAndVisible()
         
         self.window = window
@@ -59,7 +59,7 @@ class AppSceneDelegate: UIResponder, UIWindowSceneDelegate {
                 
             } else if try await adManager.shouldShowAd(appOpen, rules) {
                 try await adManager.requestTrackingAuthorizationIfNeeded()
-                try await adManager.showAd()
+//                try await adManager.showAd()
             }
         }
     }

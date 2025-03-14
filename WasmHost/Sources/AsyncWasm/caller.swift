@@ -48,16 +48,22 @@ extension AsyncifyCommand {
         self.requestID = UUID().uuidString
         self.kind = .call
         self.call = call
-        self.options.contentType = "application/json"
-        self.options.bundleID = Bundle.main.bundleIdentifier ?? ""
+        self.options = AsyncifyOptions.default()
+    }
+}
+extension AsyncifyOptions {
+    static func `default`() -> Self {
+        var val = AsyncifyOptions()
+        val.contentType = "application/json"
+        val.bundleID = Bundle.main.bundleIdentifier ?? ""
 #if canImport(UIKit)
-        self.options.deviceID = UIDevice.current.identifierForVendor?.uuidString ?? ""
-        self.options.platform = "\(UIDevice.current.systemName) \(UIDevice.current.systemVersion)"
+        val.deviceID = UIDevice.current.identifierForVendor?.uuidString ?? ""
+        val.platform = "\(UIDevice.current.systemName) \(UIDevice.current.systemVersion)"
 #endif
-        self.options.countryCode = Locale.current.identifier
-        self.options.languageCode = Locale.current.languageCode ?? "en"
-        self.options.regionCode = Locale.current.regionCode ?? "US"
-        self.options.appVersion = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? ("Unknown")
-        
+        val.countryCode = Locale.current.identifier
+        val.languageCode = Locale.current.languageCode ?? "en"
+        val.regionCode = Locale.current.regionCode ?? "US"
+        val.appVersion = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? ("Unknown")
+        return val
     }
 }

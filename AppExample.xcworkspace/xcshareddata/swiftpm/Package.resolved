@@ -1,5 +1,5 @@
 {
-  "originHash" : "ca6c26902d4ba00e78dae0ab03a9d7f416e4625b6688f300387208d4a7b8bf27",
+  "originHash" : "c35a8555ca5abe8edfd47e8e535004e7e44471f4e1379c459761fe748d7d7239",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -101,6 +101,15 @@
       }
     },
     {
+      "identity" : "hero",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/HeroTransitions/Hero.git",
+      "state" : {
+        "revision" : "670b81ed3d95f7183bbc009d0ec67c71506557b5",
+        "version" : "1.6.4"
+      }
+    },
+    {
       "identity" : "interop-ios-for-google-sdks",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/google/interop-ios-for-google-sdks.git",
@@ -152,15 +161,6 @@
       "state" : {
         "revision" : "dd013309755d75d8636fd7fb89bb25da34b92c7e",
         "version" : "0.20.0"
-      }
-    },
-    {
-      "identity" : "swift-argument-parser",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/apple/swift-argument-parser",
-      "state" : {
-        "revision" : "41982a3656a71c768319979febd796c6fd111d5c",
-        "version" : "1.5.0"
       }
     },
     {
@@ -305,24 +305,6 @@
       "state" : {
         "revision" : "0687f71944021d616d34d922343dcef086855920",
         "version" : "600.0.1"
-      }
-    },
-    {
-      "identity" : "swift-system",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/apple/swift-system",
-      "state" : {
-        "revision" : "d2ba781702a1d8285419c15ee62fd734a9437ff5",
-        "version" : "1.3.2"
-      }
-    },
-    {
-      "identity" : "wasmkit",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/swiftwasm/WasmKit.git",
-      "state" : {
-        "revision" : "68490fecd15fd85eb9240d9339e02716abdbaf1b",
-        "version" : "0.1.3"
       }
     },
     {

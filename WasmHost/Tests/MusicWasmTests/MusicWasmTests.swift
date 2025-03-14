@@ -19,6 +19,7 @@ final class AsyncWasmTests: XCTestCase {
         var opts = MusicOptions()
         opts.provider = "youtube"
         self.sut.copts = ["music": try opts.serializedData()]
+        try await self.sut.start()
     }
     
     func testGetDetails() async throws {

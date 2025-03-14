@@ -222,6 +222,7 @@ typedef GPB_ENUM(WAMusicTrackDetails_Format_FieldNumber) {
   WAMusicTrackDetails_Format_FieldNumber_Quality = 3,
   WAMusicTrackDetails_Format_FieldNumber_Metadata = 4,
   WAMusicTrackDetails_Format_FieldNumber_MimeType = 5,
+  WAMusicTrackDetails_Format_FieldNumber_Exp = 6,
 };
 
 GPB_FINAL @interface WAMusicTrackDetails_Format : GPBMessage
@@ -241,6 +242,10 @@ GPB_FINAL @interface WAMusicTrackDetails_Format : GPBMessage
 @property(nonatomic, readwrite, copy, null_resettable) NSString *mimeType;
 /** Test to see if @c mimeType has been set. */
 @property(nonatomic, readwrite) BOOL hasMimeType;
+
+/** expiry time (epoch time) */
+@property(nonatomic, readwrite) int64_t exp;
+@property(nonatomic, readwrite) BOOL hasExp;
 
 @end
 

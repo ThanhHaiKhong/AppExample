@@ -3,33 +3,36 @@
 
 import PackageDescription
 
+let mffi_file_name = "mffi_asyncify_wasm_644da77e2c56.xcframework.zip"
+let mffi_checksum = "644da77e2c56b6213c42216a850df43df85435807b36333b9ae93fd6b85f1ec9"
+
 #if FFI_DEBUG
 let ffiTargets: [PackageDescription.Target] = [
     .binaryTarget(name: "mffi",
-                  path: "../../../target/ios/mffi_asyncify_wasm.xcframework.zip"),
+                  path: "../../../target/ios/mffi_asyncify_wasm.zip"),
 ]
 #else
 let ffiTargets: [PackageDescription.Target] = [
     .binaryTarget(name: "mffi",
-                  url: "https://wasm.sfo3.cdn.digitaloceanspaces.com/l7mobile2.xcframework.zip",
-                  checksum: "37f4d64f734adb4e123755c46c5a9f692b0fbecb64570103340c76240d0458e6"),
+                  url: "https://wasm.sfo3.cdn.digitaloceanspaces.com/\(mffi_file_name)",
+                  checksum: mffi_checksum),
 ]
 #endif
 
 let package = Package(
     name: "WasmHost",
     platforms: [
-        .macOS(.v11), .iOS(.v14), .watchOS(.v7), .tvOS(.v14)
+        .macOS(.v11), .iOS(.v14), .watchOS(.v7)
     ],
     products: [
         .library(name: "AsyncWasm", targets: ["AsyncWasm"]),
+        .library(name: "MusicWasm", targets: ["MusicWasm"]),
+        .library(name: "MusicWasmUI", type: .dynamic, targets: ["MusicWasmUI"]),
         .library(name: "AsyncWasmObjC", targets: ["AsyncWasmObjC"]),
         .library(name: "WasmObjCProtobuf", targets: ["WasmObjCProtobuf"]),
         .library(name: "WasmSwiftProtobuf", targets: ["WasmSwiftProtobuf"]),
-        .library(name: "MusicWasm", targets: ["MusicWasm"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/swiftwasm/WasmKit.git", from: "0.1.0"),
         .package(url: "https://github.com/apple/swift-protobuf.git", from: "1.22.0"),
         .package(url: "https://github.com/CocoaLumberjack/CocoaLumberjack.git", from: "3.8.0")
     ],
@@ -38,13 +41,6 @@ let package = Package(
             name: "WasmSwiftProtobuf",
             dependencies: [
                 .product(name: "SwiftProtobuf", package: "swift-protobuf")
-            ]
-        ),
-        .target(
-            name: "AsyncWasmKit",
-            dependencies: [
-                .product(name: "WasmKit", package: "WasmKit"),
-                "WasmSwiftProtobuf",
             ]
         ),
         .target(

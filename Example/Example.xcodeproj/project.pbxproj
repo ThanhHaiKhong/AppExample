@@ -18,6 +18,7 @@
 		7F8E6DD42D5DB8820050BDAF /* NativeAdClient in Frameworks */ = {isa = PBXBuildFile; productRef = 7F8E6DD32D5DB8820050BDAF /* NativeAdClient */; };
 		7F8E6DD62D5DB8820050BDAF /* NativeAdClientLive in Frameworks */ = {isa = PBXBuildFile; productRef = 7F8E6DD52D5DB8820050BDAF /* NativeAdClientLive */; };
 		7FA2F0572D701017009F7A9D /* MusicWasmKit in Frameworks */ = {isa = PBXBuildFile; productRef = 7FA2F0562D701017009F7A9D /* MusicWasmKit */; };
+		7FB3A8E82D830ACB00C66D26 /* Hero in Frameworks */ = {isa = PBXBuildFile; productRef = 7FB3A8E72D830ACB00C66D26 /* Hero */; };
 		7FB7E7952CE710BE004A300C /* ImageMagick in Frameworks */ = {isa = PBXBuildFile; productRef = 7FB7E7942CE710BE004A300C /* ImageMagick */; };
 		7FB7E7972CE710F5004A300C /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 7FB7E7962CE710F5004A300C /* libz.tbd */; };
 		7FC297892CFD94AC00674EEA /* UIComponents in Frameworks */ = {isa = PBXBuildFile; productRef = 7FC297882CFD94AC00674EEA /* UIComponents */; };
@@ -25,7 +26,21 @@
 		7FE06F742D51CAC60002164B /* TCAFeatureAction in Frameworks */ = {isa = PBXBuildFile; productRef = 7FE06F732D51CAC60002164B /* TCAFeatureAction */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		7F2200812D82C73B00CF87E4 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		7F2200792D82C33300CF87E4 /* CSCardTransition.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CSCardTransition.framework; path = "../../../Library/Developer/Xcode/DerivedData/CSCardTransition-akyunrythuteceewcxsbvdabxexb/Build/Products/Debug-iphonesimulator/CSCardTransition.framework"; sourceTree = "<group>"; };
 		7FB7E7792CE71033004A300C /* Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7FB7E7962CE710F5004A300C /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
@@ -71,6 +86,7 @@
 				7F7E0D612D55D18200D3A652 /* MobileAdsClient in Frameworks */,
 				7FA2F0572D701017009F7A9D /* MusicWasmKit in Frameworks */,
 				7FC297892CFD94AC00674EEA /* UIComponents in Frameworks */,
+				7FB3A8E82D830ACB00C66D26 /* Hero in Frameworks */,
 				7FDD6FCF2D6FF67D00082A78 /* NotificationsClientUI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -98,6 +114,7 @@
 		7FB7E7932CE710BE004A300C /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				7F2200792D82C33300CF87E4 /* CSCardTransition.framework */,
 				7FB7E7962CE710F5004A300C /* libz.tbd */,
 			);
 			name = Frameworks;
@@ -113,6 +130,7 @@
 				7FB7E7752CE71033004A300C /* Sources */,
 				7FB7E7762CE71033004A300C /* Frameworks */,
 				7FB7E7772CE71033004A300C /* Resources */,
+				7F2200812D82C73B00CF87E4 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -138,6 +156,7 @@
 				7F8E6DD52D5DB8820050BDAF /* NativeAdClientLive */,
 				7FDD6FCE2D6FF67D00082A78 /* NotificationsClientUI */,
 				7FA2F0562D701017009F7A9D /* MusicWasmKit */,
+				7FB3A8E72D830ACB00C66D26 /* Hero */,
 			);
 			productName = Example;
 			productReference = 7FB7E7792CE71033004A300C /* Example.app */;
@@ -168,6 +187,7 @@
 			mainGroup = 7FB7E7702CE71033004A300C;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
+				7FB3A8E62D830ACB00C66D26 /* XCRemoteSwiftPackageReference "Hero" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 7FB7E77A2CE71033004A300C /* Products */;
@@ -329,9 +349,14 @@
 				DEVELOPMENT_ASSET_PATHS = "\"Example/Preview Content\"";
 				DEVELOPMENT_TEAM = C77T3ALUS5;
 				ENABLE_PREVIEWS = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(PROJECT_DIR)/Frameworks",
+					"$(PROJECT_DIR)",
+				);
 				GENERATE_INFOPLIST_FILE = YES;
 				HEADER_SEARCH_PATHS = /Users/thanhhaikhong/Downloads/Packages/ImageMagickObjC/Dependencies/ImageMagick/include;
 				INFOPLIST_FILE = Example/Info.plist;
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "App want to access to display and manage the photos";
 				INFOPLIST_KEY_NSUserTrackingUsageDescription = "“We use your data to deliver more personalized and relevant ads.”";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -362,9 +387,14 @@
 				DEVELOPMENT_ASSET_PATHS = "\"Example/Preview Content\"";
 				DEVELOPMENT_TEAM = C77T3ALUS5;
 				ENABLE_PREVIEWS = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(PROJECT_DIR)/Frameworks",
+					"$(PROJECT_DIR)",
+				);
 				GENERATE_INFOPLIST_FILE = YES;
 				HEADER_SEARCH_PATHS = /Users/thanhhaikhong/Downloads/Packages/ImageMagickObjC/Dependencies/ImageMagick/include;
 				INFOPLIST_FILE = Example/Info.plist;
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "App want to access to display and manage the photos";
 				INFOPLIST_KEY_NSUserTrackingUsageDescription = "“We use your data to deliver more personalized and relevant ads.”";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -407,6 +437,17 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		7FB3A8E62D830ACB00C66D26 /* XCRemoteSwiftPackageReference "Hero" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/HeroTransitions/Hero.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.6.4;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
 		7F0186E62CFEA82100ABAC67 /* TCADependencies */ = {
@@ -452,6 +493,11 @@
 		7FA2F0562D701017009F7A9D /* MusicWasmKit */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = MusicWasmKit;
+		};
+		7FB3A8E72D830ACB00C66D26 /* Hero */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 7FB3A8E62D830ACB00C66D26 /* XCRemoteSwiftPackageReference "Hero" */;
+			productName = Hero;
 		};
 		7FB7E7942CE710BE004A300C /* ImageMagick */ = {
 			isa = XCSwiftPackageProductDependency;

@@ -22,7 +22,6 @@ let package = Package(
         .package(url: "https://github.com/firebase/firebase-ios-sdk.git", branch: "main"),
         .package(url: "https://github.com/marmelroy/Zip.git", branch: "master"),
         .package(path: "/Users/thanhhaikhong/Desktop/AppExample/PHAssetExtensions"),
-        .package(path: "/Users/thanhhaikhong/Desktop/AppExample/ImageMagick"),
         .package(path: "/Users/thanhhaikhong/Desktop/AppExample/MobileAdsClient"),
     ],
     targets: [

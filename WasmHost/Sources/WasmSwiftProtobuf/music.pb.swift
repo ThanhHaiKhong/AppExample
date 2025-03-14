@@ -254,6 +254,16 @@ public struct MusicTrackDetails: Sendable {
     /// Clears the value of `mimeType`. Subsequent reads from it will return its default value.
     public mutating func clearMimeType() {self._mimeType = nil}
 
+    /// expiry time (epoch time)
+    public var exp: Int64 {
+      get {return _exp ?? 0}
+      set {_exp = newValue}
+    }
+    /// Returns true if `exp` has been explicitly set.
+    public var hasExp: Bool {return self._exp != nil}
+    /// Clears the value of `exp`. Subsequent reads from it will return its default value.
+    public mutating func clearExp() {self._exp = nil}
+
     public var unknownFields = SwiftProtobuf.UnknownStorage()
 
     public init() {}
@@ -261,6 +271,7 @@ public struct MusicTrackDetails: Sendable {
     fileprivate var _quality: String? = nil
     fileprivate var _metadata: SwiftProtobuf.Google_Protobuf_Struct? = nil
     fileprivate var _mimeType: String? = nil
+    fileprivate var _exp: Int64? = nil
   }
 
   public init() {}
@@ -699,6 +710,7 @@ extension MusicTrackDetails.Format: SwiftProtobuf.Message, SwiftProtobuf._Messag
     3: .same(proto: "quality"),
     4: .same(proto: "metadata"),
     5: .standard(proto: "mime_type"),
+    6: .same(proto: "exp"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -712,6 +724,7 @@ extension MusicTrackDetails.Format: SwiftProtobuf.Message, SwiftProtobuf._Messag
       case 3: try { try decoder.decodeSingularStringField(value: &self._quality) }()
       case 4: try { try decoder.decodeSingularMessageField(value: &self._metadata) }()
       case 5: try { try decoder.decodeSingularStringField(value: &self._mimeType) }()
+      case 6: try { try decoder.decodeSingularInt64Field(value: &self._exp) }()
       default: break
       }
     }
@@ -737,6 +750,9 @@ extension MusicTrackDetails.Format: SwiftProtobuf.Message, SwiftProtobuf._Messag
     try { if let v = self._mimeType {
       try visitor.visitSingularStringField(value: v, fieldNumber: 5)
     } }()
+    try { if let v = self._exp {
+      try visitor.visitSingularInt64Field(value: v, fieldNumber: 6)
+    } }()
     try unknownFields.traverse(visitor: &visitor)
   }
 
@@ -746,6 +762,7 @@ extension MusicTrackDetails.Format: SwiftProtobuf.Message, SwiftProtobuf._Messag
     if lhs._quality != rhs._quality {return false}
     if lhs._metadata != rhs._metadata {return false}
     if lhs._mimeType != rhs._mimeType {return false}
+    if lhs._exp != rhs._exp {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
