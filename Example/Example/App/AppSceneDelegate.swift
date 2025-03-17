@@ -41,7 +41,12 @@ class AppSceneDelegate: UIResponder, UIWindowSceneDelegate {
         */
         
         let window = AppUIWindow(windowScene: windowScene)
-        window.rootViewController = PhotoViewController()
+        window.rootViewController = PhotoViewController(
+            store: Store(
+            initialState: PhotoList.State()) {
+                PhotoList()
+            }
+        )
         window.makeKeyAndVisible()
         
         self.window = window

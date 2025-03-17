@@ -40,7 +40,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		7F2200792D82C33300CF87E4 /* CSCardTransition.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CSCardTransition.framework; path = "../../../Library/Developer/Xcode/DerivedData/CSCardTransition-akyunrythuteceewcxsbvdabxexb/Build/Products/Debug-iphonesimulator/CSCardTransition.framework"; sourceTree = "<group>"; };
 		7FB7E7792CE71033004A300C /* Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7FB7E7962CE710F5004A300C /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
@@ -114,7 +113,6 @@
 		7FB7E7932CE710BE004A300C /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				7F2200792D82C33300CF87E4 /* CSCardTransition.framework */,
 				7FB7E7962CE710F5004A300C /* libz.tbd */,
 			);
 			name = Frameworks;

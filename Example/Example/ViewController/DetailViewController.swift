@@ -27,7 +27,7 @@ class DetailViewController: UIViewController {
         super.viewDidLoad()
         
         setupUI()
-        setupGesture()
+        setupGestures()
         configureUI()
     }
     
@@ -38,7 +38,11 @@ class DetailViewController: UIViewController {
             imageView.topAnchor.constraint(equalTo: view.topAnchor),
             imageView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             imageView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            imageView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+            imageView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            
+            headerStackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            headerStackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            headerStackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
         ])
     }
     
@@ -46,12 +50,48 @@ class DetailViewController: UIViewController {
         let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.contentMode = .scaleAspectFill
+        imageView.layer.masksToBounds = true
         return imageView
+    }()
+    
+    private lazy var headerStackView: UIStackView = {
+        let stackView = UIStackView(arrangedSubviews: [scaleButton, dismissButton])
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.axis = .horizontal
+        stackView.alignment = .center
+        stackView.distribution = .fillProportionally
+        stackView.spacing = 8
+        return stackView
+    }()
+    
+    private lazy var dismissButton: UIButton = {
+        let button = UIButton(type: .system)
+        let image = UIImage(systemName: "xmark", withConfiguration: symbolConfig)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setImage(image, for: .normal)
+        button.tintColor = .white
+        button.addTarget(self, action: #selector(dismissButtonTapped(_:)), for: .touchUpInside)
+        return button
+    }()
+    
+    private lazy var scaleButton: UIButton = {
+        let button = UIButton(type: .system)
+        let image = UIImage(systemName: "arrow.down.right.and.arrow.up.left", withConfiguration: symbolConfig)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setImage(image, for: .normal)
+        button.tintColor = .white
+        button.addTarget(self, action: #selector(handleTap(_:)), for: .touchUpInside)
+        return button
+    }()
+    
+    private lazy var symbolConfig: UIImage.SymbolConfiguration = {
+        return UIImage.SymbolConfiguration(pointSize: 16, weight: .semibold)
     }()
     
     private func setupUI() {
         view.backgroundColor = .systemBackground
         view.addSubview(imageView)
+        view.addSubview(headerStackView)
     }
     
     private func configureUI() {
@@ -61,14 +101,17 @@ class DetailViewController: UIViewController {
         options.resizeMode = .fast
         options.isNetworkAccessAllowed = true
         
+        let thumbnailSize = CGSize(width: view.frame.width * UIScreen.main.scale,
+                                   height: view.frame.height * UIScreen.main.scale)
+        
         DispatchQueue.global(qos: .background).async { [weak self] in
-            print("🚦 LOAD_IMAGE on Thread: \(DispatchQueue.currentLabel)")
+            print("🚦 LOADING_IMAGE on Thread: \(DispatchQueue.currentLabel)")
             guard let `self` = self else {
                 return
             }
             
             PHImageManager.default().requestImage(for: self.asset,
-                                                  targetSize: PHImageManagerMaximumSize,
+                                                  targetSize: thumbnailSize,
                                                   contentMode: .aspectFill,
                                                   options: options) {  image, _ in
                 guard let image = image else {
@@ -78,40 +121,55 @@ class DetailViewController: UIViewController {
                 DispatchQueue.main.async {
                     print("🚦 UPDATE_IMAGE on Thread: \(DispatchQueue.currentLabel)")
                     self.imageView.image = image
-                    /*
-                    let transition = CATransition()
-                    transition.duration = 0.25
-                    transition.type = .fade
-                    transition.subtype = .fromLeft
-
-                    self.imageView.layer.add(transition, forKey: kCATransition)
-                    // CATransition chỉ ảnh hưởng đến việc hiển thị (render tree), chứ không thêm layer mới vào imageView.layer (layer tree).
-                    // Nếu đã có một transition khác với cùng key (kCATransition), nó sẽ bị ghi đè bởi transition mới, không tạo thêm layer dư thừa.
-                    */
                 }
             }
         }
     }
     
-    private func setupGesture() {
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissDetail))
-        view.addGestureRecognizer(tapGesture)
+    private func setupGestures() {
+        let panGesture = UIPanGestureRecognizer(target: self, action: #selector(handlePan(_:)))
+        view.addGestureRecognizer(panGesture)
     }
 }
 
 extension DetailViewController {
     
-    @objc func dismissDetail() {
+    @objc func dismissButtonTapped(_ sender: UIButton) {
         dismiss(animated: true)
+    }
+    
+    @objc func handleTap(_ gesture: UITapGestureRecognizer) {
+        dismiss(animated: true)
+    }
+    
+    @objc func handlePan(_ gesture: UIPanGestureRecognizer) {
+        let translation = gesture.translation(in: view)
+        
+        switch gesture.state {
+        case .began:
+            dismiss(animated: true, completion: nil)
+            
+        case .changed:
+            Hero.shared.update(translation.y / view.bounds.height)
+            
+        default:
+            let velocity = gesture.velocity(in: view)
+            if ((translation.y + velocity.y) / view.bounds.height) > 0.5 {
+                Hero.shared.finish()
+            } else {
+                Hero.shared.cancel()
+            }
+        }
     }
 }
 
-extension DispatchQueue {
-    static var currentLabel: String {
-        let name = __dispatch_queue_get_label(nil)
-        if let label = String(cString: name, encoding: .utf8) {
-            return label
-        }
-        return "Unknown"
-    }
-}
+/*
+ let transition = CATransition()
+ transition.duration = 0.25
+ transition.type = .fade
+ transition.subtype = .fromLeft
+ 
+ self.imageView.layer.add(transition, forKey: kCATransition)
+ // CATransition chỉ ảnh hưởng đến việc hiển thị (render tree), chứ không thêm layer mới vào imageView.layer (layer tree).
+ // Nếu đã có một transition khác với cùng key (kCATransition), nó sẽ bị ghi đè bởi transition mới, không tạo thêm layer dư thừa.
+ */

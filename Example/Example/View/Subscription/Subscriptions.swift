@@ -31,10 +31,11 @@ public struct AppConfig {
 @Reducer
 public struct Subscriptions: Sendable {
     @ObservableState
-    public struct State: Equatable {
+    public struct State: Identifiable, Equatable {
         public var products: [IAPProduct] = []
         public var selectedProductID: String?
         public var ui: UIState = .idle
+        public let id: UUID = UUID()
         
         public init() { }
         

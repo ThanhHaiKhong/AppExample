@@ -5,51 +5,98 @@
 //  Created by Thanh Hai Khong on 12/3/25.
 //
 
-import UIKit
-import Photos
+import ComposableArchitecture
+import RemoteConfigClient
+import Kingfisher
 import PhotosUI
+import SwiftUI
+import Photos
+import UIKit
 import Hero
 
 public class PhotoViewController: UIViewController {
+    public enum Section: Int, Sendable {
+        case editorChoices
+        case allPhotos
+    }
+    
+    public enum Item: Hashable, Sendable {
+        case photo(PHAsset)
+        case editorChoice(EditorChoice)
+    }
+
+    @UIBindable private var store: StoreOf<PhotoList>
     
     private let imageManager = PHCachingImageManager()
     private let imageCache = NSCache<NSString, UIImage>()
     
-    private var fetchResult = PHFetchResult<PHAsset>()
-    private var dataSource: UICollectionViewDiffableDataSource<Int, PHAsset>! = nil
-    private var selectedIndexPath: IndexPath?
-    private var previousPreheatRect = CGRect.zero
+    private var dataSource: UICollectionViewDiffableDataSource<Section, Item>! = nil
     private var thumbnailSize = CGSize(width: 100, height: 100)
-    private var isSelecting = false
-    private var isDataLoaded = false
-    private var selectedPhoto: PhotoItemView? {
-        guard let selectedIndexPath = selectedIndexPath,
-              let selectedCell = collectionView.cellForItem(at: selectedIndexPath) as? PhotoItemView else {
-            return nil
-        }
-        return selectedCell
+    
+    public init(store: StoreOf<PhotoList>) {
+        self.store = store
+        
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
     public override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.setupViews()
-        self.configureDataSource()
+        setupViews()
         
-        self.resetCachedAssets()
-        
-        if !isDataLoaded {
-            fetchAssets()
-            isDataLoaded = true
+        let editorChoiceCellRegistration = UICollectionView.CellRegistration<EditorChoiceItemView, EditorChoice> { [weak self] cell, _, editorChoice in
+            guard let `self` = self else {
+                return
+            }
+            
+            configureCell(cell, with: editorChoice)
         }
         
-        PHPhotoLibrary.shared().register(self)
-    }
-    
-    public override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
+        let photoCellRegistration = UICollectionView.CellRegistration<PhotoItemView, PHAsset> { [weak self] cell, indexPath, asset in
+            guard let `self` = self else {
+                return
+            }
+            
+            configureCell(cell, with: asset)
+        }
         
-        updateCachedAssets()
+        dataSource = UICollectionViewDiffableDataSource<Section, Item>(collectionView: collectionView) { collectionView, indexPath, item in
+            switch item {
+            case let .photo(asset):
+                return collectionView.dequeueConfiguredReusableCell(using: photoCellRegistration, for: indexPath, item: asset)
+                
+            case let .editorChoice(editorChoice):
+                return collectionView.dequeueConfiguredReusableCell(using: editorChoiceCellRegistration, for: indexPath, item: editorChoice)
+            }
+        }
+        
+        observe { [weak self] in
+            guard let `self` = self else {
+                return
+            }
+            
+            print("🚦 OBSERVE on Thread: \(DispatchQueue.currentLabel) - Photos: \(store.photos.count) - EditorChoices: \(store.editorChoices.count)")
+            dataSource.apply(.init(store: store), animatingDifferences: true)
+        }
+        
+        present(item: $store.scope(state: \.showSubscriptions, action: \.showSubscriptions)) { store in
+            self.premiumButton.hero.id = "asset.localIdentifier"
+            self.premiumButton.hero.modifiers = [.useGlobalCoordinateSpace, .fade]
+            
+            let hostingVC = UIHostingController(rootView: SubscriptionView(store: store))
+            hostingVC.modalPresentationStyle = .fullScreen
+            hostingVC.hero.isEnabled = true
+            hostingVC.hero.modalAnimationType = .zoomOut
+            hostingVC.view.hero.id = "asset.localIdentifier"
+            
+            return hostingVC
+        }
+        
+        store.send(.onDidLoad)
     }
     
     public override func viewDidLayoutSubviews() {
@@ -61,6 +108,22 @@ public class PhotoViewController: UIViewController {
             collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             
+            headerStackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            headerStackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            headerStackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            
+            fileButton.widthAnchor.constraint(equalToConstant: 34),
+            fileButton.heightAnchor.constraint(equalToConstant: 34),
+            
+            cameraButton.widthAnchor.constraint(equalToConstant: 34),
+            cameraButton.heightAnchor.constraint(equalToConstant: 34),
+            
+            premiumButton.widthAnchor.constraint(equalToConstant: 34),
+            premiumButton.heightAnchor.constraint(equalToConstant: 34),
+            
+            settingsButton.widthAnchor.constraint(equalToConstant: 34),
+            settingsButton.heightAnchor.constraint(equalToConstant: 34),
+            
             stackView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
 
@@ -69,14 +132,12 @@ public class PhotoViewController: UIViewController {
         ])
     }
     
-    deinit {
-        PHPhotoLibrary.shared().unregisterChangeObserver(self)
-    }
-    
     private lazy var collectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: createLayout())
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         collectionView.delegate = self
+        collectionView.prefetchDataSource = self
+        collectionView.register(EditorChoiceItemView.self, forCellWithReuseIdentifier: EditorChoiceItemView.identifier)
         collectionView.register(PhotoItemView.self, forCellWithReuseIdentifier: PhotoItemView.identifier)
         return collectionView
     }()
@@ -106,6 +167,72 @@ public class PhotoViewController: UIViewController {
         return label
     }()
     
+    private lazy var fileButton: UIButton = {
+        let button = UIButton()
+        let normalImage = UIImage(systemName: "folder.fill", withConfiguration: imageConfiguration)
+        button.setImage(normalImage, for: .normal)
+        button.layer.cornerRadius = 17.0
+        button.layer.masksToBounds = true
+        button.tintColor = .white
+        button.backgroundColor = .systemGreen
+        button.addTarget(self, action: #selector(fileButtonTapped(_:)), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        
+        return button
+    }()
+    
+    private lazy var cameraButton: UIButton = {
+        let button = UIButton()
+        let normalImage = UIImage(systemName: "camera.fill", withConfiguration: imageConfiguration)
+        button.setImage(normalImage, for: .normal)
+        button.layer.cornerRadius = 17.0
+        button.layer.masksToBounds = true
+        button.tintColor = .white
+        button.backgroundColor = .systemGreen
+        button.addTarget(self, action: #selector(cameraButtonTapped(_:)), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        
+        return button
+    }()
+    
+    private lazy var premiumButton: UIButton = {
+        let button = UIButton()
+        let normalImage = UIImage(systemName: "crown.fill", withConfiguration: imageConfiguration)
+        button.setImage(normalImage, for: .normal)
+        button.layer.cornerRadius = 17.0
+        button.layer.masksToBounds = true
+        button.tintColor = .white
+        button.backgroundColor = .systemGreen
+        button.addTarget(self, action: #selector(premiumButtonTapped(_:)), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        
+        return button
+    }()
+    
+    private lazy var settingsButton: UIButton = {
+        let button = UIButton()
+        let normalImage = UIImage(systemName: "gearshape.fill", withConfiguration: imageConfiguration)
+        button.setImage(normalImage, for: .normal)
+        button.layer.cornerRadius = 17.0
+        button.layer.masksToBounds = true
+        button.tintColor = .white
+        button.backgroundColor = .systemGreen
+        button.addTarget(self, action: #selector(settingsButtonTapped(_:)), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        
+        return button
+    }()
+    
+    private lazy var headerStackView: UIStackView = {
+        let stackView = UIStackView(arrangedSubviews: [fileButton, cameraButton, UIView(), premiumButton, settingsButton])
+        stackView.axis = .horizontal
+        stackView.alignment = .center
+        stackView.distribution = .fill
+        stackView.spacing = 12
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        return stackView
+    }()
+    
     private lazy var stackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [titleLabel, subtitleLabel])
         stackView.axis = .vertical
@@ -116,7 +243,7 @@ public class PhotoViewController: UIViewController {
     }()
     
     private lazy var toggleSelectionButton: UIButton = {
-        var configuration = UIButton.Configuration.tinted()
+        var configuration = UIButton.Configuration.borderedProminent()
         configuration.cornerStyle = .capsule
         configuration.baseForegroundColor = .systemGreen
         configuration.buttonSize = .medium
@@ -131,6 +258,10 @@ public class PhotoViewController: UIViewController {
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
+    
+    private lazy var imageConfiguration: UIImage.SymbolConfiguration = {
+        return UIImage.SymbolConfiguration(pointSize: 14, weight: .medium)
+    }()
 }
 
 // MARK: - Supporting Methods
@@ -139,52 +270,124 @@ extension PhotoViewController {
     
     private func setupViews() {
         view.addSubview(collectionView)
+        view.addSubview(headerStackView)
         view.addSubview(stackView)
         view.addSubview(toggleSelectionButton)
     }
     
     private func createLayout() -> UICollectionViewLayout {
-        let innerSpacing: CGFloat = 2.0
-        let itemCount = 4
-
-        let layout = UICollectionViewCompositionalLayout { (_, layoutEnvironment) -> NSCollectionLayoutSection? in
-            let itemWidthFraction = 1.0 / CGFloat(itemCount)
-
-            let itemSize = NSCollectionLayoutSize(
-                widthDimension: .fractionalWidth(itemWidthFraction),
-                heightDimension: .fractionalHeight(1.0)
-            )
-
-            let item = NSCollectionLayoutItem(layoutSize: itemSize)
-
-            let groupSize = NSCollectionLayoutSize(
-                widthDimension: .fractionalWidth(1.0),
-                heightDimension: .fractionalWidth(itemWidthFraction)
-            )
-
-            let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, repeatingSubitem: item, count: itemCount)
-            group.interItemSpacing = .fixed(innerSpacing)
-
-            let section = NSCollectionLayoutSection(group: group)
-            section.contentInsets = NSDirectionalEdgeInsets(top: innerSpacing, leading: 0, bottom: innerSpacing, trailing: 0)
-            section.interGroupSpacing = innerSpacing
-
-            return section
-        }
-
+        let configuration = UICollectionViewCompositionalLayoutConfiguration()
+        configuration.interSectionSpacing = .zero
+        
+        let layout = UICollectionViewCompositionalLayout(sectionProvider: { [weak self] (sectionIndex, layoutEnvironment) -> NSCollectionLayoutSection? in
+            guard let `self` = self,
+                  let section = Section(rawValue: sectionIndex) else {
+                return nil
+            }
+            
+            switch section {
+            case .editorChoices:
+                return editorChoiceLayoutSection(layoutEnvironment)
+                
+            case .allPhotos:
+                return photoLayoutSection()
+            }
+        }, configuration: configuration)
+        
         return layout
     }
     
-    private func configureDataSource() {
-        dataSource = UICollectionViewDiffableDataSource<Int, PHAsset>(collectionView: collectionView) { [weak self] collectionView, indexPath, asset in
-            guard let self = self,
-                  let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PhotoItemView.identifier, for: indexPath) as? PhotoItemView else {
-                return UICollectionViewCell()
+    private func editorChoiceLayoutSection(_ layoutEnvironment: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection {
+        let isRegular = layoutEnvironment.traitCollection.horizontalSizeClass == .regular
+        let contentSize = layoutEnvironment.container.contentSize
+        let innerSpacing: CGFloat = 12.0
+        let edgeInsets = NSDirectionalEdgeInsets(top: innerSpacing, leading: 20, bottom: innerSpacing, trailing: 20)
+        let itemCount = isRegular ? 2 : 1
+        let itemWidthFactor: CGFloat = 1.4
+
+        let itemSize = NSCollectionLayoutSize(
+            widthDimension: .fractionalWidth(1.0),
+            heightDimension: .fractionalHeight(1.0)
+        )
+
+        let item = NSCollectionLayoutItem(layoutSize: itemSize)
+
+        let widthGroup = (contentSize.width - edgeInsets.leading - edgeInsets.trailing - CGFloat(itemCount - 1) * innerSpacing) / CGFloat(itemCount)
+        let heightGroup = widthGroup / itemWidthFactor
+        
+        let groupSize = NSCollectionLayoutSize(
+            widthDimension: .absolute(widthGroup),
+            heightDimension: .absolute(heightGroup)
+        )
+
+        let group = NSCollectionLayoutGroup.horizontal(
+            layoutSize: groupSize,
+            subitems: [item]
+        )
+        group.interItemSpacing = .fixed(innerSpacing)
+
+        let layoutSection = NSCollectionLayoutSection(group: group)
+        layoutSection.contentInsets = edgeInsets
+        layoutSection.interGroupSpacing = innerSpacing
+        layoutSection.orthogonalScrollingBehavior = .continuousGroupLeadingBoundary
+
+        return layoutSection
+    }
+    
+    private func photoLayoutSection() -> NSCollectionLayoutSection {
+        let innerSpacing: CGFloat = 2.0
+        let itemCount = 4
+        let itemWidthFraction = 1.0 / CGFloat(itemCount)
+
+        let itemSize = NSCollectionLayoutSize(
+            widthDimension: .fractionalWidth(itemWidthFraction),
+            heightDimension: .fractionalHeight(1.0)
+        )
+
+        let item = NSCollectionLayoutItem(layoutSize: itemSize)
+
+        let groupSize = NSCollectionLayoutSize(
+            widthDimension: .fractionalWidth(1.0),
+            heightDimension: .fractionalWidth(itemWidthFraction)
+        )
+
+        let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, repeatingSubitem: item, count: itemCount)
+        group.interItemSpacing = .fixed(innerSpacing)
+
+        let layoutSection = NSCollectionLayoutSection(group: group)
+        layoutSection.contentInsets = NSDirectionalEdgeInsets(top: innerSpacing, leading: 0, bottom: innerSpacing, trailing: 0)
+        layoutSection.interGroupSpacing = innerSpacing
+
+        return layoutSection
+    }
+    
+    private func configureCell(_ cell: EditorChoiceItemView, with editorChoice: EditorChoice) {
+        DispatchQueue.main.async {
+            print("🚦 CONFIGURE_EDITOR_CHOICE on Thread: \(DispatchQueue.currentLabel)")
+            if let url = editorChoice.artworkURL {
+                cell.backgroundImageView.kf.setImage(
+                    with: url,
+                    options: [
+                        .loadDiskFileSynchronously,
+                        .cacheOriginalImage,
+                        .transition(.fade(0.25)),
+                    ]
+                )
             }
             
-            self.configureCell(cell, with: asset)
-
-            return cell
+            if let url = editorChoice.miniIconURL {
+                cell.iconImageView.kf.setImage(
+                    with: url,
+                    options: [
+                        .loadDiskFileSynchronously,
+                        .cacheOriginalImage,
+                        .transition(.fade(0.25)),
+                    ]
+                )
+            }
+            
+            cell.titleLabel.text = editorChoice.title
+            cell.subtitleLabel.text = editorChoice.description
         }
     }
 
@@ -217,9 +420,6 @@ extension PhotoViewController {
         options.isSynchronous = false
         options.deliveryMode = .highQualityFormat
         options.isNetworkAccessAllowed = true
-        options.progressHandler = { progress, _, _, _ in
-            print("⚙️ Đang tải ảnh: \(progress * 100)%")
-        }
 
         imageManager.requestImage(for: asset,
                                   targetSize: thumbnailSize,
@@ -236,97 +436,43 @@ extension PhotoViewController {
             }
         }
     }
-    
-    private func fetchAssets() {
-        let allPhotosOptions = PHFetchOptions()
-        allPhotosOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
-        
-        fetchResult = PHAsset.fetchAssets(with: allPhotosOptions)
-        let assets = fetchResult.objects(at: IndexSet(0..<fetchResult.count))
-        
-        let videoCount = assets.filter { $0.mediaType == .video }.count
-        let photoCount = assets.count - videoCount
-        let photoString = photoCount == 1 ? "Photo" : "Photos"
-        let videoString = videoCount == 1 ? "Video" : "Videos"
-        
-        DispatchQueue.main.async {
-            self.subtitleLabel.text = "\(photoCount) \(photoString), \(videoCount) \(videoString)"
-            
-            var snapshot = NSDiffableDataSourceSnapshot<Int, PHAsset>()
-            snapshot.appendSections([0])
-            snapshot.appendItems(assets)
-            
-            self.dataSource.apply(snapshot, animatingDifferences: true)
-        }
-    }
-    
-    private func resetCachedAssets() {
-        imageManager.stopCachingImagesForAllAssets()
-        previousPreheatRect = .zero
-    }
-    
-    private func updateCachedAssets() {
-        guard isViewLoaded, view.window != nil else { return }
-        
-        let visibleIndexPaths = collectionView.indexPathsForVisibleItems
-        let visibleAssets = visibleIndexPaths.compactMap { fetchResult.object(at: $0.item) }
-        
-        imageManager.startCachingImages(for: visibleAssets, targetSize: thumbnailSize, contentMode: .aspectFill, options: nil)
-        
-        previousPreheatRect = collectionView.bounds
-    }
-    
-    private func differencesBetweenRects(_ old: CGRect, _ new: CGRect) -> (added: [CGRect], removed: [CGRect]) {
-        if old.intersects(new) {
-            let combined = old.union(new)
-            let added = new.intersection(combined).isNull ? [new] : []
-            let removed = old.intersection(combined).isNull ? [old] : []
-            return (added, removed)
-        } else {
-            return ([new], [old])
-        }
-    }
-    
-    private func fetchAssets(in collection: PHAssetCollection? = nil, sort sortDescriptor: NSSortDescriptor? = nil) -> [PHAsset] {
-        let fetchOptions = PHFetchOptions()
-        if let sortDescriptor = sortDescriptor {
-            fetchOptions.sortDescriptors = [sortDescriptor]
-        }
-        
-        let fetchResult: PHFetchResult<PHAsset>
-        if let collection = collection {
-            fetchResult = PHAsset.fetchAssets(in: collection, options: fetchOptions)
-        } else {
-            fetchResult = PHAsset.fetchAssets(with: fetchOptions)
-        }
-        
-        return fetchResult.objects(at: IndexSet(0..<fetchResult.count))
-    }
 }
 
 // MARK: - Actions
 
 extension PhotoViewController {
     
-    @objc func selectButtonTapped(_ sender: UIButton) {
-        self.isEditing = true
+    @objc private func fileButtonTapped(_ sender: UIButton) {
+        
     }
     
-    @objc func cancelButtonTapped(_ sender: UIButton) {
+    @objc private func cameraButtonTapped(_ sender: UIButton) {
+        
+    }
+    
+    @objc private func premiumButtonTapped(_ sender: UIButton) {
+        store.send(.premiumButtonTapped)
+    }
+    
+    @objc private func settingsButtonTapped(_ sender: UIButton) {
+        
+    }
+    
+    @objc private func cancelButtonTapped(_ sender: UIButton) {
         self.isEditing = false
     }
     
     @objc private func toggleSelectionTapped(_ sender: UIButton) {
-        isSelecting.toggle()
+        store.send(.toggleSectionButtonTapped)
         
         var textAttributes = AttributeContainer()
         textAttributes.font = .preferredRoundedFont(forTextStyle: .headline, weight: .semibold)
         
         var updatedConfig = sender.configuration
-        updatedConfig?.attributedTitle = AttributedString(isSelecting ? "Cancel" : "Select", attributes: textAttributes)
+        updatedConfig?.attributedTitle = AttributedString(store.isSelecting ? "Cancel" : "Select", attributes: textAttributes)
         
         sender.configuration = updatedConfig
-        updateSelectionMode(isSelecting)
+        updateSelectionMode(store.isSelecting)
     }
     
     private func updateSelectionMode(_ selecting: Bool) {
@@ -344,21 +490,12 @@ extension PhotoViewController {
     }
 }
 
-// MARK: - UIScrollViewDelegate
-
-extension PhotoViewController: UIScrollViewDelegate {
-    
-    public func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        updateCachedAssets()
-    }
-}
-
 // MARK: - UICollectionViewDelegate
 
 extension PhotoViewController: UICollectionViewDelegate {
     
     public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        guard let cell = collectionView.cellForItem(at: indexPath) as? PhotoItemView, let asset = dataSource.itemIdentifier(for: indexPath) else {
+        guard let cell = collectionView.cellForItem(at: indexPath) as? PhotoItemView, let item = dataSource.itemIdentifier(for: indexPath) else {
             return
         }
         
@@ -367,7 +504,7 @@ extension PhotoViewController: UICollectionViewDelegate {
                 return
             }
             
-            if self.isSelecting {
+            if self.store.isSelecting {
                 collectionView.selectItem(at: indexPath, animated: true, scrollPosition: [])
                 
                 guard let selectedIndexPaths = collectionView.indexPathsForSelectedItems else {
@@ -380,23 +517,29 @@ extension PhotoViewController: UICollectionViewDelegate {
                     cell.imageView.alpha = 0.75
                 }
             } else {
-                cell.hero.id = asset.localIdentifier
-                cell.hero.modifiers = [.useGlobalCoordinateSpace, .fade]
-                
-                let detailViewController = DetailViewController(asset: asset)
-                print("🚦 INITIALIZE_IMAGE on Thread: \(DispatchQueue.currentLabel)")
-                detailViewController.imageView.image = cell.imageView.image
-                detailViewController.modalPresentationStyle = .fullScreen
-                detailViewController.hero.isEnabled = true
-                detailViewController.hero.modalAnimationType = .zoomOut
-                detailViewController.imageView.hero.id = asset.localIdentifier
-                self.present(detailViewController, animated: true)
+                switch item {
+                case let .photo(asset):
+                    cell.hero.id = asset.localIdentifier
+                    cell.hero.modifiers = [.useGlobalCoordinateSpace, .fade]
+                    
+                    let detailViewController = DetailViewController(asset: asset)
+                    print("🚦 INITIALIZE_IMAGE on Thread: \(DispatchQueue.currentLabel)")
+                    detailViewController.imageView.image = cell.imageView.image
+                    detailViewController.modalPresentationStyle = .fullScreen
+                    detailViewController.hero.isEnabled = true
+                    detailViewController.hero.modalAnimationType = .zoomOut
+                    detailViewController.imageView.hero.id = asset.localIdentifier
+                    self.present(detailViewController, animated: true)
+                    
+                case .editorChoice:
+                    break
+                }
             }
         }
     }
     
     public func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
-        if collectionView.isEditing {
+        if store.isSelecting {
             collectionView.deselectItem(at: indexPath, animated: true)
             
             guard let cell = collectionView.cellForItem(at: indexPath) as? PhotoItemView,
@@ -404,28 +547,46 @@ extension PhotoViewController: UICollectionViewDelegate {
             else {
                 return
             }
-
-            self.countLabel.text = selectedIndexPaths.count <= 1 ? "Select Item" : "\(selectedIndexPaths.count) Items Selected"
-            cell.selectButton.isSelected = false
-            cell.imageView.alpha = 1.0
+            
+            DispatchQueue.main.async {
+                self.countLabel.text = selectedIndexPaths.count <= 1 ? "Select Item" : "\(selectedIndexPaths.count) Items Selected"
+                cell.selectButton.isSelected = false
+                cell.imageView.alpha = 1.0
+            }
         }
     }
 }
 
-// MARK: - PHPhotoLibraryChangeObserver
+// MARK: - UICollectionViewDataSourcePrefetching
 
-extension PhotoViewController: PHPhotoLibraryChangeObserver {
-    
-    public func photoLibraryDidChange(_ changeInstance: PHChange) {
-        guard changeInstance.changeDetails(for: fetchResult) != nil else { return }
+extension PhotoViewController: UICollectionViewDataSourcePrefetching {
         
-        DispatchQueue.global(qos: .background).async {
-            let updatedFetchResult = PHAsset.fetchAssets(with: .image, options: nil)
+    public func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
+        let photoIndexPaths = indexPaths.filter { $0.section == 1 }
+        let assets = photoIndexPaths.compactMap { store.photos[$0.item] }
+        imageManager.startCachingImages(for: assets, targetSize: thumbnailSize, contentMode: .aspectFill, options: nil)
+    }
+    
+    public func collectionView(_ collectionView: UICollectionView, cancelPrefetchingForItemsAt indexPaths: [IndexPath]) {
+        let photoIndexPaths = indexPaths.filter { $0.section == 1 }
+        let assets = photoIndexPaths.compactMap { store.photos[$0.item] }
+        imageManager.stopCachingImages(for: assets, targetSize: thumbnailSize, contentMode: .aspectFill, options: nil)
+    }
+}
 
-            DispatchQueue.main.async {
-                self.fetchResult = updatedFetchResult
-                self.collectionView.reloadData()
-            }
+extension NSDiffableDataSourceSnapshot<PhotoViewController.Section, PhotoViewController.Item> {
+    init(store: StoreOf<PhotoList>) {
+        self.init()
+        
+        appendSections([.editorChoices])
+        appendSections([.allPhotos])
+        
+        if !store.editorChoices.isEmpty && !store.isSelecting {
+            appendItems(store.editorChoices.map { .editorChoice($0) }, toSection: .editorChoices)
+        }
+        
+        if !store.photos.isEmpty {
+            appendItems(store.photos.map { .photo($0) }, toSection: .allPhotos)
         }
     }
 }

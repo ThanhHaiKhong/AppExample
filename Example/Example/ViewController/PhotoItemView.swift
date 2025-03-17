@@ -103,38 +103,33 @@ public class PhotoItemView: UICollectionViewCell, UIGestureRecognizerDelegate {
             }
             
             DispatchQueue.main.async {
-                // Animation for image change
-                UIView.transition(with: self.imageView,
-                                  duration: 0.25,
-                                  options: .transitionCrossDissolve,
-                                  animations: {
-                    self.imageView.image = image
-                }, completion: nil)
+                self.imageView.image = image
             }
         }
     }
     
     func animateSelection(completion: (() -> Void)? = nil) {
         UIView.animate(
-            withDuration: 0.1,  // Giảm thời gian để phản hồi nhanh hơn
+            withDuration: 0.1,
             delay: 0,
-            usingSpringWithDamping: 0.6,  // Tăng damping để tránh bật lại quá mạnh
+            usingSpringWithDamping: 0.6,
             initialSpringVelocity: 0.5,
             options: [.allowUserInteraction],
             animations: {
                 self.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
-                self.alpha = 0.85  // Thêm hiệu ứng fade-out nhẹ
+                self.alpha = 0.85
+                UISelectionFeedbackGenerator().selectionChanged()
             },
             completion: { _ in
                 UIView.animate(
                     withDuration: 0.2,
                     delay: 0,
-                    usingSpringWithDamping: 0.8,  // Giảm damping để trở lại mượt hơn
+                    usingSpringWithDamping: 0.8,
                     initialSpringVelocity: 0.3,
                     options: [.allowUserInteraction],
                     animations: {
                         self.transform = .identity
-                        self.alpha = 1.0  // Fade-in trở lại
+                        self.alpha = 1.0
                     },
                     completion: { _ in completion?() }
                 )
