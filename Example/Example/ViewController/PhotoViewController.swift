@@ -80,6 +80,7 @@ public class PhotoViewController: UIViewController {
             }
             
             print("🚦 OBSERVE on Thread: \(DispatchQueue.currentLabel) - Photos: \(store.photos.count) - EditorChoices: \(store.editorChoices.count)")
+            countLabel.text = "\(store.photos.count) photos"
             dataSource.apply(.init(store: store), animatingDifferences: true)
         }
         
@@ -102,34 +103,7 @@ public class PhotoViewController: UIViewController {
     public override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         
-        NSLayoutConstraint.activate([
-            collectionView.topAnchor.constraint(equalTo: view.topAnchor),
-            collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            
-            headerStackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            headerStackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            headerStackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-            
-            fileButton.widthAnchor.constraint(equalToConstant: 34),
-            fileButton.heightAnchor.constraint(equalToConstant: 34),
-            
-            cameraButton.widthAnchor.constraint(equalToConstant: 34),
-            cameraButton.heightAnchor.constraint(equalToConstant: 34),
-            
-            premiumButton.widthAnchor.constraint(equalToConstant: 34),
-            premiumButton.heightAnchor.constraint(equalToConstant: 34),
-            
-            settingsButton.widthAnchor.constraint(equalToConstant: 34),
-            settingsButton.heightAnchor.constraint(equalToConstant: 34),
-            
-            stackView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
-            stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-
-            toggleSelectionButton.centerYAnchor.constraint(equalTo: stackView.centerYAnchor),
-            toggleSelectionButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-        ])
+        setupConstraints()
     }
     
     private lazy var collectionView: UICollectionView = {
@@ -148,14 +122,6 @@ public class PhotoViewController: UIViewController {
         label.textColor = .systemGreen
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = .preferredRoundedFont(forTextStyle: .title2, weight: .heavy)
-        return label
-    }()
-    
-    private lazy var subtitleLabel: UILabel = {
-        let label = UILabel()
-        label.numberOfLines = 1
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = .preferredRoundedFont(forTextStyle: .headline, weight: .semibold)
         return label
     }()
     
@@ -233,8 +199,18 @@ public class PhotoViewController: UIViewController {
         return stackView
     }()
     
+    private lazy var footerStackView: UIStackView = {
+        let stackView = UIStackView(arrangedSubviews: [stackView, UIView(), toggleSelectionButton, sortButton, changeLayoutButton])
+        stackView.axis = .horizontal
+        stackView.alignment = .center
+        stackView.distribution = .fill
+        stackView.spacing = 12
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        return stackView
+    }()
+    
     private lazy var stackView: UIStackView = {
-        let stackView = UIStackView(arrangedSubviews: [titleLabel, subtitleLabel])
+        let stackView = UIStackView(arrangedSubviews: [titleLabel, countLabel])
         stackView.axis = .vertical
         stackView.alignment = .leading
         stackView.spacing = 2
@@ -245,12 +221,12 @@ public class PhotoViewController: UIViewController {
     private lazy var toggleSelectionButton: UIButton = {
         var configuration = UIButton.Configuration.borderedProminent()
         configuration.cornerStyle = .capsule
-        configuration.baseForegroundColor = .systemGreen
+        configuration.baseForegroundColor = .white
         configuration.buttonSize = .medium
-        configuration.background.backgroundColor = .systemGray5
+        configuration.background.backgroundColor = .systemGreen
         
         var textAttributes = AttributeContainer()
-        textAttributes.font = .preferredRoundedFont(forTextStyle: .headline, weight: .semibold)
+        textAttributes.font = .preferredRoundedFont(forTextStyle: .subheadline, weight: .semibold)
         configuration.attributedTitle = AttributedString("Select", attributes: textAttributes)
         
         let button = UIButton(configuration: configuration)
@@ -259,8 +235,36 @@ public class PhotoViewController: UIViewController {
         return button
     }()
     
+    private lazy var sortButton: UIButton = {
+        let button = UIButton()
+        let normalImage = UIImage(systemName: "line.3.horizontal.decrease", withConfiguration: imageConfiguration)
+        button.setImage(normalImage, for: .normal)
+        button.layer.cornerRadius = 17.0
+        button.layer.masksToBounds = true
+        button.tintColor = .white
+        button.backgroundColor = .systemGreen
+        button.addTarget(self, action: #selector(sortButtonTapped(_:)), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        
+        return button
+    }()
+    
+    private lazy var changeLayoutButton: UIButton = {
+        let button = UIButton()
+        let normalImage = UIImage(systemName: "square.grid.3x3.square", withConfiguration: imageConfiguration)
+        button.setImage(normalImage, for: .normal)
+        button.layer.cornerRadius = 17.0
+        button.layer.masksToBounds = true
+        button.tintColor = .white
+        button.backgroundColor = .systemGreen
+        button.addTarget(self, action: #selector(changeLayoutButtonTapped(_:)), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        
+        return button
+    }()
+    
     private lazy var imageConfiguration: UIImage.SymbolConfiguration = {
-        return UIImage.SymbolConfiguration(pointSize: 14, weight: .medium)
+        return UIImage.SymbolConfiguration(pointSize: 14, weight: .semibold)
     }()
 }
 
@@ -271,8 +275,44 @@ extension PhotoViewController {
     private func setupViews() {
         view.addSubview(collectionView)
         view.addSubview(headerStackView)
-        view.addSubview(stackView)
-        view.addSubview(toggleSelectionButton)
+        view.addSubview(footerStackView)
+    }
+    
+    private func setupConstraints() {
+        NSLayoutConstraint.activate([
+            collectionView.topAnchor.constraint(equalTo: view.topAnchor),
+            collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            
+            headerStackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            headerStackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            headerStackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            
+            fileButton.widthAnchor.constraint(equalToConstant: 34),
+            fileButton.heightAnchor.constraint(equalToConstant: 34),
+            
+            cameraButton.widthAnchor.constraint(equalToConstant: 34),
+            cameraButton.heightAnchor.constraint(equalToConstant: 34),
+            
+            premiumButton.widthAnchor.constraint(equalToConstant: 34),
+            premiumButton.heightAnchor.constraint(equalToConstant: 34),
+            
+            settingsButton.widthAnchor.constraint(equalToConstant: 34),
+            settingsButton.heightAnchor.constraint(equalToConstant: 34),
+            
+            footerStackView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            footerStackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            footerStackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            
+            toggleSelectionButton.heightAnchor.constraint(equalToConstant: 34),
+            
+            sortButton.widthAnchor.constraint(equalToConstant: 34),
+            sortButton.heightAnchor.constraint(equalToConstant: 34),
+            
+            changeLayoutButton.widthAnchor.constraint(equalToConstant: 34),
+            changeLayoutButton.heightAnchor.constraint(equalToConstant: 34),
+        ])
     }
     
     private func createLayout() -> UICollectionViewLayout {
@@ -301,7 +341,7 @@ extension PhotoViewController {
         let isRegular = layoutEnvironment.traitCollection.horizontalSizeClass == .regular
         let contentSize = layoutEnvironment.container.contentSize
         let innerSpacing: CGFloat = 12.0
-        let edgeInsets = NSDirectionalEdgeInsets(top: innerSpacing, leading: 20, bottom: innerSpacing, trailing: 20)
+        let edgeInsets = NSDirectionalEdgeInsets(top: innerSpacing + 34.0, leading: 20, bottom: innerSpacing, trailing: 20)
         let itemCount = isRegular ? 2 : 1
         let itemWidthFactor: CGFloat = 1.4
 
@@ -462,11 +502,19 @@ extension PhotoViewController {
         self.isEditing = false
     }
     
+    @objc private func sortButtonTapped(_ sender: UIButton) {
+        
+    }
+    
+    @objc private func changeLayoutButtonTapped(_ sender: UIButton) {
+        
+    }
+    
     @objc private func toggleSelectionTapped(_ sender: UIButton) {
         store.send(.toggleSectionButtonTapped)
         
         var textAttributes = AttributeContainer()
-        textAttributes.font = .preferredRoundedFont(forTextStyle: .headline, weight: .semibold)
+        textAttributes.font = .preferredRoundedFont(forTextStyle: .subheadline, weight: .semibold)
         
         var updatedConfig = sender.configuration
         updatedConfig?.attributedTitle = AttributedString(store.isSelecting ? "Cancel" : "Select", attributes: textAttributes)

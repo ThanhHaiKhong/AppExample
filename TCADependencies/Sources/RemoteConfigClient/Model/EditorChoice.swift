@@ -112,5 +112,5 @@ extension EditorChoice {
                                                                  miniIconPath: "https://is1-ssl.mzstatic.com/image/thumb/Purple116/v4/af/bc/f6/afbcf612-6331-7a1f-ffe7-de324e094741/AppIcon-1x_U007emarketing-0-7-0-85-220-0.png/540x540bb.jpg",
                                                                  title: "Compress Videos - Shrink Video")
     
-    public static let all: [EditorChoice] = [offlineFiles, contacts, pixelAI, randonauting, idPassport, cartoonPhoto, compressPhoto, compressVideo]
+    public static let all = [offlineFiles, contacts, pixelAI, randonauting, idPassport, cartoonPhoto, compressPhoto, compressVideo]
 }
