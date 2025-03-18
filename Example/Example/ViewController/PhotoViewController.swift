@@ -7,6 +7,7 @@
 
 import ComposableArchitecture
 import RemoteConfigClient
+import UIComponents
 import Kingfisher
 import PhotosUI
 import SwiftUI
@@ -21,8 +22,8 @@ public class PhotoViewController: UIViewController {
     }
     
     public enum Item: Hashable, Sendable {
-        case photo(PHAsset)
-        case editorChoice(EditorChoice)
+        case editorChoice(StoreOf<EditorChoiceCard>)
+        case photo(StoreOf<PhotoCard>)
     }
 
     @UIBindable private var store: StoreOf<PhotoList>
@@ -48,20 +49,20 @@ public class PhotoViewController: UIViewController {
         
         setupViews()
         
-        let editorChoiceCellRegistration = UICollectionView.CellRegistration<EditorChoiceItemView, EditorChoice> { [weak self] cell, _, editorChoice in
+        let editorChoiceCellRegistration = UICollectionView.CellRegistration<EditorChoiceItemView, StoreOf<EditorChoiceCard>> { [weak self] cell, _, store in
             guard let `self` = self else {
                 return
             }
             
-            configureCell(cell, with: editorChoice)
+            configureCell(cell, with: store)
         }
         
-        let photoCellRegistration = UICollectionView.CellRegistration<PhotoItemView, PHAsset> { [weak self] cell, indexPath, asset in
+        let photoCellRegistration = UICollectionView.CellRegistration<PhotoItemView, StoreOf<PhotoCard>> { [weak self] cell, indexPath, store in
             guard let `self` = self else {
                 return
             }
             
-            configureCell(cell, with: asset)
+            configureCell(cell, with: store)
         }
         
         dataSource = UICollectionViewDiffableDataSource<Section, Item>(collectionView: collectionView) { collectionView, indexPath, item in
@@ -81,7 +82,11 @@ public class PhotoViewController: UIViewController {
             
             print("🚦 OBSERVE on Thread: \(DispatchQueue.currentLabel) - Photos: \(store.photos.count) - EditorChoices: \(store.editorChoices.count)")
             countLabel.text = "\(store.photos.count) photos"
-            dataSource.apply(.init(store: store), animatingDifferences: true)
+            
+            measureExecutionTime("APPLY_SNAPSHOT") { completion in
+                self.dataSource.apply(.init(store: self.store), animatingDifferences: true)
+                completion()
+            }
         }
         
         present(item: $store.scope(state: \.showSubscriptions, action: \.showSubscriptions)) { store in
@@ -264,7 +269,7 @@ public class PhotoViewController: UIViewController {
     }()
     
     private lazy var imageConfiguration: UIImage.SymbolConfiguration = {
-        return UIImage.SymbolConfiguration(pointSize: 14, weight: .semibold)
+        return .init(pointSize: 15, weight: .semibold)
     }()
 }
 
@@ -401,10 +406,9 @@ extension PhotoViewController {
         return layoutSection
     }
     
-    private func configureCell(_ cell: EditorChoiceItemView, with editorChoice: EditorChoice) {
+    private func configureCell(_ cell: EditorChoiceItemView, with store: StoreOf<EditorChoiceCard>) {
         DispatchQueue.main.async {
-            print("🚦 CONFIGURE_EDITOR_CHOICE on Thread: \(DispatchQueue.currentLabel)")
-            if let url = editorChoice.artworkURL {
+            if let url = store.item.artworkURL {
                 cell.backgroundImageView.kf.setImage(
                     with: url,
                     options: [
@@ -415,7 +419,7 @@ extension PhotoViewController {
                 )
             }
             
-            if let url = editorChoice.miniIconURL {
+            if let url = store.item.miniIconURL {
                 cell.iconImageView.kf.setImage(
                     with: url,
                     options: [
@@ -426,27 +430,27 @@ extension PhotoViewController {
                 )
             }
             
-            cell.titleLabel.text = editorChoice.title
-            cell.subtitleLabel.text = editorChoice.description
+            cell.titleLabel.text = store.item.title
+            cell.subtitleLabel.text = store.item.description
         }
     }
 
-    private func configureCell(_ cell: PhotoItemView, with asset: PHAsset) {
+    private func configureCell(_ cell: PhotoItemView, with store: StoreOf<PhotoCard>) {
         cell.selectButton.isHidden = !collectionView.isEditing
         cell.imageView.alpha = cell.isSelected ? 0.75 : 1.0
         cell.selectButton.isSelected = cell.isSelected
-        cell.representedAssetIdentifier = asset.localIdentifier
+        cell.representedAssetIdentifier = store.asset.localIdentifier
 
-        if asset.mediaSubtypes.contains(.photoLive) {
+        if store.asset.mediaSubtypes.contains(.photoLive) {
             cell.livePhotoBadgeImageView.image = PHLivePhotoView.livePhotoBadgeImage(options: .overContent)
             cell.livePhotoBadgeImageView.isHidden = false
         } else {
             cell.livePhotoBadgeImageView.isHidden = true
         }
         
-        cell.videoImageView.isHidden = asset.mediaType != .video
+        cell.videoImageView.isHidden = store.asset.mediaType != .video
 
-        let cacheKey = asset.localIdentifier as NSString
+        let cacheKey = store.asset.localIdentifier as NSString
 
         if let cachedImage = imageCache.object(forKey: cacheKey) {
             cell.imageView.image = cachedImage
@@ -460,12 +464,12 @@ extension PhotoViewController {
         options.isSynchronous = false
         options.deliveryMode = .highQualityFormat
         options.isNetworkAccessAllowed = true
-
-        imageManager.requestImage(for: asset,
+        
+        imageManager.requestImage(for: store.asset,
                                   targetSize: thumbnailSize,
                                   contentMode: .aspectFill,
                                   options: options) { [weak self, weak cell] image, _ in
-            guard let self = self, let cell = cell, cell.representedAssetIdentifier == asset.localIdentifier, let image = image else {
+            guard let self = self, let cell = cell, cell.representedAssetIdentifier == store.asset.localIdentifier, let image = image else {
                 return
             }
             
@@ -566,17 +570,17 @@ extension PhotoViewController: UICollectionViewDelegate {
                 }
             } else {
                 switch item {
-                case let .photo(asset):
-                    cell.hero.id = asset.localIdentifier
+                case let .photo(store):
+                    cell.hero.id = store.asset.localIdentifier
                     cell.hero.modifiers = [.useGlobalCoordinateSpace, .fade]
                     
-                    let detailViewController = DetailViewController(asset: asset)
+                    let detailViewController = DetailViewController(asset: store.asset)
                     print("🚦 INITIALIZE_IMAGE on Thread: \(DispatchQueue.currentLabel)")
                     detailViewController.imageView.image = cell.imageView.image
                     detailViewController.modalPresentationStyle = .fullScreen
                     detailViewController.hero.isEnabled = true
                     detailViewController.hero.modalAnimationType = .zoomOut
-                    detailViewController.imageView.hero.id = asset.localIdentifier
+                    detailViewController.imageView.hero.id = store.asset.localIdentifier
                     self.present(detailViewController, animated: true)
                     
                 case .editorChoice:
@@ -611,30 +615,63 @@ extension PhotoViewController: UICollectionViewDataSourcePrefetching {
         
     public func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
         let photoIndexPaths = indexPaths.filter { $0.section == 1 }
-        let assets = photoIndexPaths.compactMap { store.photos[$0.item] }
+        let assets = photoIndexPaths.compactMap { store.photos[$0.item].asset }
         imageManager.startCachingImages(for: assets, targetSize: thumbnailSize, contentMode: .aspectFill, options: nil)
     }
     
     public func collectionView(_ collectionView: UICollectionView, cancelPrefetchingForItemsAt indexPaths: [IndexPath]) {
         let photoIndexPaths = indexPaths.filter { $0.section == 1 }
-        let assets = photoIndexPaths.compactMap { store.photos[$0.item] }
+        let assets = photoIndexPaths.compactMap { store.photos[$0.item].asset }
         imageManager.stopCachingImages(for: assets, targetSize: thumbnailSize, contentMode: .aspectFill, options: nil)
     }
 }
 
-extension NSDiffableDataSourceSnapshot<PhotoViewController.Section, PhotoViewController.Item> {
+extension NSDiffableDataSourceSnapshot where SectionIdentifierType == PhotoViewController.Section, ItemIdentifierType == PhotoViewController.Item {
     init(store: StoreOf<PhotoList>) {
         self.init()
         
         appendSections([.editorChoices])
         appendSections([.allPhotos])
-        
+         
         if !store.editorChoices.isEmpty && !store.isSelecting {
-            appendItems(store.editorChoices.map { .editorChoice($0) }, toSection: .editorChoices)
+            var editorChoiceStores: [StoreOf<EditorChoiceCard>] = []
+            for editorChoice in store.editorChoices {
+                let id = editorChoice.id
+                if let store = store.scope(state: \.editorChoices[id: id], action: \.editorChoices[id: id]) {
+                    editorChoiceStores.append(store)
+                }
+            }
+            appendItems(editorChoiceStores.map { .editorChoice($0) }, toSection: .editorChoices)
         }
         
         if !store.photos.isEmpty {
-            appendItems(store.photos.map { .photo($0) }, toSection: .allPhotos)
+            var photoStores: [StoreOf<PhotoCard>] = []
+            for photo in store.photos {
+                let id = photo.id
+                if let store = store.scope(state: \.photos[id: id], action: \.photos[id: id]) {
+                    photoStores.append(store)
+                }
+            }
+            appendItems(photoStores.map { .photo($0) }, toSection: .allPhotos)
         }
     }
+    
+    mutating func updateItems(_ items: [ItemIdentifierType], toSection section: SectionIdentifierType) {
+        appendItems(items, toSection: section)
+    }
+}
+
+func measureExecutionTime(_ label: String, block: (@escaping () -> Void) -> Void) {
+    let start = DispatchTime.now()
+    let group = DispatchGroup()
+    group.enter()
+    
+    block {
+        group.leave()
+    }
+    
+    group.wait()
+    let end = DispatchTime.now()
+    let elapsed = Double(end.uptimeNanoseconds - start.uptimeNanoseconds) / 1_000_000_000
+    print("⏳ \(label.uppercased()) executed on Thread: \(DispatchQueue.currentLabel) in \(elapsed) seconds")
 }

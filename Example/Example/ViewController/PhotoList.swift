@@ -9,6 +9,7 @@ import ComposableArchitecture
 import RemoteConfigClient
 import PhotoLibraryClient
 import PhotoPermission
+import UIComponents
 import Photos
 import UIKit
 
@@ -16,8 +17,8 @@ import UIKit
 public struct PhotoList {
     @ObservableState
     public struct State: Equatable {
-        public var photos: [PHAsset] = []
-        public var editorChoices: [EditorChoice] = []
+        public var photos: IdentifiedArrayOf<PhotoCard.State> = []
+        public var editorChoices: IdentifiedArrayOf<EditorChoiceCard.State> = []
         public var isSelecting = false
         @Presents public var showSubscriptions: Subscriptions.State?
     }
@@ -30,6 +31,8 @@ public struct PhotoList {
         case fetchedEditorChoices([EditorChoice])
         case toggleSectionButtonTapped
         case premiumButtonTapped
+        case photos(IdentifiedActionOf<PhotoCard>)
+        case editorChoices(IdentifiedActionOf<EditorChoiceCard>)
     }
     
     @Dependency(\.remoteConfigClient) private var remoteConfigClient
@@ -38,35 +41,40 @@ public struct PhotoList {
     
     public var body: some ReducerOf<Self> {
         BindingReducer()
-            .ifLet(\.$showSubscriptions, action: \.showSubscriptions) {
-                Subscriptions()
-            }
         
         Reduce { state, action in
             switch action {
             case .onDidLoad:
                 return .run { send in
-                    let status = await photoPermission.authorizationStatus()
-                    switch status {
-                    case .authorized:
-                        let assets = try await photoLibraryClient.fetchAssets()
-                        await send(.fetchedPhotos(assets))
-                    default:
-                        break
-                    }
+                    await withThrowingTaskGroup(of: Void.self) { group in
+                        group.addTask {
+                            let status = await photoPermission.authorizationStatus()
+                            switch status {
+                            case .authorized:
+                                let assets = try await photoLibraryClient.fetchAssets()
+                                await send(.fetchedPhotos(assets))
+                            default:
+                                break
+                            }
+                        }
                     
-                    let editorChoices = try await remoteConfigClient.editorChoices()
-                    await send(.fetchedEditorChoices(editorChoices))
+                        group.addTask {
+                            let editorChoices = try await remoteConfigClient.editorChoices()
+                            await send(.fetchedEditorChoices(editorChoices))
+                        }
+                    }
                 } catch: { error, send in
                     print("🔴 FETCH ASSETS ERROR on Thread: \(DispatchQueue.currentLabel) \(error)")
                 }
                 
             case let .fetchedEditorChoices(editorChoices):
-                state.editorChoices = editorChoices
+                let choices = editorChoices.map { EditorChoiceCard.State(item: $0) }
+                state.editorChoices = IdentifiedArrayOf(uniqueElements: choices)
                 return .none
                 
-            case let .fetchedPhotos(photos):
-                state.photos = photos
+            case let .fetchedPhotos(assets):
+                let photos = assets.map { PhotoCard.State(asset: $0) }
+                state.photos = IdentifiedArrayOf(uniqueElements: photos)
                 return .none
                 
             case .toggleSectionButtonTapped:
@@ -86,9 +94,24 @@ public struct PhotoList {
                     return handleSubscriptionsAction(&state, action: action)
                 }
                 
+            case .photos:
+                return .none
+                
+            case .editorChoices:
+                return .none
+                
             case .binding:
                 return .none
             }
+        }
+        .ifLet(\.$showSubscriptions, action: \.showSubscriptions) {
+            Subscriptions()
+        }
+        .forEach(\.photos, action: \.photos) {
+            PhotoCard()
+        }
+        .forEach(\.editorChoices, action: \.editorChoices) {
+            EditorChoiceCard()
         }
     }
     
@@ -97,32 +120,32 @@ public struct PhotoList {
 
 extension PhotoList {
     private func handleSubscriptionsAction(_ state: inout State, action: Subscriptions.Action) -> Effect<Action> {
-            switch action {
-            case .view(let viewAction):
-                return handleSubscriptionsViewAction(&state, action: viewAction)
-            case .internal:
-                return .none
-            case .delegate:
-                return .none
-            default:
-                return .none
-            }
+        switch action {
+        case .view(let viewAction):
+            return handleSubscriptionsViewAction(&state, action: viewAction)
+        case .internal:
+            return .none
+        case .delegate:
+            return .none
+        default:
+            return .none
         }
-        
-        private func handleSubscriptionsViewAction(_ state: inout State, action: Subscriptions.Action.ViewAction) -> Effect<Action> {
-            switch action {
-            case let .interaction(interaction):
-                switch interaction {
-                case .dismiss:
-                    state.showSubscriptions = nil
-                    return .none
+    }
+    
+    private func handleSubscriptionsViewAction(_ state: inout State, action: Subscriptions.Action.ViewAction) -> Effect<Action> {
+        switch action {
+        case let .interaction(interaction):
+            switch interaction {
+            case .dismiss:
+                state.showSubscriptions = nil
+                return .none
 
-                default:
-                    return .none
-                }
-                
             default:
                 return .none
             }
+            
+        default:
+            return .none
         }
+    }
 }
