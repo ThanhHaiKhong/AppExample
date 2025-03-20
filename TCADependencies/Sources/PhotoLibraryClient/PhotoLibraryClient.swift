@@ -9,19 +9,64 @@ import ComposableArchitecture
 import PHAssetExtensions
 import Combine
 import Photos
+import UIKit
 
 @DependencyClient
 public struct PhotoLibraryClient: Sendable {
-    public var fetchAssets: @Sendable () async throws -> [PHAsset]
+    public var fetchAssets: @Sendable (_ category: Category) async throws -> [PHAsset]
     public var observeChanges: @Sendable () async throws -> AsyncStream<[PHAsset]>
+    
+    public enum Category: String, Identifiable, Equatable, CaseIterable, Sendable {
+        case all = "All Photos"
+        case favorite = "Favorites"
+        case recent = "Recents"
+        case burst = "Burst Photos"
+        case live = "Live Photos"
+        case screenShot = "Screenshots"
+        
+        public var id: String { rawValue }
+        
+        public var systemName: String {
+            switch self {
+            case .all: return "photo.stack.fill"
+            case .favorite: return "star.fill"
+            case .recent: return "clock.fill"
+            case .burst: return "square.stack.3d.forward.dottedline"
+            case .live: return "livephoto"
+            case .screenShot: return "camera.viewfinder"
+            }
+        }
+        
+        public var activeColor: UIColor {
+            switch self {
+            case .all: return .systemIndigo
+            case .favorite: return .systemYellow
+            case .recent: return .systemGreen
+            case .burst: return .systemRed
+            case .live: return .systemBlue
+            case .screenShot: return .systemOrange
+            }
+        }
+        
+        public var fetchOptions: PHFetchOptions {
+            switch self {
+            case .all: return .all
+            case .favorite: return .favorite
+            case .recent: return .recent
+            case .burst: return .burst
+            case .live: return .live
+            case .screenShot: return .screenshot
+            }
+        }
+    }
 }
 
 extension PhotoLibraryClient: DependencyKey {
     public static var liveValue: PhotoLibraryClient {
         let actor = PhotoLibraryActor()
         return PhotoLibraryClient(
-            fetchAssets: {
-                return try await actor.fetchAssets()
+            fetchAssets: { category in
+                return try await actor.fetchAssets(category: category)
             },
             observeChanges: {
                 return await actor.observeChanges()
@@ -37,8 +82,8 @@ extension PhotoLibraryClient: DependencyKey {
         
         // MARK: - Public Methods
         
-        public func fetchAssets() async throws -> [PHAsset] {
-            try await observer.fetchAssets()
+        public func fetchAssets(category: Category = .all) async throws -> [PHAsset] {
+            try await observer.fetchAssets(category: category)
         }
         
         public func observeChanges() -> AsyncStream<[PHAsset]> {
@@ -60,9 +105,9 @@ extension PhotoLibraryClient: DependencyKey {
                 continuation?.finish()
             }
             
-            public func fetchAssets() async throws -> [PHAsset] {
+            public func fetchAssets(category: Category) async throws -> [PHAsset] {
                 return try await withCheckedThrowingContinuation { continuation in
-                    fetchResult = PHAsset.fetchAssets(with: .image, options: .all)
+                    fetchResult = PHAsset.fetchAssets(with: .image, options: category.fetchOptions)
                     
                     if let fetchResult {
                         let assets = (0..<fetchResult.count).compactMap { fetchResult.object(at: $0) }

@@ -15,7 +15,8 @@ public class EditorChoiceItemView: UICollectionViewCell {
         super.init(frame: frame)
         
         setupViews()
-
+        setupConstraints()
+        
         self.layer.cornerRadius = 8
         self.layer.masksToBounds = true
         
@@ -33,27 +34,6 @@ public class EditorChoiceItemView: UICollectionViewCell {
     override public func layoutSubviews() {
         super.layoutSubviews()
         
-        NSLayoutConstraint.activate([
-            backgroundImageView.topAnchor.constraint(equalTo: topAnchor),
-            backgroundImageView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            backgroundImageView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            backgroundImageView.bottomAnchor.constraint(equalTo: bottomAnchor),
-            
-            prominentGradientView.bottomAnchor.constraint(equalTo: bottomAnchor),
-            prominentGradientView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            prominentGradientView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            prominentGradientView.heightAnchor.constraint(equalToConstant: 60),
-            
-            stackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10),
-            stackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10),
-            stackView.centerYAnchor.constraint(equalTo: prominentGradientView.centerYAnchor),
-            
-            iconImageView.widthAnchor.constraint(equalToConstant: 40),
-            iconImageView.heightAnchor.constraint(equalToConstant: 40),
-            
-            priceLabel.widthAnchor.constraint(equalToConstant: 60),
-            priceLabel.heightAnchor.constraint(equalToConstant: 26),
-        ])
     }
     
     public lazy var backgroundImageView: UIImageView = {
@@ -76,7 +56,7 @@ public class EditorChoiceItemView: UICollectionViewCell {
     public lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 15, weight: .medium)
-        label.textColor = .systemBlue
+        label.textColor = .label
         label.numberOfLines = 1
         label.translatesAutoresizingMaskIntoConstraints = false
         
@@ -86,7 +66,7 @@ public class EditorChoiceItemView: UICollectionViewCell {
     public lazy var subtitleLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 13, weight: .regular)
-        label.textColor = .systemBlue.withAlphaComponent(0.25)
+        label.textColor = .secondaryLabel
         label.numberOfLines = 1
         label.translatesAutoresizingMaskIntoConstraints = false
         
@@ -127,9 +107,9 @@ public class EditorChoiceItemView: UICollectionViewCell {
         return stackView
     }()
     
-    private lazy var prominentGradientView: UIView = {
-        let view = UIView()
-        view.backgroundColor = .quaternarySystemFill
+    private lazy var prominentGradientView: UIVisualEffectView = {
+        let effect = UIBlurEffect(style: .systemUltraThinMaterial)
+        let view = UIVisualEffectView(effect: effect)
         view.translatesAutoresizingMaskIntoConstraints = false
         
         return view
@@ -140,57 +120,32 @@ public class EditorChoiceItemView: UICollectionViewCell {
     }()
     
     private func setupViews() {
-        prominentGradientView.addSubview(stackView)
+        prominentGradientView.contentView.addSubview(stackView)
         addSubview(backgroundImageView)
         addSubview(prominentGradientView)
     }
-}
-
-class ProminentGradientView: UIView {
     
-    private let gradientLayer = CAGradientLayer()
-    private let blurEffectView: UIVisualEffectView
-    
-    override init(frame: CGRect) {
-        let blurEffect = UIBlurEffect(style: .dark)
-        let vibrancyEffect = UIVibrancyEffect(blurEffect: blurEffect, style: .fill)
-        blurEffectView = UIVisualEffectView(effect: vibrancyEffect)
-        
-        super.init(frame: frame)
-//        setupGradient()
-        setupBlur()
-    }
-    
-    required init?(coder: NSCoder) {
-        let blurEffect = UIBlurEffect(style: .systemThickMaterial)
-        let vibrancyEffect = UIVibrancyEffect(blurEffect: blurEffect, style: .fill)
-        blurEffectView = UIVisualEffectView(effect: vibrancyEffect)
-        
-        super.init(coder: coder)
-//        setupGradient()
-        setupBlur()
-    }
-    
-    private func setupGradient() {
-        gradientLayer.colors = [
-            UIColor.clear.cgColor,
-            UIColor.clear.cgColor,
-        ]
-        gradientLayer.startPoint = CGPoint(x: 0.5, y: 0.0)
-        gradientLayer.endPoint = CGPoint(x: 0.5, y: 0.5)
-        gradientLayer.frame = bounds
-        layer.insertSublayer(gradientLayer, at: 0)
-    }
-    
-    private func setupBlur() {
-        blurEffectView.frame = bounds
-        blurEffectView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        addSubview(blurEffectView)
-    }
-    
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        gradientLayer.frame = bounds
-        blurEffectView.frame = bounds
+    private func setupConstraints() {
+        NSLayoutConstraint.activate([
+            backgroundImageView.topAnchor.constraint(equalTo: topAnchor),
+            backgroundImageView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            backgroundImageView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            backgroundImageView.bottomAnchor.constraint(equalTo: bottomAnchor),
+            
+            prominentGradientView.bottomAnchor.constraint(equalTo: bottomAnchor),
+            prominentGradientView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            prominentGradientView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            prominentGradientView.heightAnchor.constraint(equalToConstant: 60),
+            
+            stackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10),
+            stackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10),
+            stackView.centerYAnchor.constraint(equalTo: prominentGradientView.centerYAnchor),
+            
+            iconImageView.widthAnchor.constraint(equalToConstant: 40),
+            iconImageView.heightAnchor.constraint(equalToConstant: 40),
+            
+            priceLabel.widthAnchor.constraint(equalToConstant: 60),
+            priceLabel.heightAnchor.constraint(equalToConstant: 26),
+        ])
     }
 }

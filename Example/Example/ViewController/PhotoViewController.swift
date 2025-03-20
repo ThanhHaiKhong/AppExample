@@ -7,6 +7,9 @@
 
 import ComposableArchitecture
 import RemoteConfigClient
+import PhotoLibraryClient
+import TCAFeatureAction
+import UIConstants
 import Kingfisher
 import PhotosUI
 import SwiftUI
@@ -47,6 +50,7 @@ public class PhotoViewController: UIViewController {
         super.viewDidLoad()
         
         setupViews()
+        setupConstraints()
         
         let editorChoiceCellRegistration = UICollectionView.CellRegistration<EditorChoiceItemView, EditorChoice> { [weak self] cell, _, editorChoice in
             guard let `self` = self else {
@@ -79,20 +83,57 @@ public class PhotoViewController: UIViewController {
                 return
             }
             
+            if store.isSelecting {
+                titleLabel.text = "Select Photos"
+                countLabel.text = ""
+            } else {
+                titleLabel.text = store.currentCategory.rawValue
+                countLabel.text = store.photos.count <= 1 ? "1 photo" : "\(store.photos.count) photos"
+            }
+        }
+        
+        observe { [weak self] in
+            guard let `self` = self else {
+                return
+            }
+            
             print("🚦 OBSERVE on Thread: \(DispatchQueue.currentLabel) - Photos: \(store.photos.count) - EditorChoices: \(store.editorChoices.count)")
-            countLabel.text = "\(store.photos.count) photos"
-            dataSource.apply(.init(store: store), animatingDifferences: true)
+
+            measureExecutionTime("APPLY_SNAPSHOT") { done in
+                self.dataSource.apply(.init(store: self.store), animatingDifferences: true)
+                done()
+            }
         }
         
         present(item: $store.scope(state: \.showSubscriptions, action: \.showSubscriptions)) { store in
             self.premiumButton.hero.id = "asset.localIdentifier"
             self.premiumButton.hero.modifiers = [.useGlobalCoordinateSpace, .fade]
             
-            let hostingVC = UIHostingController(rootView: SubscriptionView(store: store))
+            let hostingVC = CustomHostingController(store: store) { store in
+                SubscriptionView(store: store)
+            }
             hostingVC.modalPresentationStyle = .fullScreen
             hostingVC.hero.isEnabled = true
             hostingVC.hero.modalAnimationType = .zoomOut
             hostingVC.view.hero.id = "asset.localIdentifier"
+            
+            return hostingVC
+        }
+        
+        present(item: $store.scope(state: \.showCard, action: \.showCard)) { store in
+            let id: String = UUID().uuidString
+            if let selectedItem = self.store.selectedItem, let cell = self.collectionView.cellForItem(at: selectedItem.indexPath) as? PhotoItemView {
+                cell.hero.id = id
+                cell.hero.modifiers = [.useGlobalCoordinateSpace, .fade]
+            }
+            
+            let hostingVC = CustomHostingController(store: store) { store in
+                PhotoCardView(store: store)
+            }
+            hostingVC.modalPresentationStyle = .fullScreen
+            hostingVC.hero.isEnabled = true
+            hostingVC.hero.modalAnimationType = .zoomOut
+            hostingVC.view.hero.id = id
             
             return hostingVC
         }
@@ -102,8 +143,6 @@ public class PhotoViewController: UIViewController {
     
     public override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        
-        setupConstraints()
     }
     
     private lazy var collectionView: UICollectionView = {
@@ -128,7 +167,7 @@ public class PhotoViewController: UIViewController {
     private lazy var countLabel: UILabel = {
         let label = UILabel()
         label.font = .preferredRoundedFont(forTextStyle: .headline, weight: .semibold)
-        label.textColor = .systemGreen
+        label.textColor = .white
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -266,6 +305,22 @@ public class PhotoViewController: UIViewController {
     private lazy var imageConfiguration: UIImage.SymbolConfiguration = {
         return UIImage.SymbolConfiguration(pointSize: 14, weight: .semibold)
     }()
+    
+    private lazy var categoryView: CategoryView = {
+        let view = CategoryView()
+        view.layer.cornerRadius = 10
+        view.layer.masksToBounds = true
+        view.delegate = self
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        return view
+    }()
+    
+    private lazy var gradientView: GradientView = {
+        let view = GradientView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
 }
 
 // MARK: - Supporting Methods
@@ -276,6 +331,7 @@ extension PhotoViewController {
         view.addSubview(collectionView)
         view.addSubview(headerStackView)
         view.addSubview(footerStackView)
+        view.addSubview(categoryView)
     }
     
     private func setupConstraints() {
@@ -286,8 +342,12 @@ extension PhotoViewController {
             collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             
             headerStackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            headerStackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            headerStackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            headerStackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: UIConstants.Padding.horizontal),
+            headerStackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -UIConstants.Padding.horizontal),
+            
+            categoryView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: UIConstants.Padding.horizontal),
+            categoryView.bottomAnchor.constraint(equalTo: footerStackView.topAnchor, constant: -UIConstants.Padding.horizontal),
+            categoryView.widthAnchor.constraint(equalToConstant: 40),
             
             fileButton.widthAnchor.constraint(equalToConstant: 34),
             fileButton.heightAnchor.constraint(equalToConstant: 34),
@@ -330,7 +390,7 @@ extension PhotoViewController {
                 return editorChoiceLayoutSection(layoutEnvironment)
                 
             case .allPhotos:
-                return photoLayoutSection()
+                return photoLayoutSection(layoutEnvironment)
             }
         }, configuration: configuration)
         
@@ -374,9 +434,10 @@ extension PhotoViewController {
         return layoutSection
     }
     
-    private func photoLayoutSection() -> NSCollectionLayoutSection {
+    private func photoLayoutSection(_ layoutEnvironment: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection {
+        let isRegular = layoutEnvironment.traitCollection.horizontalSizeClass == .regular
         let innerSpacing: CGFloat = 2.0
-        let itemCount = 4
+        let itemCount = isRegular ? 8 : 4
         let itemWidthFraction = 1.0 / CGFloat(itemCount)
 
         let itemSize = NSCollectionLayoutSize(
@@ -558,27 +619,24 @@ extension PhotoViewController: UICollectionViewDelegate {
                 guard let selectedIndexPaths = collectionView.indexPathsForSelectedItems else {
                     return
                 }
+                let numberOfSelectedPhotos = selectedIndexPaths.count
                 
                 DispatchQueue.main.async {
-                    self.countLabel.text = selectedIndexPaths.count <= 1 ? "Select Item" : "\(selectedIndexPaths.count) Items Selected"
                     cell.selectButton.isSelected = true
                     cell.imageView.alpha = 0.75
+                    
+                    var countString = ""
+                    if numberOfSelectedPhotos == 1 {
+                        countString = "1 photo selected"
+                    } else {
+                        countString = "\(numberOfSelectedPhotos) photos selected"
+                    }
+                    self.countLabel.text = countString
                 }
             } else {
                 switch item {
                 case let .photo(asset):
-                    cell.hero.id = asset.localIdentifier
-                    cell.hero.modifiers = [.useGlobalCoordinateSpace, .fade]
-                    
-                    let detailViewController = DetailViewController(asset: asset)
-                    print("🚦 INITIALIZE_IMAGE on Thread: \(DispatchQueue.currentLabel)")
-                    detailViewController.imageView.image = cell.imageView.image
-                    detailViewController.modalPresentationStyle = .fullScreen
-                    detailViewController.hero.isEnabled = true
-                    detailViewController.hero.modalAnimationType = .zoomOut
-                    detailViewController.imageView.hero.id = asset.localIdentifier
-                    self.present(detailViewController, animated: true)
-                    
+                    store.send(.didSelectedItem(PhotoList.State.Item(asset: asset, indexPath: indexPath)))
                 case .editorChoice:
                     break
                 }
@@ -596,10 +654,19 @@ extension PhotoViewController: UICollectionViewDelegate {
                 return
             }
             
+            let numberOfSelectedPhotos = selectedIndexPaths.count
+            
             DispatchQueue.main.async {
-                self.countLabel.text = selectedIndexPaths.count <= 1 ? "Select Item" : "\(selectedIndexPaths.count) Items Selected"
                 cell.selectButton.isSelected = false
                 cell.imageView.alpha = 1.0
+                
+                var countString = ""
+                if numberOfSelectedPhotos == 1 {
+                    countString = "1 photo selected"
+                } else {
+                    countString = "\(numberOfSelectedPhotos) photos selected"
+                }
+                self.countLabel.text = countString
             }
         }
     }
@@ -611,16 +678,77 @@ extension PhotoViewController: UICollectionViewDataSourcePrefetching {
         
     public func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
         let photoIndexPaths = indexPaths.filter { $0.section == 1 }
-        let assets = photoIndexPaths.compactMap { store.photos[$0.item] }
+        let assets = photoIndexPaths.compactMap { indexPath in
+            if indexPath.item < store.photos.count {
+                return store.photos[indexPath.item]
+            } else {
+                return nil
+            }
+        }
         imageManager.startCachingImages(for: assets, targetSize: thumbnailSize, contentMode: .aspectFill, options: nil)
     }
     
     public func collectionView(_ collectionView: UICollectionView, cancelPrefetchingForItemsAt indexPaths: [IndexPath]) {
         let photoIndexPaths = indexPaths.filter { $0.section == 1 }
-        let assets = photoIndexPaths.compactMap { store.photos[$0.item] }
+        let assets = photoIndexPaths.compactMap { indexPath in
+            if indexPath.item < store.photos.count {
+                return store.photos[indexPath.item]
+            } else {
+                return nil
+            }
+        }
         imageManager.stopCachingImages(for: assets, targetSize: thumbnailSize, contentMode: .aspectFill, options: nil)
     }
 }
+
+// MARK: - UIScrollViewDelegate
+
+extension PhotoViewController: UIScrollViewDelegate {
+    
+    public func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+        UIView.animate(withDuration: 0.3, animations: {
+            self.headerStackView.alpha = 0
+            self.categoryView.alpha = 0
+            self.toggleSelectionButton.alpha = 0
+            self.sortButton.alpha = 0
+            self.changeLayoutButton.alpha = 0
+        })
+    }
+
+    public func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        UIView.animate(withDuration: 0.3, animations: {
+            self.headerStackView.alpha = 1
+            self.categoryView.alpha = 1
+            self.toggleSelectionButton.alpha = 1
+            self.sortButton.alpha = 1
+            self.changeLayoutButton.alpha = 1
+        })
+    }
+
+    public func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        if !decelerate {
+            UIView.animate(withDuration: 0.3, animations: {
+                self.headerStackView.alpha = 1
+                self.categoryView.alpha = 1
+                self.toggleSelectionButton.alpha = 1
+                self.sortButton.alpha = 1
+                self.changeLayoutButton.alpha = 1
+            })
+        }
+    }
+}
+
+// MARK: - CategoryViewDelegate
+
+extension PhotoViewController: CategoryViewDelegate {
+        
+    func categoryView(_ view: CategoryView, didSelect category: PhotoLibraryClient.Category) {
+        print("🚦 CATEGORY_VIEW on Thread: \(DispatchQueue.currentLabel) - Category: \(category)")
+        store.send(.didChangeCategory(category))
+    }
+}
+
+// MARK: - NSDiffableDataSourceSnapshot
 
 extension NSDiffableDataSourceSnapshot<PhotoViewController.Section, PhotoViewController.Item> {
     init(store: StoreOf<PhotoList>) {
@@ -637,4 +765,21 @@ extension NSDiffableDataSourceSnapshot<PhotoViewController.Section, PhotoViewCon
             appendItems(store.photos.map { .photo($0) }, toSection: .allPhotos)
         }
     }
+}
+
+// MARK: - Execution Time Measurement
+
+func measureExecutionTime(_ label: String, block: (@escaping () -> Void) -> Void) {
+    let start = DispatchTime.now()
+    let group = DispatchGroup()
+    group.enter()
+    
+    block {
+        group.leave()
+    }
+    
+    group.wait()
+    let end = DispatchTime.now()
+    let elapsed = Double(end.uptimeNanoseconds - start.uptimeNanoseconds) / 1_000_000_000
+    print("⏳ \(label.uppercased()) executed on Thread: \(DispatchQueue.currentLabel) in \(elapsed) seconds")
 }

@@ -14,9 +14,13 @@ struct SubscriptionView: View {
     
     @Perception.Bindable var store: StoreOf<Subscriptions>
     
+    public init(store: StoreOf<Subscriptions>) {
+        self.store = store
+    }
+    
     var body: some View {
         WithPerceptionTracking {
-            ScrollView {
+            ScrollView(showsIndicators: false) {
                 VStack {
                     VStack(spacing: 8) {
                         Text("UPGRADE TO")

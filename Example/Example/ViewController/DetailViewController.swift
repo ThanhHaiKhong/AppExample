@@ -5,6 +5,7 @@
 //  Created by Thanh Hai Khong on 12/3/25.
 //
 
+import UIConstants
 import UIKit
 import Hero
 import Photos
@@ -41,8 +42,14 @@ class DetailViewController: UIViewController {
             imageView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             
             headerStackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            headerStackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            headerStackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            headerStackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: UIConstants.Padding.horizontal),
+            headerStackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -UIConstants.Padding.horizontal),
+            
+            dismissButton.widthAnchor.constraint(equalToConstant: UIConstants.Sizes.small),
+            dismissButton.heightAnchor.constraint(equalToConstant: UIConstants.Sizes.small),
+            
+            scaleButton.widthAnchor.constraint(equalToConstant: UIConstants.Sizes.small),
+            scaleButton.heightAnchor.constraint(equalToConstant: UIConstants.Sizes.small),
         ])
     }
     
@@ -55,32 +62,33 @@ class DetailViewController: UIViewController {
     }()
     
     private lazy var headerStackView: UIStackView = {
-        let stackView = UIStackView(arrangedSubviews: [scaleButton, dismissButton])
+        let stackView = UIStackView(arrangedSubviews: [scaleButton, UIView(), dismissButton])
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.axis = .horizontal
         stackView.alignment = .center
-        stackView.distribution = .fillProportionally
-        stackView.spacing = 8
+        stackView.distribution = .fill
+        stackView.spacing = UIConstants.Spacing.inner
         return stackView
     }()
     
     private lazy var dismissButton: UIButton = {
         let button = UIButton(type: .system)
         let image = UIImage(systemName: "xmark", withConfiguration: symbolConfig)
-        button.translatesAutoresizingMaskIntoConstraints = false
         button.setImage(image, for: .normal)
         button.tintColor = .white
         button.addTarget(self, action: #selector(dismissButtonTapped(_:)), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
     
     private lazy var scaleButton: UIButton = {
         let button = UIButton(type: .system)
         let image = UIImage(systemName: "arrow.down.right.and.arrow.up.left", withConfiguration: symbolConfig)
-        button.translatesAutoresizingMaskIntoConstraints = false
         button.setImage(image, for: .normal)
         button.tintColor = .white
         button.addTarget(self, action: #selector(handleTap(_:)), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        
         return button
     }()
     

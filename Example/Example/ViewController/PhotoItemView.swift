@@ -24,6 +24,30 @@ public class PhotoItemView: UICollectionViewCell, UIGestureRecognizerDelegate {
         fatalError("init(coder:) has not been implemented")
     }
     
+    public override func layoutSubviews() {
+        super.layoutSubviews()
+        
+        DispatchQueue.main.async {
+            self.selectButton.tintColor = self.selectButton.isSelected ? .systemGreen : .white
+        }
+        
+        NSLayoutConstraint.activate([
+            imageView.topAnchor.constraint(equalTo: topAnchor),
+            imageView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            imageView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            imageView.bottomAnchor.constraint(equalTo: bottomAnchor),
+            
+            livePhotoBadgeImageView.leadingAnchor.constraint(equalTo: imageView.leadingAnchor),
+            livePhotoBadgeImageView.topAnchor.constraint(equalTo: imageView.topAnchor),
+            
+            videoImageView.leadingAnchor.constraint(equalTo: imageView.leadingAnchor, constant: 3.5),
+            videoImageView.topAnchor.constraint(equalTo: imageView.topAnchor, constant: 3.5),
+            
+            selectButton.topAnchor.constraint(equalTo: topAnchor, constant: 5.0),
+            selectButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -5.0),
+        ])
+    }
+    
     public lazy var imageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
@@ -56,7 +80,6 @@ public class PhotoItemView: UICollectionViewCell, UIGestureRecognizerDelegate {
         let selectedImage = UIImage(systemName: "checkmark.square.fill", withConfiguration: imageConfiguration)
         button.setImage(normalImage, for: .normal)
         button.setImage(selectedImage, for: .selected)
-        button.tintColor = .systemGreen
         button.translatesAutoresizingMaskIntoConstraints = false
         
         return button
@@ -71,22 +94,6 @@ public class PhotoItemView: UICollectionViewCell, UIGestureRecognizerDelegate {
         addSubview(livePhotoBadgeImageView)
         addSubview(videoImageView)
         addSubview(selectButton)
-        
-        NSLayoutConstraint.activate([
-            imageView.topAnchor.constraint(equalTo: topAnchor),
-            imageView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            imageView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            imageView.bottomAnchor.constraint(equalTo: bottomAnchor),
-            
-            livePhotoBadgeImageView.leadingAnchor.constraint(equalTo: imageView.leadingAnchor),
-            livePhotoBadgeImageView.topAnchor.constraint(equalTo: imageView.topAnchor),
-            
-            videoImageView.leadingAnchor.constraint(equalTo: imageView.leadingAnchor, constant: 3.5),
-            videoImageView.topAnchor.constraint(equalTo: imageView.topAnchor, constant: 3.5),
-            
-            selectButton.topAnchor.constraint(equalTo: topAnchor, constant: 5.0),
-            selectButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -5.0),
-        ])
     }
     
     public func configureUI() {
