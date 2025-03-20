@@ -18,6 +18,7 @@ import UIKit
 import Hero
 
 public class PhotoViewController: UIViewController {
+    
     public enum Section: Int, Sendable {
         case editorChoices
         case allPhotos
@@ -83,12 +84,16 @@ public class PhotoViewController: UIViewController {
                 return
             }
             
-            if store.isSelecting {
-                titleLabel.text = "Select Photos"
-                countLabel.text = ""
-            } else {
-                titleLabel.text = store.currentCategory.rawValue
-                countLabel.text = store.photos.count <= 1 ? "1 photo" : "\(store.photos.count) photos"
+            UIView.animate(withDuration: 0.3) {
+                self.headerStackView.isHidden = self.store.isSelecting
+                
+                if self.store.isSelecting {
+                    self.titleLabel.text = "Select Photos"
+                    self.countLabel.text = "No photos selected"
+                } else {
+                    self.titleLabel.text = self.store.currentCategory.rawValue
+                    self.countLabel.text = self.store.photos.count <= 1 ? "1 photo" : "\(self.store.photos.count) photos"
+                }
             }
             
             let angle: CGFloat = store.isAscendingOrder ? 0 : .pi
@@ -101,12 +106,30 @@ public class PhotoViewController: UIViewController {
                 self.sortButton.transform = CGAffineTransform(rotationAngle: angle)
                 UIImpactFeedbackGenerator(style: .medium).impactOccurred()
             }
+        }
+        
+        observe { [weak self] in
+            guard let `self` = self else {
+                return
+            }
             
-            changeLayoutButton.isSelected = !store.isGridLayout
+            let isNowSelected = !store.isGridLayout
+            changeLayoutButton.isSelected = isNowSelected
             let newLayout = store.isGridLayout ? createLayout() : createSpiralLayout()
-                
-            UIView.animate(withDuration: 0.3) {
-                self.collectionView.setCollectionViewLayout(newLayout, animated: true)
+            
+            UIView.animate(withDuration: 0.3,
+                           delay: 0,
+                           usingSpringWithDamping: 0.5,
+                           initialSpringVelocity: 1.0,
+                           options: [.curveEaseInOut],
+                           animations: {
+                self.changeLayoutButton.transform = CGAffineTransform(scaleX: 1.2, y: 1.2)
+                UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+            }) { _ in
+                UIView.animate(withDuration: 0.2) {
+                    self.changeLayoutButton.transform = .identity
+                    self.collectionView.setCollectionViewLayout(newLayout, animated: true)
+                }
             }
         }
         
@@ -185,7 +208,7 @@ public class PhotoViewController: UIViewController {
     private lazy var countLabel: UILabel = {
         let label = UILabel()
         label.font = .preferredRoundedFont(forTextStyle: .headline, weight: .semibold)
-        label.textColor = .white
+        label.textColor = .secondaryLabel
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -307,10 +330,35 @@ public class PhotoViewController: UIViewController {
         return button
     }()
     
+    private lazy var nextButton: UIButton = {
+        var configuration = UIButton.Configuration.borderedProminent()
+        configuration.baseForegroundColor = .white
+        configuration.background.backgroundColor = .systemGreen
+        configuration.title = "Next"
+        configuration.image = UIImage(systemName: "chevron.forward.2")
+        configuration.imagePadding = 5
+        configuration.imagePlacement = .trailing
+        configuration.preferredSymbolConfigurationForImage = UIImage.SymbolConfiguration(scale: .medium)
+        configuration.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { incoming in
+            var outgoing = incoming
+            outgoing.font = UIFont.preferredFont(forTextStyle: .headline)
+            return outgoing
+        }
+        
+        let button = UIButton(configuration: configuration)
+        button.layer.cornerRadius = 5.0
+        button.layer.masksToBounds = true
+        button.tintColor = .white
+        button.addTarget(self, action: #selector(nextButtonTapped(_:)), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        
+        return button
+    }()
+    
     private lazy var changeLayoutButton: UIButton = {
         let button = UIButton()
-        let normalImage = UIImage(systemName: "square.grid.2x2", withConfiguration: imageConfiguration)
-        let selectedImage = UIImage(systemName: "rectangle.3.group", withConfiguration: imageConfiguration)
+        let normalImage = UIImage(systemName: "rectangle.3.group", withConfiguration: imageConfiguration)
+        let selectedImage = UIImage(systemName: "square.grid.2x2", withConfiguration: imageConfiguration)
         button.setImage(normalImage, for: .normal)
         button.setImage(selectedImage, for: .selected)
         button.layer.cornerRadius = 17.0
@@ -336,12 +384,6 @@ public class PhotoViewController: UIViewController {
         
         return view
     }()
-    
-    private lazy var gradientView: GradientView = {
-        let view = GradientView()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-    }()
 }
 
 // MARK: - Supporting Methods
@@ -352,6 +394,7 @@ extension PhotoViewController {
         view.addSubview(collectionView)
         view.addSubview(headerStackView)
         view.addSubview(footerStackView)
+        view.addSubview(nextButton)
         view.addSubview(categoryView)
     }
     
@@ -367,8 +410,13 @@ extension PhotoViewController {
             headerStackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -UIConstants.Padding.horizontal),
             
             categoryView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: UIConstants.Padding.horizontal),
-            categoryView.bottomAnchor.constraint(equalTo: footerStackView.topAnchor, constant: -UIConstants.Padding.horizontal),
+            categoryView.bottomAnchor.constraint(equalTo: nextButton.topAnchor, constant: -UIConstants.Padding.horizontal),
             categoryView.widthAnchor.constraint(equalToConstant: 40),
+            
+            nextButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: UIConstants.Padding.horizontal),
+            nextButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -UIConstants.Padding.horizontal),
+            nextButton.bottomAnchor.constraint(equalTo: footerStackView.topAnchor, constant: -UIConstants.Padding.horizontal),
+            nextButton.heightAnchor.constraint(equalToConstant: 50),
             
             fileButton.widthAnchor.constraint(equalToConstant: 34),
             fileButton.heightAnchor.constraint(equalToConstant: 34),
@@ -499,7 +547,7 @@ extension PhotoViewController {
         group.interItemSpacing = .fixed(innerSpacing)
 
         let layoutSection = NSCollectionLayoutSection(group: group)
-        layoutSection.contentInsets = NSDirectionalEdgeInsets(top: innerSpacing, leading: 0, bottom: innerSpacing, trailing: 0)
+        layoutSection.contentInsets = NSDirectionalEdgeInsets(top: innerSpacing, leading: 0, bottom: 100, trailing: 0)
         layoutSection.interGroupSpacing = innerSpacing
 
         return layoutSection
@@ -616,6 +664,7 @@ extension PhotoViewController {
 
         let section = NSCollectionLayoutSection(group: group)
         section.interGroupSpacing = innerSpacing
+        section.contentInsets = NSDirectionalEdgeInsets(top: innerSpacing, leading: 0, bottom: 100, trailing: 0)
         
         return section
     }
@@ -727,6 +776,10 @@ extension PhotoViewController {
     
     @objc private func changeLayoutButtonTapped(_ sender: UIButton) {
         store.send(.toggleLayoutButtonTapped)
+    }
+    
+    @objc private func nextButtonTapped(_ sender: UIButton) {
+        
     }
     
     @objc private func toggleSelectionTapped(_ sender: UIButton) {
