@@ -98,13 +98,20 @@ public class PhotoViewController: UIViewController {
             
             let angle: CGFloat = store.isAscendingOrder ? 0 : .pi
 
-            UIView.animate(withDuration: 0.6,
+            UIView.animate(withDuration: 0.5,
                            delay: 0,
                            usingSpringWithDamping: 0.5,
                            initialSpringVelocity: 1.0,
-                           options: [.curveEaseInOut]) {
-                self.sortButton.transform = CGAffineTransform(rotationAngle: angle)
+                           options: [.curveEaseInOut],
+                           animations: {
+                let rotation = CGAffineTransform(rotationAngle: angle)
+                let scale = CGAffineTransform(scaleX: 1.2, y: 1.2)
+                self.sortButton.transform = rotation.concatenating(scale)
                 UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+            }) { _ in
+                UIView.animate(withDuration: 0.25) {
+                    self.sortButton.transform = CGAffineTransform(rotationAngle: angle)
+                }
             }
         }
         
@@ -117,7 +124,7 @@ public class PhotoViewController: UIViewController {
             changeLayoutButton.isSelected = isNowSelected
             let newLayout = store.isGridLayout ? createLayout() : createSpiralLayout()
             
-            UIView.animate(withDuration: 0.3,
+            UIView.animate(withDuration: 0.5,
                            delay: 0,
                            usingSpringWithDamping: 0.5,
                            initialSpringVelocity: 1.0,
@@ -126,7 +133,7 @@ public class PhotoViewController: UIViewController {
                 self.changeLayoutButton.transform = CGAffineTransform(scaleX: 1.2, y: 1.2)
                 UIImpactFeedbackGenerator(style: .medium).impactOccurred()
             }) { _ in
-                UIView.animate(withDuration: 0.2) {
+                UIView.animate(withDuration: 0.25) {
                     self.changeLayoutButton.transform = .identity
                     self.collectionView.setCollectionViewLayout(newLayout, animated: true)
                 }
