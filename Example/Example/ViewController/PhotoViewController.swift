@@ -291,7 +291,9 @@ public class PhotoViewController: UIViewController {
     private lazy var changeLayoutButton: UIButton = {
         let button = UIButton()
         let normalImage = UIImage(systemName: "square.grid.3x3.square", withConfiguration: imageConfiguration)
+        let selectedImage = UIImage(systemName: "square.grid.3x3.middle.filled", withConfiguration: imageConfiguration)
         button.setImage(normalImage, for: .normal)
+        button.setImage(selectedImage, for: .selected)
         button.layer.cornerRadius = 17.0
         button.layer.masksToBounds = true
         button.tintColor = .white
@@ -397,6 +399,28 @@ extension PhotoViewController {
         return layout
     }
     
+    private func createSpiralLayout() -> UICollectionViewLayout {
+        let configuration = UICollectionViewCompositionalLayoutConfiguration()
+        configuration.interSectionSpacing = .zero
+        
+        let layout = UICollectionViewCompositionalLayout(sectionProvider: { [weak self] (sectionIndex, layoutEnvironment) -> NSCollectionLayoutSection? in
+            guard let `self` = self,
+                  let section = Section(rawValue: sectionIndex) else {
+                return nil
+            }
+            
+            switch section {
+            case .editorChoices:
+                return editorChoiceLayoutSection(layoutEnvironment)
+                
+            case .allPhotos:
+                return photoCustomLayoutSection(layoutEnvironment)
+            }
+        }, configuration: configuration)
+        
+        return layout
+    }
+    
     private func editorChoiceLayoutSection(_ layoutEnvironment: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection {
         let isRegular = layoutEnvironment.traitCollection.horizontalSizeClass == .regular
         let contentSize = layoutEnvironment.container.contentSize
@@ -437,7 +461,7 @@ extension PhotoViewController {
     private func photoLayoutSection(_ layoutEnvironment: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection {
         let isRegular = layoutEnvironment.traitCollection.horizontalSizeClass == .regular
         let innerSpacing: CGFloat = 2.0
-        let itemCount = isRegular ? 8 : 4
+        let itemCount = isRegular ? 6 : 4
         let itemWidthFraction = 1.0 / CGFloat(itemCount)
 
         let itemSize = NSCollectionLayoutSize(
@@ -460,6 +484,121 @@ extension PhotoViewController {
         layoutSection.interGroupSpacing = innerSpacing
 
         return layoutSection
+    }
+    
+    private func photoGridLayoutSection(_ layoutEnvironment: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection {
+        let innerSpacing: CGFloat = 2.0
+
+        // Top Group
+        
+        let topItemSize = NSCollectionLayoutSize(
+            widthDimension: .fractionalWidth(0.5),
+            heightDimension: .fractionalHeight(1.0)
+        )
+
+        let topItem = NSCollectionLayoutItem(layoutSize: topItemSize)
+
+        let groupSize = NSCollectionLayoutSize(
+            widthDimension: .fractionalWidth(1.0),
+            heightDimension: .fractionalHeight(1.0 / 3.0)
+        )
+
+        let topGroup = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [topItem, topItem])
+        topGroup.interItemSpacing = .fixed(innerSpacing)
+        
+        // Bottom Group
+        
+        let leadingItemSize = NSCollectionLayoutSize(
+            widthDimension: .fractionalWidth(1.0),
+            heightDimension: .fractionalHeight(1.0 / 2.0)
+        )
+        
+        let leadingItem = NSCollectionLayoutItem(layoutSize: leadingItemSize)
+        
+        let middleItemSize = NSCollectionLayoutSize(
+            widthDimension: .fractionalWidth(1.0 / 3.0),
+            heightDimension: .fractionalHeight(1.0)
+        )
+        
+        let middleItem = NSCollectionLayoutItem(layoutSize: middleItemSize)
+        
+        let leadingGroupSize = NSCollectionLayoutSize(
+            widthDimension: .fractionalWidth(1.0 / 3.0),
+            heightDimension: .fractionalHeight(1.0)
+        )
+        
+        let leadingGroup = NSCollectionLayoutGroup.vertical(layoutSize: leadingGroupSize, subitems: [leadingItem, leadingItem])
+        leadingGroup.interItemSpacing = .fixed(innerSpacing)
+        
+        let bottomGroupSize = NSCollectionLayoutSize(
+            widthDimension: .fractionalWidth(1.0),
+            heightDimension: .fractionalHeight(2.0 / 3.0)
+        )
+        
+        let bottomGroup = NSCollectionLayoutGroup.horizontal(layoutSize: bottomGroupSize, subitems: [leadingGroup, middleItem, leadingGroup])
+        bottomGroup.interItemSpacing = .fixed(innerSpacing)
+        
+        // Main Group
+        
+        let mainGroupSize = NSCollectionLayoutSize(
+            widthDimension: .fractionalWidth(1.0),
+            heightDimension: .fractionalWidth(1.0)
+        )
+        
+        let mainGroup = NSCollectionLayoutGroup.vertical(layoutSize: mainGroupSize, subitems: [topGroup, bottomGroup])
+        mainGroup.interItemSpacing = .fixed(innerSpacing)
+        
+        let layoutSection = NSCollectionLayoutSection(group: mainGroup)
+        layoutSection.contentInsets = NSDirectionalEdgeInsets(top: innerSpacing, leading: 0, bottom: innerSpacing, trailing: 0)
+        layoutSection.interGroupSpacing = innerSpacing
+
+        return layoutSection
+    }
+    
+    private func photoCustomLayoutSection(_ layoutEnvironment: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection {
+        let innerSpacing: CGFloat = 2.0
+
+        let groupSize = NSCollectionLayoutSize(
+            widthDimension: .fractionalWidth(1.0),
+            heightDimension: .fractionalWidth(1.0)
+        )
+                    
+        let group = NSCollectionLayoutGroup.custom(layoutSize: groupSize) { environment in
+            let containerWidth = environment.container.effectiveContentSize.width
+            let containerHeight = environment.container.effectiveContentSize.width
+            let numberOfItemsUnitsByAbstraction: Int = 4
+            let itemUnitSize = CGSize(
+                width: (containerWidth - (CGFloat(numberOfItemsUnitsByAbstraction) - 1.0) * innerSpacing) / CGFloat(numberOfItemsUnitsByAbstraction),
+                height: (containerHeight - (CGFloat(numberOfItemsUnitsByAbstraction) - 1.0) * innerSpacing) / CGFloat(numberOfItemsUnitsByAbstraction)
+            )
+            
+            let firstItemFrame = CGRect(x: 0, y: 0, width: itemUnitSize.width * 2 + innerSpacing, height: itemUnitSize.height)
+            let secondItemFrame = CGRect(x: CGRectGetMaxX(firstItemFrame) + innerSpacing, y: 0, width: itemUnitSize.width, height: itemUnitSize.height)
+            let thirdItemFrame = CGRect(x: CGRectGetMaxX(secondItemFrame) + innerSpacing, y: 0, width: itemUnitSize.width, height: itemUnitSize.height * 2 + innerSpacing)
+            let fourthItemFrame = CGRect(x: 0, y: CGRectGetMaxY(firstItemFrame) + innerSpacing, width: itemUnitSize.width, height: itemUnitSize.height)
+            let fifthItemFrame = CGRect(x: CGRectGetMaxX(fourthItemFrame) + innerSpacing, y: CGRectGetMinY(fourthItemFrame), width: itemUnitSize.width * 2 + innerSpacing, height: itemUnitSize.height * 2 + innerSpacing)
+            let sixthItemFrame = CGRect(x: 0, y: CGRectGetMaxY(fourthItemFrame) + innerSpacing, width: itemUnitSize.width, height: itemUnitSize.height * 2 + innerSpacing)
+            let seventhItemFrame = CGRect(x: CGRectGetMinX(thirdItemFrame), y: CGRectGetMaxY(thirdItemFrame) + innerSpacing, width: itemUnitSize.width, height: itemUnitSize.height)
+            let eighthItemFrame = CGRect(x: CGRectGetMaxX(sixthItemFrame) + innerSpacing, y: CGRectGetMaxY(fifthItemFrame) + innerSpacing, width: itemUnitSize.width, height: itemUnitSize.height)
+            let ninthItemFrame = CGRect(x: CGRectGetMaxX(eighthItemFrame) + innerSpacing, y: CGRectGetMinY(eighthItemFrame), width: itemUnitSize.width * 2 + innerSpacing, height: itemUnitSize.height)
+            
+            return [
+                NSCollectionLayoutGroupCustomItem(frame: firstItemFrame),
+                NSCollectionLayoutGroupCustomItem(frame: secondItemFrame),
+                NSCollectionLayoutGroupCustomItem(frame: thirdItemFrame),
+                NSCollectionLayoutGroupCustomItem(frame: fourthItemFrame),
+                NSCollectionLayoutGroupCustomItem(frame: fifthItemFrame),
+                NSCollectionLayoutGroupCustomItem(frame: sixthItemFrame),
+                NSCollectionLayoutGroupCustomItem(frame: seventhItemFrame),
+                NSCollectionLayoutGroupCustomItem(frame: eighthItemFrame),
+                NSCollectionLayoutGroupCustomItem(frame: ninthItemFrame)
+            ]
+        }
+
+        let section = NSCollectionLayoutSection(group: group)
+        section.interGroupSpacing = innerSpacing
+        
+        return section
     }
     
     private func configureCell(_ cell: EditorChoiceItemView, with editorChoice: EditorChoice) {
@@ -568,7 +707,14 @@ extension PhotoViewController {
     }
     
     @objc private func changeLayoutButtonTapped(_ sender: UIButton) {
+        store.isGridLayout.toggle()
+        sender.isSelected = !store.isGridLayout
         
+        let newLayout = store.isGridLayout ? createLayout() : createSpiralLayout()
+            
+        UIView.animate(withDuration: 0.3) {
+            self.collectionView.setCollectionViewLayout(newLayout, animated: true)
+        }
     }
     
     @objc private func toggleSelectionTapped(_ sender: UIButton) {

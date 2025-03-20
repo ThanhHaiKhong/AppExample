@@ -21,6 +21,7 @@ public struct PhotoList {
         public var isSelecting = false
         public var selectedItem: Item?
         public var currentCategory: PhotoLibraryClient.Category = .all
+        public var isGridLayout = true
         @Presents public var showSubscriptions: Subscriptions.State?
         @Presents public var showCard: PhotoCard.State?
         
@@ -70,7 +71,7 @@ public struct PhotoList {
                             let status = await photoPermission.authorizationStatus()
                             switch status {
                             case .authorized:
-                                let assets = try await photoLibraryClient.fetchAssets(.all)
+                                let assets = try await photoLibraryClient.fetchAssets(category)
                                 await send(.fetchedPhotos(assets))
                             default:
                                 break
