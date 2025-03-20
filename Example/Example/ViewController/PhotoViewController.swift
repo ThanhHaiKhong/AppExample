@@ -90,6 +90,24 @@ public class PhotoViewController: UIViewController {
                 titleLabel.text = store.currentCategory.rawValue
                 countLabel.text = store.photos.count <= 1 ? "1 photo" : "\(store.photos.count) photos"
             }
+            
+            let angle: CGFloat = store.isAscendingOrder ? 0 : .pi
+
+            UIView.animate(withDuration: 0.6,
+                           delay: 0,
+                           usingSpringWithDamping: 0.5,
+                           initialSpringVelocity: 1.0,
+                           options: [.curveEaseInOut]) {
+                self.sortButton.transform = CGAffineTransform(rotationAngle: angle)
+                UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+            }
+            
+            changeLayoutButton.isSelected = !store.isGridLayout
+            let newLayout = store.isGridLayout ? createLayout() : createSpiralLayout()
+                
+            UIView.animate(withDuration: 0.3) {
+                self.collectionView.setCollectionViewLayout(newLayout, animated: true)
+            }
         }
         
         observe { [weak self] in
@@ -277,6 +295,7 @@ public class PhotoViewController: UIViewController {
     private lazy var sortButton: UIButton = {
         let button = UIButton()
         let normalImage = UIImage(systemName: "line.3.horizontal.decrease", withConfiguration: imageConfiguration)
+        let selectedImage = UIImage(systemName: "chevron.up.2", withConfiguration: imageConfiguration)
         button.setImage(normalImage, for: .normal)
         button.layer.cornerRadius = 17.0
         button.layer.masksToBounds = true
@@ -290,8 +309,8 @@ public class PhotoViewController: UIViewController {
     
     private lazy var changeLayoutButton: UIButton = {
         let button = UIButton()
-        let normalImage = UIImage(systemName: "square.grid.3x3.square", withConfiguration: imageConfiguration)
-        let selectedImage = UIImage(systemName: "square.grid.3x3.middle.filled", withConfiguration: imageConfiguration)
+        let normalImage = UIImage(systemName: "square.grid.2x2", withConfiguration: imageConfiguration)
+        let selectedImage = UIImage(systemName: "rectangle.3.group", withConfiguration: imageConfiguration)
         button.setImage(normalImage, for: .normal)
         button.setImage(selectedImage, for: .selected)
         button.layer.cornerRadius = 17.0
@@ -703,18 +722,11 @@ extension PhotoViewController {
     }
     
     @objc private func sortButtonTapped(_ sender: UIButton) {
-        
+        store.send(.toggleOrderButtonTapped)
     }
     
     @objc private func changeLayoutButtonTapped(_ sender: UIButton) {
-        store.isGridLayout.toggle()
-        sender.isSelected = !store.isGridLayout
-        
-        let newLayout = store.isGridLayout ? createLayout() : createSpiralLayout()
-            
-        UIView.animate(withDuration: 0.3) {
-            self.collectionView.setCollectionViewLayout(newLayout, animated: true)
-        }
+        store.send(.toggleLayoutButtonTapped)
     }
     
     @objc private func toggleSelectionTapped(_ sender: UIButton) {

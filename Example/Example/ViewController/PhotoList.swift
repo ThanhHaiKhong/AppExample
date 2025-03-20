@@ -22,6 +22,7 @@ public struct PhotoList {
         public var selectedItem: Item?
         public var currentCategory: PhotoLibraryClient.Category = .all
         public var isGridLayout = true
+        public var isAscendingOrder = true
         @Presents public var showSubscriptions: Subscriptions.State?
         @Presents public var showCard: PhotoCard.State?
         
@@ -45,6 +46,8 @@ public struct PhotoList {
         case fetchedEditorChoices([EditorChoice])
         case toggleSectionButtonTapped
         case premiumButtonTapped
+        case toggleLayoutButtonTapped
+        case toggleOrderButtonTapped
         case didSelectedItem(State.Item)
         case didChangeCategory(PhotoLibraryClient.Category)
     }
@@ -101,6 +104,15 @@ public struct PhotoList {
                 
             case .premiumButtonTapped:
                 state.showSubscriptions = Subscriptions.State()
+                return .none
+                
+            case .toggleLayoutButtonTapped:
+                state.isGridLayout.toggle()
+                return .none
+                
+            case .toggleOrderButtonTapped:
+                state.isAscendingOrder.toggle()
+                state.photos.reverse()
                 return .none
                 
             case let .showSubscriptions(action):
