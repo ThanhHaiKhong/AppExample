@@ -85,7 +85,8 @@ public class PhotoViewController: UIViewController {
             }
             
             UIView.animate(withDuration: 0.3) {
-                self.headerStackView.isHidden = self.store.isSelecting
+                self.headerStackView.alpha = self.store.isSelecting ? 0 : 1
+                self.categoryView.alpha = self.store.isSelecting ? 0 : 1
                 
                 if self.store.isSelecting {
                     self.titleLabel.text = "Select Photos"
@@ -93,6 +94,7 @@ public class PhotoViewController: UIViewController {
                 } else {
                     self.titleLabel.text = self.store.currentCategory.rawValue
                     self.countLabel.text = self.store.photos.count <= 1 ? "1 photo" : "\(self.store.photos.count) photos"
+                    self.nextButton.alpha = 0
                 }
             }
             
@@ -338,24 +340,22 @@ public class PhotoViewController: UIViewController {
     }()
     
     private lazy var nextButton: UIButton = {
-        var configuration = UIButton.Configuration.borderedProminent()
+        var configuration = UIButton.Configuration.filled()
         configuration.baseForegroundColor = .white
         configuration.background.backgroundColor = .systemGreen
         configuration.title = "Next"
         configuration.image = UIImage(systemName: "chevron.forward.2")
         configuration.imagePadding = 5
         configuration.imagePlacement = .trailing
-        configuration.preferredSymbolConfigurationForImage = UIImage.SymbolConfiguration(scale: .medium)
+        configuration.preferredSymbolConfigurationForImage = UIImage.SymbolConfiguration(pointSize: 13, weight: .bold)
         configuration.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { incoming in
             var outgoing = incoming
-            outgoing.font = UIFont.preferredFont(forTextStyle: .headline)
+            outgoing.font = UIFont.systemFont(ofSize: 18, weight: .semibold)
             return outgoing
         }
         
         let button = UIButton(configuration: configuration)
-        button.layer.cornerRadius = 5.0
-        button.layer.masksToBounds = true
-        button.tintColor = .white
+        button.alpha = 0.0
         button.addTarget(self, action: #selector(nextButtonTapped(_:)), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         
@@ -391,6 +391,16 @@ public class PhotoViewController: UIViewController {
         
         return view
     }()
+    
+    private lazy var placeholderView: UIVisualEffectView = {
+        let effect = UIBlurEffect(style: .systemUltraThinMaterial)
+        let view = UIVisualEffectView(effect: effect)
+        view.layer.cornerRadius = 5.0
+        view.layer.masksToBounds = true
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        return view
+    }()
 }
 
 // MARK: - Supporting Methods
@@ -398,10 +408,11 @@ public class PhotoViewController: UIViewController {
 extension PhotoViewController {
     
     private func setupViews() {
+        placeholderView.contentView.addSubview(nextButton)
         view.addSubview(collectionView)
         view.addSubview(headerStackView)
         view.addSubview(footerStackView)
-        view.addSubview(nextButton)
+        view.addSubview(placeholderView)
         view.addSubview(categoryView)
     }
     
@@ -417,13 +428,18 @@ extension PhotoViewController {
             headerStackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -UIConstants.Padding.horizontal),
             
             categoryView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: UIConstants.Padding.horizontal),
-            categoryView.bottomAnchor.constraint(equalTo: nextButton.topAnchor, constant: -UIConstants.Padding.horizontal),
+            categoryView.bottomAnchor.constraint(equalTo: placeholderView.topAnchor, constant: -UIConstants.Padding.horizontal),
             categoryView.widthAnchor.constraint(equalToConstant: 40),
             
-            nextButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: UIConstants.Padding.horizontal),
-            nextButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -UIConstants.Padding.horizontal),
-            nextButton.bottomAnchor.constraint(equalTo: footerStackView.topAnchor, constant: -UIConstants.Padding.horizontal),
-            nextButton.heightAnchor.constraint(equalToConstant: 50),
+            placeholderView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: UIConstants.Padding.horizontal),
+            placeholderView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -UIConstants.Padding.horizontal),
+            placeholderView.bottomAnchor.constraint(equalTo: footerStackView.topAnchor, constant: -UIConstants.Padding.horizontal),
+            placeholderView.heightAnchor.constraint(equalToConstant: 50),
+            
+            nextButton.topAnchor.constraint(equalTo: placeholderView.contentView.topAnchor),
+            nextButton.leadingAnchor.constraint(equalTo: placeholderView.contentView.leadingAnchor),
+            nextButton.trailingAnchor.constraint(equalTo: placeholderView.contentView.trailingAnchor),
+            nextButton.bottomAnchor.constraint(equalTo: placeholderView.contentView.bottomAnchor),
             
             fileButton.widthAnchor.constraint(equalToConstant: 34),
             fileButton.heightAnchor.constraint(equalToConstant: 34),
@@ -839,7 +855,7 @@ extension PhotoViewController: UICollectionViewDelegate {
                 }
                 let numberOfSelectedPhotos = selectedIndexPaths.count
                 
-                DispatchQueue.main.async {
+                UIView.animate(withDuration: 0.3) {
                     cell.selectButton.isSelected = true
                     cell.imageView.alpha = 0.75
                     
@@ -850,6 +866,8 @@ extension PhotoViewController: UICollectionViewDelegate {
                         countString = "\(numberOfSelectedPhotos) photos selected"
                     }
                     self.countLabel.text = countString
+                    self.nextButton.alpha = numberOfSelectedPhotos > 0 ? 1.0 : 0.0
+                    self.nextButton.isEnabled = numberOfSelectedPhotos <= 20
                 }
             } else {
                 switch item {
@@ -874,17 +892,19 @@ extension PhotoViewController: UICollectionViewDelegate {
             
             let numberOfSelectedPhotos = selectedIndexPaths.count
             
-            DispatchQueue.main.async {
+            UIView.animate(withDuration: 0.3) {
                 cell.selectButton.isSelected = false
                 cell.imageView.alpha = 1.0
                 
-                var countString = ""
+                var countString = "No photos selected"
                 if numberOfSelectedPhotos == 1 {
                     countString = "1 photo selected"
                 } else {
                     countString = "\(numberOfSelectedPhotos) photos selected"
                 }
                 self.countLabel.text = countString
+                self.nextButton.alpha = numberOfSelectedPhotos > 0 ? 1.0 : 0.0
+                self.nextButton.isEnabled = numberOfSelectedPhotos <= 20
             }
         }
     }
@@ -924,6 +944,10 @@ extension PhotoViewController: UICollectionViewDataSourcePrefetching {
 extension PhotoViewController: UIScrollViewDelegate {
     
     public func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+        if store.isSelecting {
+            return
+        }
+        
         UIView.animate(withDuration: 0.3, animations: {
             self.headerStackView.alpha = 0
             self.categoryView.alpha = 0
@@ -934,6 +958,10 @@ extension PhotoViewController: UIScrollViewDelegate {
     }
 
     public func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        if store.isSelecting {
+            return
+        }
+        
         UIView.animate(withDuration: 0.3, animations: {
             self.headerStackView.alpha = 1
             self.categoryView.alpha = 1
@@ -944,6 +972,10 @@ extension PhotoViewController: UIScrollViewDelegate {
     }
 
     public func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        if store.isSelecting {
+            return
+        }
+        
         if !decelerate {
             UIView.animate(withDuration: 0.3, animations: {
                 self.headerStackView.alpha = 1
@@ -999,5 +1031,5 @@ func measureExecutionTime(_ label: String, block: (@escaping () -> Void) -> Void
     group.wait()
     let end = DispatchTime.now()
     let elapsed = Double(end.uptimeNanoseconds - start.uptimeNanoseconds) / 1_000_000_000
-    print("⏳ \(label.uppercased()) executed on Thread: \(DispatchQueue.currentLabel) in \(elapsed) seconds")
+    print("⏰ \(label.uppercased()) executed on Thread: \(DispatchQueue.currentLabel) in \(elapsed) seconds")
 }
