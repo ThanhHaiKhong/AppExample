@@ -115,7 +115,6 @@ public class PhotoViewController: UIViewController {
                 let rotation = CGAffineTransform(rotationAngle: angle)
                 let scale = CGAffineTransform(scaleX: 1.2, y: 1.2)
                 self.sortButton.transform = rotation.concatenating(scale)
-                UIImpactFeedbackGenerator(style: .medium).impactOccurred()
             }) { _ in
                 UIView.animate(withDuration: 0.25) {
                     self.sortButton.transform = CGAffineTransform(rotationAngle: angle)
@@ -139,7 +138,6 @@ public class PhotoViewController: UIViewController {
                            options: [.curveEaseInOut],
                            animations: {
                 self.changeLayoutButton.transform = CGAffineTransform(scaleX: 1.2, y: 1.2)
-                UIImpactFeedbackGenerator(style: .medium).impactOccurred()
             }) { _ in
                 UIView.animate(withDuration: 0.25) {
                     self.changeLayoutButton.transform = .identity
@@ -244,7 +242,7 @@ public class PhotoViewController: UIViewController {
         let button = UIButton()
         let normalImage = UIImage(systemName: "folder.fill", withConfiguration: imageConfiguration)
         button.setImage(normalImage, for: .normal)
-        button.layer.cornerRadius = 17.0
+        button.layer.cornerRadius = UIConstants.Sizes.small / 2
         button.layer.masksToBounds = true
         button.tintColor = .white
         button.backgroundColor = .systemGreen
@@ -258,7 +256,7 @@ public class PhotoViewController: UIViewController {
         let button = UIButton()
         let normalImage = UIImage(systemName: "camera.fill", withConfiguration: imageConfiguration)
         button.setImage(normalImage, for: .normal)
-        button.layer.cornerRadius = 17.0
+        button.layer.cornerRadius = UIConstants.Sizes.small / 2
         button.layer.masksToBounds = true
         button.tintColor = .white
         button.backgroundColor = .systemGreen
@@ -272,7 +270,7 @@ public class PhotoViewController: UIViewController {
         let button = UIButton()
         let normalImage = UIImage(systemName: "crown.fill", withConfiguration: imageConfiguration)
         button.setImage(normalImage, for: .normal)
-        button.layer.cornerRadius = 17.0
+        button.layer.cornerRadius = UIConstants.Sizes.small / 2
         button.layer.masksToBounds = true
         button.tintColor = .white
         button.backgroundColor = .systemGreen
@@ -286,7 +284,7 @@ public class PhotoViewController: UIViewController {
         let button = UIButton()
         let normalImage = UIImage(systemName: "gearshape.fill", withConfiguration: imageConfiguration)
         button.setImage(normalImage, for: .normal)
-        button.layer.cornerRadius = 17.0
+        button.layer.cornerRadius = UIConstants.Sizes.small / 2
         button.layer.masksToBounds = true
         button.tintColor = .white
         button.backgroundColor = .systemGreen
@@ -347,7 +345,7 @@ public class PhotoViewController: UIViewController {
         let normalImage = UIImage(systemName: "line.3.horizontal.decrease", withConfiguration: imageConfiguration)
         let selectedImage = UIImage(systemName: "chevron.up.2", withConfiguration: imageConfiguration)
         button.setImage(normalImage, for: .normal)
-        button.layer.cornerRadius = 17.0
+        button.layer.cornerRadius = UIConstants.Sizes.small / 2
         button.layer.masksToBounds = true
         button.tintColor = .white
         button.backgroundColor = .systemGreen
@@ -386,7 +384,7 @@ public class PhotoViewController: UIViewController {
         let selectedImage = UIImage(systemName: "square.grid.2x2", withConfiguration: imageConfiguration)
         button.setImage(normalImage, for: .normal)
         button.setImage(selectedImage, for: .selected)
-        button.layer.cornerRadius = 17.0
+        button.layer.cornerRadius = UIConstants.Sizes.small / 2
         button.layer.masksToBounds = true
         button.tintColor = .white
         button.backgroundColor = .systemGreen
@@ -484,29 +482,29 @@ extension PhotoViewController {
             warningSelectableLabel.trailingAnchor.constraint(equalTo: warningContainerView.trailingAnchor, constant: -8),
             warningSelectableLabel.bottomAnchor.constraint(equalTo: warningContainerView.bottomAnchor, constant: -8),
             
-            fileButton.widthAnchor.constraint(equalToConstant: 34),
-            fileButton.heightAnchor.constraint(equalToConstant: 34),
+            fileButton.widthAnchor.constraint(equalToConstant: UIConstants.Sizes.small),
+            fileButton.heightAnchor.constraint(equalToConstant: UIConstants.Sizes.small),
             
-            cameraButton.widthAnchor.constraint(equalToConstant: 34),
-            cameraButton.heightAnchor.constraint(equalToConstant: 34),
+            cameraButton.widthAnchor.constraint(equalToConstant: UIConstants.Sizes.small),
+            cameraButton.heightAnchor.constraint(equalToConstant: UIConstants.Sizes.small),
             
-            premiumButton.widthAnchor.constraint(equalToConstant: 34),
-            premiumButton.heightAnchor.constraint(equalToConstant: 34),
+            premiumButton.widthAnchor.constraint(equalToConstant: UIConstants.Sizes.small),
+            premiumButton.heightAnchor.constraint(equalToConstant: UIConstants.Sizes.small),
             
-            settingsButton.widthAnchor.constraint(equalToConstant: 34),
-            settingsButton.heightAnchor.constraint(equalToConstant: 34),
+            settingsButton.widthAnchor.constraint(equalToConstant: UIConstants.Sizes.small),
+            settingsButton.heightAnchor.constraint(equalToConstant: UIConstants.Sizes.small),
             
             footerStackView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             footerStackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             footerStackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
             
-            toggleSelectionButton.heightAnchor.constraint(equalToConstant: 34),
+            toggleSelectionButton.heightAnchor.constraint(equalToConstant: UIConstants.Sizes.small),
             
-            sortButton.widthAnchor.constraint(equalToConstant: 34),
-            sortButton.heightAnchor.constraint(equalToConstant: 34),
+            sortButton.widthAnchor.constraint(equalToConstant: UIConstants.Sizes.small),
+            sortButton.heightAnchor.constraint(equalToConstant: UIConstants.Sizes.small),
             
-            changeLayoutButton.widthAnchor.constraint(equalToConstant: 34),
-            changeLayoutButton.heightAnchor.constraint(equalToConstant: 34),
+            changeLayoutButton.widthAnchor.constraint(equalToConstant: UIConstants.Sizes.small),
+            changeLayoutButton.heightAnchor.constraint(equalToConstant: UIConstants.Sizes.small),
         ])
     }
     
@@ -558,7 +556,7 @@ extension PhotoViewController {
         let isRegular = layoutEnvironment.traitCollection.horizontalSizeClass == .regular
         let contentSize = layoutEnvironment.container.contentSize
         let innerSpacing: CGFloat = 12.0
-        let edgeInsets = NSDirectionalEdgeInsets(top: innerSpacing + 34.0, leading: 20, bottom: innerSpacing, trailing: 20)
+        let edgeInsets = NSDirectionalEdgeInsets(top: innerSpacing + UIConstants.Sizes.small, leading: 20, bottom: innerSpacing, trailing: 20)
         let itemCount = isRegular ? 2 : 1
         let itemWidthFactor: CGFloat = 1.4
 
@@ -613,7 +611,7 @@ extension PhotoViewController {
         group.interItemSpacing = .fixed(innerSpacing)
 
         let layoutSection = NSCollectionLayoutSection(group: group)
-        layoutSection.contentInsets = NSDirectionalEdgeInsets(top: innerSpacing, leading: 0, bottom: 100, trailing: 0)
+        layoutSection.contentInsets = NSDirectionalEdgeInsets(top: innerSpacing, leading: 0, bottom: 140, trailing: 0)
         layoutSection.interGroupSpacing = innerSpacing
 
         return layoutSection
@@ -730,7 +728,7 @@ extension PhotoViewController {
 
         let section = NSCollectionLayoutSection(group: group)
         section.interGroupSpacing = innerSpacing
-        section.contentInsets = NSDirectionalEdgeInsets(top: innerSpacing, leading: 0, bottom: 100, trailing: 0)
+        section.contentInsets = NSDirectionalEdgeInsets(top: innerSpacing, leading: 0, bottom: 140, trailing: 0)
         
         return section
     }
@@ -838,10 +836,12 @@ extension PhotoViewController {
     
     @objc private func sortButtonTapped(_ sender: UIButton) {
         store.send(.toggleOrderButtonTapped)
+        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
     }
     
     @objc private func changeLayoutButtonTapped(_ sender: UIButton) {
         store.send(.toggleLayoutButtonTapped)
+        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
     }
     
     @objc private func nextButtonTapped(_ sender: UIButton) {

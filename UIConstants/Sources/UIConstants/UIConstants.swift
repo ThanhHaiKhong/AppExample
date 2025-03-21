@@ -20,7 +20,7 @@ public struct UIConstants {
     
     public struct Sizes {
         public static let `default` = 44.0
-        public static let small = 32.0
+        public static let small = 36.0
         public static let large = 56.0
     }
     

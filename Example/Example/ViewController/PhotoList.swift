@@ -140,6 +140,7 @@ public struct PhotoList {
                 
             case let .didChangeCategory(category):
                 state.currentCategory = category
+                UIImpactFeedbackGenerator(style: .medium).impactOccurred()
                 
                 return .run { send in
                     let assets = try await photoLibraryClient.fetchAssets(category)
