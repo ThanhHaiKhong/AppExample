@@ -36,6 +36,7 @@ public class PhotoViewController: UIViewController {
     
     private var dataSource: UICollectionViewDiffableDataSource<Section, Item>! = nil
     private var thumbnailSize = CGSize(width: 100, height: 100)
+    private var placeholderBottomConstraint: NSLayoutConstraint!
     
     public init(store: StoreOf<PhotoList>) {
         self.store = store
@@ -84,6 +85,8 @@ public class PhotoViewController: UIViewController {
                 return
             }
             
+            placeholderBottomConstraint.constant = -UIConstants.Padding.horizontal
+            
             UIView.animate(withDuration: 0.3) {
                 self.headerStackView.alpha = self.store.isSelecting ? 0 : 1
                 self.categoryView.alpha = self.store.isSelecting ? 0 : 1
@@ -95,7 +98,10 @@ public class PhotoViewController: UIViewController {
                     self.titleLabel.text = self.store.currentCategory.rawValue
                     self.countLabel.text = self.store.photos.count <= 1 ? "1 photo" : "\(self.store.photos.count) photos"
                     self.nextButton.alpha = 0
+                    self.warningContainerView.alpha = 0
                 }
+                
+                self.view.layoutIfNeeded()
             }
             
             let angle: CGFloat = store.isAscendingOrder ? 0 : .pi
@@ -219,6 +225,18 @@ public class PhotoViewController: UIViewController {
         label.font = .preferredRoundedFont(forTextStyle: .headline, weight: .semibold)
         label.textColor = .secondaryLabel
         label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
+    private lazy var warningSelectableLabel: UILabel = {
+        let label = UILabel()
+        label.font = .preferredRoundedFont(forTextStyle: .subheadline, weight: .medium)
+        label.textColor = .white
+        label.textAlignment = .center
+        label.text = "Currently, we support processing up to 20 photos at a time. For the best experience, please deselect some to continue."
+        label.numberOfLines = 0
+        label.translatesAutoresizingMaskIntoConstraints = false
+        
         return label
     }()
     
@@ -401,6 +419,17 @@ public class PhotoViewController: UIViewController {
         
         return view
     }()
+    
+    private lazy var warningContainerView: UIView = {
+        let view = UIView()
+        view.layer.cornerRadius = 5.0
+        view.layer.masksToBounds = true
+        view.alpha = 0.0
+        view.backgroundColor = .systemYellow.withAlphaComponent(0.85)
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        return view
+    }()
 }
 
 // MARK: - Supporting Methods
@@ -409,14 +438,18 @@ extension PhotoViewController {
     
     private func setupViews() {
         placeholderView.contentView.addSubview(nextButton)
+        warningContainerView.addSubview(warningSelectableLabel)
         view.addSubview(collectionView)
         view.addSubview(headerStackView)
-        view.addSubview(footerStackView)
         view.addSubview(placeholderView)
+        view.addSubview(warningContainerView)
         view.addSubview(categoryView)
+        view.addSubview(footerStackView)
     }
     
     private func setupConstraints() {
+        placeholderBottomConstraint = placeholderView.bottomAnchor.constraint(equalTo: footerStackView.topAnchor, constant: -UIConstants.Padding.horizontal)
+        
         NSLayoutConstraint.activate([
             collectionView.topAnchor.constraint(equalTo: view.topAnchor),
             collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -433,13 +466,23 @@ extension PhotoViewController {
             
             placeholderView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: UIConstants.Padding.horizontal),
             placeholderView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -UIConstants.Padding.horizontal),
-            placeholderView.bottomAnchor.constraint(equalTo: footerStackView.topAnchor, constant: -UIConstants.Padding.horizontal),
+            placeholderBottomConstraint,
             placeholderView.heightAnchor.constraint(equalToConstant: 50),
             
             nextButton.topAnchor.constraint(equalTo: placeholderView.contentView.topAnchor),
             nextButton.leadingAnchor.constraint(equalTo: placeholderView.contentView.leadingAnchor),
             nextButton.trailingAnchor.constraint(equalTo: placeholderView.contentView.trailingAnchor),
             nextButton.bottomAnchor.constraint(equalTo: placeholderView.contentView.bottomAnchor),
+            
+            warningContainerView.topAnchor.constraint(equalTo: placeholderView.bottomAnchor, constant: UIConstants.Spacing.inner),
+            warningContainerView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: UIConstants.Padding.horizontal),
+            warningContainerView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -UIConstants.Padding.horizontal),
+            warningContainerView.heightAnchor.constraint(equalToConstant: 70),
+            
+            warningSelectableLabel.topAnchor.constraint(equalTo: warningContainerView.topAnchor, constant: 8),
+            warningSelectableLabel.leadingAnchor.constraint(equalTo: warningContainerView.leadingAnchor, constant: 8),
+            warningSelectableLabel.trailingAnchor.constraint(equalTo: warningContainerView.trailingAnchor, constant: -8),
+            warningSelectableLabel.bottomAnchor.constraint(equalTo: warningContainerView.bottomAnchor, constant: -8),
             
             fileButton.widthAnchor.constraint(equalToConstant: 34),
             fileButton.heightAnchor.constraint(equalToConstant: 34),
@@ -853,7 +896,9 @@ extension PhotoViewController: UICollectionViewDelegate {
                 guard let selectedIndexPaths = collectionView.indexPathsForSelectedItems else {
                     return
                 }
+                
                 let numberOfSelectedPhotos = selectedIndexPaths.count
+                placeholderBottomConstraint.constant = numberOfSelectedPhotos > 20 ? -(UIConstants.Spacing.inner + 70 + 20) : -UIConstants.Padding.horizontal
                 
                 UIView.animate(withDuration: 0.3) {
                     cell.selectButton.isSelected = true
@@ -868,6 +913,9 @@ extension PhotoViewController: UICollectionViewDelegate {
                     self.countLabel.text = countString
                     self.nextButton.alpha = numberOfSelectedPhotos > 0 ? 1.0 : 0.0
                     self.nextButton.isEnabled = numberOfSelectedPhotos <= 20
+                    self.warningContainerView.alpha = numberOfSelectedPhotos <= 20 ? 0.0 : 1.0
+                    
+                    self.view.layoutIfNeeded()
                 }
             } else {
                 switch item {
@@ -891,6 +939,7 @@ extension PhotoViewController: UICollectionViewDelegate {
             }
             
             let numberOfSelectedPhotos = selectedIndexPaths.count
+            placeholderBottomConstraint.constant = numberOfSelectedPhotos > 20 ? -(UIConstants.Spacing.inner + 70 + 20) : -UIConstants.Padding.horizontal
             
             UIView.animate(withDuration: 0.3) {
                 cell.selectButton.isSelected = false
@@ -905,6 +954,9 @@ extension PhotoViewController: UICollectionViewDelegate {
                 self.countLabel.text = countString
                 self.nextButton.alpha = numberOfSelectedPhotos > 0 ? 1.0 : 0.0
                 self.nextButton.isEnabled = numberOfSelectedPhotos <= 20
+                self.warningContainerView.alpha = numberOfSelectedPhotos <= 20 ? 0.0 : 1.0
+                
+                self.view.layoutIfNeeded()
             }
         }
     }
