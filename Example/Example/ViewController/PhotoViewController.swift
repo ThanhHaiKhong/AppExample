@@ -472,7 +472,7 @@ extension PhotoViewController {
             topGradientBlurView.topAnchor.constraint(equalTo: view.topAnchor),
             topGradientBlurView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             topGradientBlurView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            topGradientBlurView.bottomAnchor.constraint(equalTo: headerStackView.bottomAnchor, constant: 10),
+            topGradientBlurView.bottomAnchor.constraint(equalTo: headerStackView.bottomAnchor, constant: UIConstants.Padding.horizontal),
             
             headerStackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             headerStackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: UIConstants.Padding.horizontal),
@@ -529,7 +529,7 @@ extension PhotoViewController {
             bottomGradientBlurView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             bottomGradientBlurView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             bottomGradientBlurView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            bottomGradientBlurView.topAnchor.constraint(equalTo: footerStackView.topAnchor, constant: -10),
+            bottomGradientBlurView.topAnchor.constraint(equalTo: footerStackView.topAnchor, constant: -UIConstants.Padding.horizontal),
         ])
     }
     
