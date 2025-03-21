@@ -221,7 +221,6 @@ public class PhotoViewController: UIViewController {
     private lazy var countLabel: UILabel = {
         let label = UILabel()
         label.font = .preferredRoundedFont(forTextStyle: .headline, weight: .semibold)
-        label.textColor = .secondaryLabel
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -428,6 +427,20 @@ public class PhotoViewController: UIViewController {
         
         return view
     }()
+    
+    private lazy var topGradientBlurView: GradientBlurView = {
+        let view = GradientBlurView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        return view
+    }()
+    
+    private lazy var bottomGradientBlurView: GradientBlurView = {
+        let view = GradientBlurView(reverse: true)
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        return view
+    }()
 }
 
 // MARK: - Supporting Methods
@@ -438,10 +451,12 @@ extension PhotoViewController {
         placeholderView.contentView.addSubview(nextButton)
         warningContainerView.addSubview(warningSelectableLabel)
         view.addSubview(collectionView)
+        view.addSubview(topGradientBlurView)
         view.addSubview(headerStackView)
         view.addSubview(placeholderView)
         view.addSubview(warningContainerView)
         view.addSubview(categoryView)
+        view.addSubview(bottomGradientBlurView)
         view.addSubview(footerStackView)
     }
     
@@ -453,6 +468,11 @@ extension PhotoViewController {
             collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            
+            topGradientBlurView.topAnchor.constraint(equalTo: view.topAnchor),
+            topGradientBlurView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            topGradientBlurView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            topGradientBlurView.bottomAnchor.constraint(equalTo: headerStackView.bottomAnchor, constant: 10),
             
             headerStackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             headerStackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: UIConstants.Padding.horizontal),
@@ -505,6 +525,11 @@ extension PhotoViewController {
             
             changeLayoutButton.widthAnchor.constraint(equalToConstant: UIConstants.Sizes.small),
             changeLayoutButton.heightAnchor.constraint(equalToConstant: UIConstants.Sizes.small),
+            
+            bottomGradientBlurView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            bottomGradientBlurView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            bottomGradientBlurView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            bottomGradientBlurView.topAnchor.constraint(equalTo: footerStackView.topAnchor, constant: -10),
         ])
     }
     
