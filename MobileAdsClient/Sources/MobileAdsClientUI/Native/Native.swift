@@ -50,7 +50,9 @@ public struct Native: TCAInitializableReducer, Sendable {
                     let nativeAd = try await nativeAdClient.loadAd(adUnitID, rootViewController, adLoaderOptions)
                     await send(.receivedNativeAd(nativeAd), animation: .default)
                 } catch: { error, send in
+#if DEBUG
                     print("Error LOADING native ad: \(error.localizedDescription)")
+#endif
                 }
                 
             case let .receivedNativeAd(nativeAd):
@@ -70,7 +72,9 @@ public struct Native: TCAInitializableReducer, Sendable {
                     let nativeAd = try await nativeAdClient.loadAd(adUnitID, rootViewController, adLoaderOptions)
                     await send(.receivedNativeAd(nativeAd), animation: .default)
                 } catch: { error, send in
+#if DEBUG
                     print("Error REFRESH native ad: \(error.localizedDescription)")
+#endif
                 }
                 
                 default:

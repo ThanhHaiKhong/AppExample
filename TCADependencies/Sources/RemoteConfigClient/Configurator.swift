@@ -9,6 +9,7 @@ import FirebaseRemoteConfig
 
 internal actor Configurator {
     private var cachedEditorChoices: [EditorChoice]? = nil
+    private var cachedPhotoSelectionLimitNumber: Int = 20
     
     public init() {
         RemoteConfig.remoteConfig().addOnConfigUpdateListener { configUpdate, error in
@@ -34,6 +35,16 @@ extension Configurator {
         cachedEditorChoices = fetchedChoices
         return fetchedChoices
     }
+    
+    public func photoSelectionLimitNumber() async throws -> Int {
+        if cachedPhotoSelectionLimitNumber != 20 {
+            return cachedPhotoSelectionLimitNumber
+        }
+        
+        let fetchedNumber = try await fetchPhotoSelectionLimitNumber()
+        cachedPhotoSelectionLimitNumber = fetchedNumber
+        return fetchedNumber
+    }
 }
 
 // MARK: - Supporting Methods
@@ -43,8 +54,13 @@ extension Configurator {
         do {
             let updatedChoices = try await fetchEditorChoices()
             cachedEditorChoices = updatedChoices
+            
+            let updatedNumber = try await fetchPhotoSelectionLimitNumber()
+            cachedPhotoSelectionLimitNumber = updatedNumber
         } catch {
-            print("Failed to update editor choices: \(error)")
+            #if DEBUG
+            print("Failed to update editor choices: \(error.localizedDescription)")
+            #endif
         }
     }
     
@@ -76,5 +92,24 @@ extension Configurator {
         let jsonData = try JSONSerialization.data(withJSONObject: json)
         let editorChoices = try JSONDecoder().decode([EditorChoice].self, from: jsonData)
         return editorChoices
+    }
+    
+    nonisolated private func fetchPhotoSelectionLimitNumber() async throws -> Int {
+        return try await withCheckedThrowingContinuation { continuation in
+            RemoteConfig.remoteConfig().fetchAndActivate { status, error in
+                if let error {
+                    continuation.resume(throwing: error)
+                    return
+                }
+                
+                if status == .successFetchedFromRemote {
+                    if let number = RemoteConfig.remoteConfig().configValue(forKey: "PREF_REMOTE_CONFIG_MAX_SELECTABLE_PHOTOS").jsonValue as? NSNumber {
+                        continuation.resume(returning: number.intValue)
+                    } else {
+                        continuation.resume(returning: 20)
+                    }
+                }
+            }
+        }
     }
 }

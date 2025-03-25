@@ -80,6 +80,16 @@ public struct SettingsView<Background>: View where Background: View {
             }
             .navigationTitle("Settings")
             .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+                        store.send(.dismissButtonTapped)
+                    } label: {
+                        Image(systemName: "xmark")
+                            .font(.system(.headline, design: .rounded).weight(.semibold))
+                    }
+                }
+            }
         }
     }
 }

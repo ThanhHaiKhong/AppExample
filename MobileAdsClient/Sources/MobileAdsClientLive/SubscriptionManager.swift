@@ -14,7 +14,7 @@ public final actor SubscriptionManager {
     
     private let subscriptionKey = "isUserSubscribed"
     private let lastCheckedKey = "lastCheckedSubscription"
-    private let cacheDuration: TimeInterval = 24 * 60 * 60  // Cache trong 24 giờ
+    private let cacheDuration: TimeInterval = 24 * 60 * 60
 
     private init() {}
 }
@@ -39,7 +39,7 @@ extension SubscriptionManager {
     
     public func purchase(productID: String) async throws -> Transaction {
         guard let product = try await Product.products(for: [productID]).first else {
-            throw NSError(domain: "SubscriptionManager", code: -1, userInfo: [NSLocalizedDescriptionKey: "Product not found"])
+            throw SubscriptionError.productNotFound
         }
         
         let result = try await product.purchase()
@@ -49,10 +49,10 @@ extension SubscriptionManager {
                 await transaction.finish()
                 return transaction
             } else {
-                throw NSError(domain: "SubscriptionManager", code: -2, userInfo: [NSLocalizedDescriptionKey: "Transaction verification failed"])
+                throw SubscriptionError.verificationFailed
             }
         default:
-            throw NSError(domain: "SubscriptionManager", code: -3, userInfo: [NSLocalizedDescriptionKey: "Purchase failed"])
+            throw SubscriptionError.transactionFailed
         }
     }
     
@@ -60,9 +60,12 @@ extension SubscriptionManager {
         var restoredTransactions: [Transaction] = []
         
         for await result in Transaction.currentEntitlements {
-            if case .verified(let transaction) = result {
-                restoredTransactions.append(transaction)
-            }
+            guard case .verified(let transaction) = result else { continue }
+            restoredTransactions.append(transaction)
+        }
+        
+        if restoredTransactions.isEmpty {
+            throw RestoreError.noPurchasesFound
         }
         
         return restoredTransactions
@@ -76,7 +79,6 @@ extension SubscriptionManager {
                         continuation.yield(transaction)
                     }
                 }
-                continuation.finish()
             }
         }
     }
@@ -92,6 +94,25 @@ extension SubscriptionManager {
                 await transaction.finish()
             }
         }
+    }
+    
+    public func getLatestTransaction() async -> Transaction? {
+        var latestTransaction: Transaction?
+        
+        for await result in Transaction.currentEntitlements {
+            guard case .verified(let transaction) = result else {
+                continue
+            }
+            
+            let currentExpiration = latestTransaction?.expirationDate ?? Date.distantPast
+            let newExpiration = transaction.expirationDate ?? Date.distantPast
+            
+            if latestTransaction == nil || newExpiration > currentExpiration {
+                latestTransaction = transaction
+            }
+        }
+        
+        return latestTransaction
     }
 }
 
@@ -142,8 +163,17 @@ public struct IAPProduct: Identifiable, Equatable, Hashable, Sendable, Codable, 
         self.displayName = product.displayName
         self.price = product.price
         self.displayPrice = product.displayPrice
-        self.localizedDescription = product.id == "com.orientpro.photocompress_Weekly" ? "WEEKLY" : "ANNUALLY"
-        self.offer = product.id == "com.orientpro.photocompress_Weekly" ? "Flexible" : "Best Value"
+        
+        if product.id == "com.orientpro.photocompress_Weekly" {
+            self.localizedDescription = "WEEKLY"
+            self.offer = "Flexible"
+        } else if product.id == "com.orientpro.photocompress_yearly" {
+            self.localizedDescription = "ANNUALLY"
+            self.offer = "Best Value"
+        } else {
+            self.localizedDescription = product.description
+            self.offer = product.subscription?.promotionalOffers.description ?? ""
+        }
     }
     
     public static func == (lhs: IAPProduct, rhs: IAPProduct) -> Bool {
@@ -171,4 +201,21 @@ public enum SubscriptionStatus: Sendable, Equatable {
     case active
     case expired
     case notPurchased
+}
+
+public enum SubscriptionError: Error, Sendable {
+    case productNotFound
+    case transactionFailed
+    case verificationFailed
+}
+
+enum RestoreError: Error, LocalizedError, Sendable {
+    case noPurchasesFound
+    
+    var errorDescription: String? {
+        switch self {
+        case .noPurchasesFound:
+            return "No previous purchases found. If you believe this is an error, please check your Apple ID."
+        }
+    }
 }

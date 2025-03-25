@@ -464,7 +464,9 @@ extension ImageProcessor {
             throw ImageProcessorError.unknownError("Failed to set compression quality: \(quality)")
         }
         let fileSize = getUncompressedFileSize(wand: wand)
+#if DEBUG
         print("Image compression: \(compressionType) \(quality) - Size: \(fileSize)")
+#endif
     }
     
     private func resizeImage(_ wand: MagickWand, percent: Double) async throws {
@@ -477,7 +479,9 @@ extension ImageProcessor {
             throw ImageProcessorError.unknownError("Failed to resize image")
         }
         let fileSize = getUncompressedFileSize(wand: wand)
+#if DEBUG
         print("Image resized: \(percent) - Size: \(fileSize)")
+#endif
     }
     
     private func convertImage(_ wand: MagickWand, format: String) async throws {
@@ -489,6 +493,8 @@ extension ImageProcessor {
             }
         }
         let fileSize = getUncompressedFileSize(wand: wand)
+#if DEBUG
         print("Image converted: \(format) - Size: \(fileSize)")
+#endif
     }
 }

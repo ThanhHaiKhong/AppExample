@@ -11,12 +11,16 @@ import FirebaseRemoteConfig
 @DependencyClient
 public struct RemoteConfigClient: Sendable {
     public var editorChoices: @Sendable () async throws -> [EditorChoice]
+    public var photoSelectionLimitNumber: @Sendable () async throws -> Int
 }
 
 extension RemoteConfigClient: DependencyKey {
     public static var liveValue: RemoteConfigClient {
         let configurator = Configurator()
-        return Self(editorChoices: configurator.getEditorChoices)
+        return Self(
+            editorChoices: configurator.getEditorChoices,
+            photoSelectionLimitNumber: configurator.photoSelectionLimitNumber
+        )
     }
 }
 

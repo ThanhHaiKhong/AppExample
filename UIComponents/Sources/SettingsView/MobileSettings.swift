@@ -44,6 +44,7 @@ public struct MobileSettings: Sendable {
         case requestButtonTapped
         case privacyPolicyButtonTapped
         case termsOfServiceButtonTapped
+        case dismissButtonTapped
     }
     
     @Dependency(\.openURL) var openURL
@@ -145,6 +146,9 @@ public struct MobileSettings: Sendable {
                 return .run { send in
                     await openURL(url)
                 }
+                
+            case .dismissButtonTapped:
+                return .none
             }
         }
     }

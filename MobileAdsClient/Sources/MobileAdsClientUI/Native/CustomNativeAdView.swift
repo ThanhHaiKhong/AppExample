@@ -378,7 +378,9 @@ extension CustomNativeAdView {
             validViews.forEach { view, isVisible in
                 if let stackView = view.superview as? CustomStackView {
                     let viewName = view.accessibilityIdentifier ?? String(describing: type(of: view))
+#if DEBUG
                     print("- \(viewName) -> \(isVisible ? "Hiển thị ✅" : "Ẩn ❌") trong: \(stackView.accessibilityIdentifier ?? String(describing: type(of: stackView)))")
+                    #endif
                     stackView.setVisibility(for: view, isVisible: isVisible)
                 } else {
                     view.isHidden = !isVisible
@@ -415,7 +417,9 @@ extension CustomNativeAdView {
         let bodyHeight = adBodyLabel.frame.height
         let buttonHeight = actionButton.frame.height
         let totalHeight = contentHeight + headlineHeight + bodyHeight + buttonHeight + defaultSpacing * 3 + bottomPadding + verticalPadding
+#if DEBUG
         print("✅ Total height: \(totalHeight) - Body height: \(bodyHeight) - Media height: \(contentHeight)")
+#endif
         return totalHeight
     }
 }

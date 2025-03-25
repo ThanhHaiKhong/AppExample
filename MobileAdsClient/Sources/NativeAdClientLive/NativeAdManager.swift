@@ -80,9 +80,9 @@ extension NativeAdManager: NativeAdLoaderDelegate {
     public func adLoader(_ adLoader: AdLoader, didReceive nativeAd: NativeAd) {
         let adUnitID = adLoader.adUnitID
         nativeAd.delegate = self
-        
+#if DEBUG
         print("✅ Native Ad: \(nativeAd.description) loaded for \(adUnitID)")
-        
+#endif
         queue.async(flags: .barrier) {
             if self.nativeAds[adUnitID] != nil {
                 self.nativeAds[adUnitID]?.append(nativeAd)
@@ -100,8 +100,9 @@ extension NativeAdManager: NativeAdLoaderDelegate {
 
     public func adLoader(_ adLoader: AdLoader, didFailToReceiveAdWithError error: Error) {
         let adUnitID = adLoader.adUnitID
+#if DEBUG
         print("❌ Failed to load Native Ad for \(adUnitID): \(error.localizedDescription)")
-
+#endif
         queue.async(flags: .barrier) {
             if let continuation = self.pendingContinuations.removeValue(forKey: adUnitID) {
                 continuation.resume(throwing: error)
@@ -115,22 +116,22 @@ extension NativeAdManager: NativeAdLoaderDelegate {
 extension NativeAdManager: NativeAdDelegate {
     
     public func nativeAdDidRecordClick(_ nativeAd: NativeAd) {
-        print("✅ nativeAdDidRecordClick called")
+        
     }
 
     public func nativeAdDidRecordImpression(_ nativeAd: NativeAd) {
-        print("✅ nativeAdDidRecordImpression called")
+        
     }
 
     public func nativeAdWillPresentScreen(_ nativeAd: NativeAd) {
-        print("✅ nativeAdWillPresentScreen called")
+        
     }
 
     public func nativeAdWillDismissScreen(_ nativeAd: NativeAd) {
-        print("✅ nativeAdWillDismissScreen called")
+        
     }
 
     public func nativeAdDidDismissScreen(_ nativeAd: NativeAd) {
-        print("✅ nativeAdDidDismissScreen called")
+        
     }
 }

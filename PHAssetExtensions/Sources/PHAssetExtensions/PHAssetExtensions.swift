@@ -35,7 +35,9 @@ extension PHAsset {
             if let resource = PHAssetResource.assetResources(for: self).first {
                 fileName = resource.originalFilename
             }
+#if DEBUG
             print("PHASSET ORIGINAL_FILENAME: \(fileName!)")
+            #endif
             return fileName
         }
     }
@@ -115,7 +117,9 @@ extension PHAsset {
                 
                 do {
                     try data.write(to: fileURL)
+#if DEBUG
                     print("Đã lưu ảnh vào: \(fileURL.path)")
+                    #endif
                     continuation.resume(returning: fileURL)
                 } catch {
                     continuation.resume(throwing: error)
@@ -133,17 +137,24 @@ extension PHAsset {
             return await withCheckedContinuation { continuation in
                 PHImageManager.default().requestImageDataAndOrientation(for: self, options: PHImageRequestOptions.default) { (data, _, _, _) in
                     guard let data = data else {
+#if DEBUG
                         print("Không thể lấy dữ liệu ảnh.")
+                        #endif
                         continuation.resume(returning: nil)
                         return
                     }
                     
                     do {
                         try data.write(to: fileURL)
+#if DEBUG
                         print("Đã lưu ảnh vào: \(fileURL.path)")
+                        #endif
+                        
                         continuation.resume(returning: fileURL)
                     } catch {
+#if DEBUG
                         print("Lỗi khi lưu ảnh: \(error)")
+#endif
                         continuation.resume(returning: nil)
                     }
                 }
@@ -158,17 +169,23 @@ extension PHAsset {
         } else {
             return await withCheckedContinuation { continuation in
                 guard let resource = PHAssetResource.assetResources(for: self).first else {
+#if DEBUG
                     print("Không thể lấy tài nguyên từ PHAsset.")
+#endif
                     continuation.resume(returning: nil)
                     return
                 }
                 
                 PHAssetResourceManager.default().writeData(for: resource, toFile: fileURL, options: PHAssetResourceRequestOptions.default) { error in
                     if let error = error {
+#if DEBUG
                         print("Lỗi khi lưu video hoặc tài nguyên khác: \(error)")
+#endif
                         continuation.resume(returning: nil)
                     } else {
+#if DEBUG
                         print("Đã lưu video vào: \(fileURL.path)")
+#endif
                         continuation.resume(returning: fileURL)
                     }
                 }
@@ -204,7 +221,9 @@ extension PHAsset {
                 if let error = error {
                     continuation.resume(throwing: AssetFetchError.fileWriteFailed(error))
                 } else {
+#if DEBUG
                     print("Đã lưu tài nguyên (\(resourceType)) vào: \(fileURL.path)")
+#endif
                     continuation.resume(returning: fileURL)
                 }
             }
