@@ -51,12 +51,18 @@ extension SubscriptionManager {
             } else {
                 throw SubscriptionError.verificationFailed
             }
+                
+        case .userCancelled:
+            throw SubscriptionError.userCancelled
+                
         default:
             throw SubscriptionError.transactionFailed
         }
     }
     
     public func restorePurchases() async throws -> [Transaction] {
+        try await AppStore.sync()
+        
         var restoredTransactions: [Transaction] = []
         
         for await result in Transaction.currentEntitlements {
@@ -191,12 +197,6 @@ public struct IAPProduct: Identifiable, Equatable, Hashable, Sendable, Codable, 
     }
 }
 
-public enum PurchaseResult {
-    case success(SKPaymentTransaction)
-    case failure(Error)
-    case cancelled
-}
-
 public enum SubscriptionStatus: Sendable, Equatable {
     case active
     case expired
@@ -207,6 +207,22 @@ public enum SubscriptionError: Error, Sendable {
     case productNotFound
     case transactionFailed
     case verificationFailed
+    case userCancelled
+}
+
+extension SubscriptionError: LocalizedError {
+    public var errorDescription: String? {
+        switch self {
+            case .productNotFound:
+                return NSLocalizedString("The requested subscription product could not be found.", comment: "")
+            case .transactionFailed:
+                return NSLocalizedString("The transaction failed.", comment: "")
+            case .verificationFailed:
+                return NSLocalizedString("Subscription verification failed. Please try again later.", comment: "")
+            case .userCancelled:
+                return NSLocalizedString("The purchase process was cancelled by the user.", comment: "")
+        }
+    }
 }
 
 enum RestoreError: Error, LocalizedError, Sendable {

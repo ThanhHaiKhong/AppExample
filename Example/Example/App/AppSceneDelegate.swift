@@ -57,14 +57,15 @@ class AppSceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         Task {
             let adManager = DependencyValues._current.mobileAdsClient
-            let appOpen: MobileAdsClient.AdType = .appOpen("ca-app-pub-3940256099942544/5575463023")
+//            let appOpen: MobileAdsClient.AdType = .appOpen("ca-app-pub-5018745952984578/8525307296") // com.orientpro.volumebooster ca-app-pub-5018745952984578~5807844247
+            let appOpen: MobileAdsClient.AdType = .appOpen("ca-app-pub-5018745952984578/9860114504")   // com.orientpro.PhotoCompress ca-app-pub-5018745952984578~9939657844
             let rules: [MobileAdsClient.AdRule] = []
             
             if try await adManager.isUserSubscribed() {
                 
             } else if try await adManager.shouldShowAd(appOpen, rules) {
                 try await adManager.requestTrackingAuthorizationIfNeeded()
-//                try await adManager.showAd()
+                try await adManager.showAd()
             }
         }
     }

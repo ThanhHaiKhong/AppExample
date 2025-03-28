@@ -24,8 +24,14 @@ extension InterstitialAdManager {
         if interstitials[adUnitID] == nil {
             do {
                 try await loadAd(adUnitID: adUnitID)
+                #if DEBUG
+                print("🍺 INTERSTITIAL ad loaded successfully")
+                #endif
                 return true
             } catch {
+                #if DEBUG
+                print("🌶️ Failed to loading INTERSTITIAL ad: \(error.localizedDescription)")
+                #endif
                 return false
             }
         }

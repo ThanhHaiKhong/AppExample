@@ -95,19 +95,17 @@ extension Configurator {
     }
     
     nonisolated private func fetchPhotoSelectionLimitNumber() async throws -> Int {
+        let remoteConfig = RemoteConfig.remoteConfig()
         return try await withCheckedThrowingContinuation { continuation in
-            RemoteConfig.remoteConfig().fetchAndActivate { status, error in
+            remoteConfig.fetchAndActivate { status, error in
                 if let error {
                     continuation.resume(throwing: error)
                     return
                 }
                 
                 if status == .successFetchedFromRemote {
-                    if let number = RemoteConfig.remoteConfig().configValue(forKey: "PREF_REMOTE_CONFIG_MAX_SELECTABLE_PHOTOS").jsonValue as? NSNumber {
-                        continuation.resume(returning: number.intValue)
-                    } else {
-                        continuation.resume(returning: 20)
-                    }
+                    let number = remoteConfig.configValue(forKey: "PREF_REMOTE_CONFIG_MAX_SELECTABLE_PHOTOS").numberValue
+                    continuation.resume(returning: number.intValue)
                 }
             }
         }

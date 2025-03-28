@@ -1110,3 +1110,13 @@ func measureExecutionTime(_ label: String, block: (@escaping () -> Void) -> Void
     let elapsed = Double(end.uptimeNanoseconds - start.uptimeNanoseconds) / 1_000_000_000
     print("⏰ \(label.uppercased()) executed on Thread: \(DispatchQueue.currentLabel) in \(elapsed) seconds")
 }
+
+extension DispatchQueue {
+    public static var currentLabel: String {
+        let name = __dispatch_queue_get_label(nil)
+        if let label = String(cString: name, encoding: .utf8) {
+            return label
+        }
+        return "Unknown"
+    }
+}

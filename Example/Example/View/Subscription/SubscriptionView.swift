@@ -89,7 +89,7 @@ struct SubscriptionView: View {
                         .font(.system(.title2, design: .rounded).weight(.semibold))
                 }
                 .padding(.vertical, 10)
-                .padding(.horizontal, 20)
+                .padding(.horizontal, 30)
             }
             .overlay(alignment: .bottom) {
                 footerView()

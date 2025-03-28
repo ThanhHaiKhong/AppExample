@@ -21,14 +21,22 @@ final internal class OpenAdManager: NSObject, @unchecked Sendable {
 
 extension OpenAdManager {
     public func shouldShowAd(_ adUnitID: String, rules: [MobileAdsClient.AdRule]) async -> Bool {
+        let isSatisfied = await rules.allRulesSatisfied()
+        
         if appOpenAds[adUnitID] == nil {
             do {
                 try await loadAd(adUnitID: adUnitID)
+                #if DEBUG
+                print("🍺 APP_OPEN ad loaded successfully: \(isSatisfied)")
+                #endif
             } catch {
-                
+                #if DEBUG
+                print("🌶️ Failed to loading APP_OPEN ad: \(error.localizedDescription)")
+                #endif
             }
         }
-        return await rules.allRulesSatisfied()
+        
+        return isSatisfied
     }
     
     @MainActor

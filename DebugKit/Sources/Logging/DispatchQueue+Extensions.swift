@@ -1,14 +1,14 @@
 //
 //  DispatchQueue+Extensions.swift
-//  Example
+//  DebugKit
 //
-//  Created by Thanh Hai Khong on 17/3/25.
+//  Created by Thanh Hai Khong on 25/3/25.
 //
 
 import Foundation
-
+/*
 extension DispatchQueue {
-    static var currentLabel: String {
+    public static var currentLabel: String {
         let name = __dispatch_queue_get_label(nil)
         if let label = String(cString: name, encoding: .utf8) {
             return label
@@ -16,3 +16,4 @@ extension DispatchQueue {
         return "Unknown"
     }
 }
+*/
