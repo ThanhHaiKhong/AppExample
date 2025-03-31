@@ -6,10 +6,11 @@
 //
 
 import Dependencies
+import Foundation
 
 @available(iOS 15.0, *)
 extension DependencyValues {
-    public var storeKit: StoreKitClient {
+    public var storeKitClient: StoreKitClient {
         get { self[StoreKitClient.self] }
         set { self[StoreKitClient.self] = newValue }
     }
@@ -32,6 +33,19 @@ extension StoreKitClient {
         requestReview: { },
         purchase: { _ in
             .init(productID: "com.example.product", productType: .nonConsumable, rawValue: nil)
+        },
+        restorePurchases: { [] }
+    )
+    
+    public static let failing = Self(
+        receiptURL: { nil },
+        canMakePayments: { false },
+        loadProducts: { _ in throw URLError(.badServerResponse) },
+        processUnfinishedConsumables: { _ in },
+        observeTransactions: { .never },
+        requestReview: { },
+        purchase: { _ in
+            throw URLError(.badServerResponse)
         },
         restorePurchases: { [] }
     )

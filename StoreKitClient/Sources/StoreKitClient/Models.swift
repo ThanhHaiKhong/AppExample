@@ -113,10 +113,10 @@ extension StoreKitClient {
     }
 }
 
-// MARK: - StoreKitClient.StoreKitClient
+// MARK: - StoreKitClient.StoreClientError
 
 extension StoreKitClient {
-    public enum StoreKitError: Error, Sendable {
+    public enum StoreClientError: Error, Sendable {
         case fetchProductsFailed(productIDs: Set<String>, underlyingError: Error)
         case unverifiedTransaction(Error)
         case userCancelled
