@@ -38,10 +38,11 @@ let package = Package(
             path: "Sources/ZFPlayerObjC",
             publicHeadersPath: "."
         ),
-        .binaryTarget(
-            name: "IJKMediaFramework",
-            path: "Frameworks/IJKMediaFramework.xcframework"
-        )
+		.binaryTarget(
+			name: "IJKMediaFramework",
+			url: "https://github.com/ThanhHaiKhong/IJKMediaFramework/releases/download/v1.0.0/IJKMediaFramework.xcframework.zip",
+			checksum: "8c5d56b56fbc8041d5a4cc36d6fd08b52b0c742f7da6da8d13182d25876b00b4"
+		)
     ]
 )
 
