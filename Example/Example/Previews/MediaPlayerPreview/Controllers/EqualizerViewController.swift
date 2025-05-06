@@ -76,6 +76,7 @@ class EqualizerViewController: UIViewController {
 			guard let `self` = self else { return }
 			UIView.animate(withDuration: 0.3) {
 				self.collectionView.isUserInteractionEnabled = self.store.isEnabled
+				self.containerView.alpha = self.store.isEnabled ? 1.0 : 0.5
 				self.toggleSwitch.isOn = self.store.isEnabled
 			}
 		}
@@ -194,6 +195,7 @@ extension EqualizerViewController {
 		containerView.addSubview(headerStackView)
 		containerView.addSubview(collectionView)
 		
+		view.addSubview(blurEffectView)
 		view.addSubview(containerView)
 		
 		collectionView.hero.modifiers = [.fade, .spring(stiffness: 200, damping: 200)]
@@ -202,9 +204,14 @@ extension EqualizerViewController {
     
 	private func setupLayoutConstraints() {
 		NSLayoutConstraint.activate([
-			self.containerView.centerYAnchor.constraint(equalTo: self.view.centerYAnchor),
-			self.containerView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
-			self.containerView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
+			self.blurEffectView.centerYAnchor.constraint(equalTo: self.view.centerYAnchor),
+			self.blurEffectView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
+			self.blurEffectView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
+			self.blurEffectView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor),
+			
+			self.containerView.centerYAnchor.constraint(equalTo: self.blurEffectView.centerYAnchor),
+			self.containerView.leadingAnchor.constraint(equalTo: self.blurEffectView.leadingAnchor),
+			self.containerView.trailingAnchor.constraint(equalTo: self.blurEffectView.trailingAnchor),
 			self.containerView.heightAnchor.constraint(equalToConstant: 522),
 			
 			self.headerStackView.topAnchor.constraint(equalTo: self.containerView.topAnchor, constant: 12),
@@ -221,10 +228,10 @@ extension EqualizerViewController {
     
     private func setupGesture() {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
-        view.addGestureRecognizer(tapGesture)
+		blurEffectView.addGestureRecognizer(tapGesture)
         
         let panGesture = UIPanGestureRecognizer(target: self, action: #selector(handlePan(_:)))
-        view.addGestureRecognizer(panGesture)
+        blurEffectView.addGestureRecognizer(panGesture)
     }
     
     private func setupDataSource() {
@@ -240,6 +247,7 @@ extension EqualizerViewController {
 				return
 			}
 			cell.titleLabel.text = band.displayFrequency
+			cell.slider.tag = indexPath.item - 1
 			cell.slider.value = band.gain
 			cell.delegate = self
         }
