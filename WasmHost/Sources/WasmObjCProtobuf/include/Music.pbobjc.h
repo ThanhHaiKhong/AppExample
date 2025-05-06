@@ -39,33 +39,6 @@ CF_EXTERN_C_BEGIN
 
 NS_ASSUME_NONNULL_BEGIN
 
-#pragma mark - Enum WAMusicCallID
-
-typedef GPB_ENUM(WAMusicCallID) {
-  /**
-   * Value used if any message's field encounters a value that is not defined
-   * by this enum. The message will also have C functions to get/set the rawValue
-   * of the field.
-   **/
-  WAMusicCallID_GPBUnrecognizedEnumeratorValue = kGPBUnrecognizedEnumeratorValue,
-  WAMusicCallID_CallIdUnspecified = 0,
-  WAMusicCallID_CallIdGetDetails = 1,
-  WAMusicCallID_CallIdGetPlaylistDetails = 2,
-  WAMusicCallID_CallIdSearch = 3,
-  WAMusicCallID_CallIdSuggestion = 4,
-  WAMusicCallID_CallIdGetOptions = 5,
-  WAMusicCallID_CallIdGetDiscover = 6,
-  WAMusicCallID_CallIdGetTranscript = 7,
-};
-
-GPBEnumDescriptor *WAMusicCallID_EnumDescriptor(void);
-
-/**
- * Checks to see if the given value is defined by the enum or was not known at
- * the time this source was generated.
- **/
-BOOL WAMusicCallID_IsValidValue(int32_t value);
-
 #pragma mark - WAMusicMusicRoot
 
 /**

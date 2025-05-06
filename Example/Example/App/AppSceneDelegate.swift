@@ -7,46 +7,31 @@
 
 import ComposableArchitecture
 import MobileAdsClient
-import NotificationsClientUI
 import Combine
 import SwiftUI
 import UIKit
-import ModalTransition
 
 class AppSceneDelegate: UIResponder, UIWindowSceneDelegate {
     public var window: UIWindow?
     private let publisher = AppSceneEventPublisher()
     
+    private lazy var photoViewController: PhotoViewController = {
+        let store = Store(initialState: PhotoList.State()) {
+            PhotoList()
+        }
+        return PhotoViewController(store: store)
+    }()
+    
+    private lazy var playerViewController: PlayerViewController = {
+        let playerViewController = PlayerViewController()
+        return playerViewController
+    }()
+    
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let windowScene = scene as? UIWindowScene else { return }
         
-        /*
-        let hostingViewController = UIHostingController(rootView: SubscriptionView(store: Store(
-            initialState: Subscriptions.State()) {
-                Subscriptions()
-            }
-        ))
-        
-        let hostingViewController = UIHostingController(rootView: NotificationView(store: Store(
-            initialState: Notifications.State()) {
-                Notifications()
-            }
-        ))
-        
-        let hostingViewController = UIHostingController(rootView: GoogleAdsView(store: Store(
-            initialState: GoogleAds.State()) {
-                GoogleAds()
-            }
-        ))
-        */
-        
         let window = AppUIWindow(windowScene: windowScene)
-        window.rootViewController = PhotoViewController(
-            store: Store(
-            initialState: PhotoList.State()) {
-                PhotoList()
-            }
-        )
+        window.rootViewController = UINavigationController(rootViewController: playerViewController)
         window.makeKeyAndVisible()
         
         self.window = window
@@ -54,20 +39,20 @@ class AppSceneDelegate: UIResponder, UIWindowSceneDelegate {
     
     func sceneDidBecomeActive(_ scene: UIScene) {
         publisher.phase = .active
-        
+        /*
         Task {
-            let adManager = DependencyValues._current.mobileAdsClient
-//            let appOpen: MobileAdsClient.AdType = .appOpen("ca-app-pub-5018745952984578/8525307296") // com.orientpro.volumebooster ca-app-pub-5018745952984578~5807844247
+            let mobileAds = DependencyValues._current.mobileAdsClient
             let appOpen: MobileAdsClient.AdType = .appOpen("ca-app-pub-5018745952984578/9860114504")   // com.orientpro.PhotoCompress ca-app-pub-5018745952984578~9939657844
             let rules: [MobileAdsClient.AdRule] = []
             
-            if try await adManager.isUserSubscribed() {
+            if try await mobileAds.isUserSubscribed() {
                 
-            } else if try await adManager.shouldShowAd(appOpen, rules) {
-                try await adManager.requestTrackingAuthorizationIfNeeded()
-                try await adManager.showAd()
+            } else if try await mobileAds.shouldShowAd(appOpen, rules) {
+                try await mobileAds.requestTrackingAuthorizationIfNeeded()
+                try await mobileAds.showAd()
             }
         }
+        */
     }
     
     func sceneDidEnterBackground(_ scene: UIScene) {
@@ -115,24 +100,4 @@ class AppUIWindow: UIWindow {
 class AppSceneEventPublisher: ObservableObject {
     @Published var phase: ScenePhase = .inactive
     @Published var openURL: URL?
-}
-
-struct CustomOpenURL: ViewModifier {
-    @EnvironmentObject var scenePhase: AppSceneEventPublisher
-    
-    let action: (URL) -> Void
-    
-    func body(content: Content) -> some View {
-        content.onReceive(scenePhase.$openURL) { url in
-            if let url = url {
-                action(url)
-            }
-        }
-    }
-}
-
-extension View {
-    func onCustomOpenURL(perform action: @escaping (URL) -> Void) -> some View {
-        self.modifier(CustomOpenURL(action: action))
-    }
 }

@@ -10,11 +10,24 @@ import WasmSwiftProtobuf
 #if canImport(UIKit)
 import UIKit
 #endif
-public protocol CallerID {}
+#if os(watchOS)
+import WatchKit
+#endif
+public protocol CallerID {
+    func prefix() -> String?
+}
+extension CallerID {
+    public func prefix() -> String? {
+        return nil
+    }
+}
 
 extension CallerID {
     func to_asyncify_call_id() throws -> String {
         let elms = String(reflecting: self).components(separatedBy: ".")
+        if let prefix = self.prefix() {
+            return try [prefix, elms.last!].map({ try $0.snakecased().uppercased() }).joined(separator: "_")
+        }
         return try elms.dropFirst(elms.count - 2)
             .map({ try $0.snakecased().uppercased() }).joined(separator: "_")
     }
@@ -56,9 +69,12 @@ extension AsyncifyOptions {
         var val = AsyncifyOptions()
         val.contentType = "application/json"
         val.bundleID = Bundle.main.bundleIdentifier ?? ""
-#if canImport(UIKit)
+#if os(iOS) && canImport(UIKit)
         val.deviceID = UIDevice.current.identifierForVendor?.uuidString ?? ""
         val.platform = "\(UIDevice.current.systemName) \(UIDevice.current.systemVersion)"
+#elseif os(watchOS)
+        val.deviceID = WKInterfaceDevice.current().identifierForVendor?.uuidString ?? ""
+        val.platform = "watchOS \(WKInterfaceDevice.current().systemVersion)"
 #endif
         val.countryCode = Locale.current.identifier
         val.languageCode = Locale.current.languageCode ?? "en"

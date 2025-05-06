@@ -20,64 +20,6 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
   typealias Version = _2
 }
 
-public enum MusicCallID: SwiftProtobuf.Enum, Swift.CaseIterable {
-  public typealias RawValue = Int
-  case unspecified // = 0
-  case getDetails // = 1
-  case getPlaylistDetails // = 2
-  case search // = 3
-  case suggestion // = 4
-  case getOptions // = 5
-  case getDiscover // = 6
-  case getTranscript // = 7
-  case UNRECOGNIZED(Int)
-
-  public init() {
-    self = .unspecified
-  }
-
-  public init?(rawValue: Int) {
-    switch rawValue {
-    case 0: self = .unspecified
-    case 1: self = .getDetails
-    case 2: self = .getPlaylistDetails
-    case 3: self = .search
-    case 4: self = .suggestion
-    case 5: self = .getOptions
-    case 6: self = .getDiscover
-    case 7: self = .getTranscript
-    default: self = .UNRECOGNIZED(rawValue)
-    }
-  }
-
-  public var rawValue: Int {
-    switch self {
-    case .unspecified: return 0
-    case .getDetails: return 1
-    case .getPlaylistDetails: return 2
-    case .search: return 3
-    case .suggestion: return 4
-    case .getOptions: return 5
-    case .getDiscover: return 6
-    case .getTranscript: return 7
-    case .UNRECOGNIZED(let i): return i
-    }
-  }
-
-  // The compiler won't synthesize support with the UNRECOGNIZED case.
-  public static let allCases: [MusicCallID] = [
-    .unspecified,
-    .getDetails,
-    .getPlaylistDetails,
-    .search,
-    .suggestion,
-    .getOptions,
-    .getDiscover,
-    .getTranscript,
-  ]
-
-}
-
 public struct MusicOptions: Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
@@ -410,19 +352,6 @@ public struct MusicListSuggestions: Sendable {
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 
 fileprivate let _protobuf_package = "asyncify.music"
-
-extension MusicCallID: SwiftProtobuf._ProtoNameProviding {
-  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    0: .same(proto: "CALL_ID_UNSPECIFIED"),
-    1: .same(proto: "CALL_ID_GET_DETAILS"),
-    2: .same(proto: "CALL_ID_GET_PLAYLIST_DETAILS"),
-    3: .same(proto: "CALL_ID_SEARCH"),
-    4: .same(proto: "CALL_ID_SUGGESTION"),
-    5: .same(proto: "CALL_ID_GET_OPTIONS"),
-    6: .same(proto: "CALL_ID_GET_DISCOVER"),
-    7: .same(proto: "CALL_ID_GET_TRANSCRIPT"),
-  ]
-}
 
 extension MusicOptions: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   public static let protoMessageName: String = _protobuf_package + ".Options"

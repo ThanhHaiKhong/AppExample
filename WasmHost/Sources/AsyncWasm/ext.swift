@@ -26,10 +26,3 @@ extension String {
         }
     }
 }
-extension URL {
-    public static let wasmDir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!.appendingPathComponent("wasm")
-    
-    public var wasmPath: String {
-        path.replacingOccurrences(of: URL.wasmDir.path, with: "")
-    }
-}

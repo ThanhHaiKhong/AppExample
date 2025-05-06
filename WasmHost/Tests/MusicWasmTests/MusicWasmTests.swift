@@ -15,10 +15,7 @@ final class AsyncWasmTests: XCTestCase {
     override func setUp() async throws {
         try await super.setUp()
         self.sut = try MusicWasmEngine(
-            file: Bundle.module.url(forResource: "music", withExtension: "wasm")!)
-        var opts = MusicOptions()
-        opts.provider = "youtube"
-        self.sut.copts = ["music": try opts.serializedData()]
+            file: Bundle.module.url(forResource: "music_tube", withExtension: "wasm")!)
         try await self.sut.start()
     }
     
@@ -40,21 +37,20 @@ final class AsyncWasmTests: XCTestCase {
         }
     }
     func testSearch() async throws {
-        print(try await sut.search(keyword: "i know your ways", scope: "all", continuation: nil).jsonString())
+        print(try await sut.search(keyword: "i know your ways", scope: MusicSearchScope.all, continuation: nil).jsonString())
     }
     func testSearchEmptyKeyword() async throws {
-        print(try await sut.search(keyword: "", scope: "all", continuation: nil).jsonString())
+        print(try await sut.search(keyword: "", scope: MusicSearchScope.all, continuation: nil).jsonString())
     }
     @available(iOS 16.0, *)
     func testGenPreviewData() async throws {
         let out = URL(fileURLWithPath: FileManager.default.currentDirectoryPath).appending(component: "Sources/MusicWasm/Resources")
         
         try await sut.details(vid: "kPa7bsKwL-c").serializedData().write(to: out.appending(component: "details.dat"))
-        try await sut.search(keyword: "die with a smile", scope: "all", continuation: nil).serializedData().write(to: out.appending(component: "search.dat"))
+        try await sut.search(keyword: "die with a smile", scope: MusicSearchScope.all, continuation: nil).serializedData().write(to: out.appending(component: "search.dat"))
     }
     func testCallID() throws {
         XCTAssertEqual(try EngineCallID.getVersion.to_asyncify_call_id(), "ENGINE_CALL_ID_GET_VERSION")
-        XCTAssertEqual(try MusicCallID.getDetails.to_asyncify_call_id(), "MUSIC_CALL_ID_GET_DETAILS")
         enum Foo: CallerID {
             case bar
             case bar2
@@ -66,5 +62,14 @@ final class AsyncWasmTests: XCTestCase {
         XCTAssertEqual(try Foo.bar2.to_asyncify_call_id(), "FOO_BAR2")
         XCTAssertEqual(try Foo.bar_3.to_asyncify_call_id(), "FOO_BAR_3")
         XCTAssertEqual(try Foo.fooBar.to_asyncify_call_id(), "FOO_FOO_BAR")
+        
+        enum FooPrefix: CallerID {
+            case bar
+            func prefix() -> String? {
+                "BAR"
+            }
+        }
+        
+        XCTAssertEqual(try FooPrefix.bar.to_asyncify_call_id(), "BAR_BAR")
     }
 }

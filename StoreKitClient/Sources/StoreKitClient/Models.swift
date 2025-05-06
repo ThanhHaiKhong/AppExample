@@ -12,7 +12,7 @@ import StoreKit
 // MARK: - StoreKitClient.Product
 
 extension StoreKitClient {
-    public struct Product: Equatable, Sendable {
+    public struct Product: Equatable, Sendable, Hashable {
         public var id: String
         public var displayName: String
         public var description: String
@@ -50,32 +50,42 @@ extension StoreKitClient {
         public var purchaseDate: Date? { rawValue?.purchaseDate }
         public var expirationDate: Date? { rawValue?.expirationDate }
         public var purchasedQuantity: Int { rawValue?.purchasedQuantity ?? 1 }
+        public var displayPrice: String? {
+            
+            if #available(iOS 16.0, *) {
+                guard let price = rawValue?.price, let currency = rawValue?.currency else {
+                    return "Unknown Price"
+                }
+                return "\(price) \(currency)"
+            } else {
+                guard let price = rawValue?.price, let currencyCode = rawValue?.currencyCode else {
+                    return "Unknown Price"
+                }
+                return "\(price) \(currencyCode)"
+            }
+        }
         
-        // Core initializer
         public init(rawValue: StoreKit.Transaction? = nil) {
             self.rawValue = rawValue
         }
         
-        // Convenience initializer for testing
         public init(
             productID: String,
             productType: StoreKit.Product.ProductType,
             purchaseDate: Date? = nil,
             expirationDate: Date? = nil,
             purchasedQuantity: Int = 1,
+            displayPrice: String? = nil,
             rawValue: StoreKit.Transaction? = nil
         ) {
             self.rawValue = rawValue
-            // Properties derived from rawValue if present, otherwise manual values
         }
         
-        // Computed property for expiration check
         public var isExpired: Bool {
             guard let expirationDate else { return false }
             return expirationDate < Date()
         }
         
-        // Static test instances
         public static let mockConsumable = Transaction(
             productID: "com.example.coins100",
             productType: .consumable,

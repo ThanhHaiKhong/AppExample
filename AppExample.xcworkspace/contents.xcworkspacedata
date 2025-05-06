@@ -2,13 +2,37 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:TimerClient">
+   </FileRef>
+   <FileRef
+      location = "group:DataExtensions">
+   </FileRef>
+   <FileRef
+      location = "group:UIExtensions">
+   </FileRef>
+   <FileRef
+      location = "group:UIKitPreviews">
+   </FileRef>
+   <FileRef
+      location = "group:MediaPlayerClient">
+   </FileRef>
+   <FileRef
+      location = "group:PHAssetClient">
+   </FileRef>
+   <FileRef
+      location = "group:PhotosClient">
+   </FileRef>
+   <FileRef
+      location = "group:RemoteConfigClient">
+   </FileRef>
+   <FileRef
+      location = "group:ArchiveClient">
+   </FileRef>
+   <FileRef
       location = "group:StoreKitClient">
    </FileRef>
    <FileRef
       location = "group:ImageMagickClient">
-   </FileRef>
-   <FileRef
-      location = "group:MusicWasmKit">
    </FileRef>
    <FileRef
       location = "group:WasmHost">
@@ -42,8 +66,5 @@
    </FileRef>
    <FileRef
       location = "group:TCAInitializableReducer">
-   </FileRef>
-   <FileRef
-      location = "group:TCADependencies">
    </FileRef>
 </Workspace>

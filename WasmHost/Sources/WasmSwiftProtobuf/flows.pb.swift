@@ -43,6 +43,7 @@ public struct AsyncifyOptions: Sendable {
   public var appVersion: String = String()
 
   /// extra arguments
+  /// api_key embedded in sdk
   public var extra: SwiftProtobuf.Google_Protobuf_Struct {
     get {return _extra ?? SwiftProtobuf.Google_Protobuf_Struct()}
     set {_extra = newValue}
@@ -53,6 +54,9 @@ public struct AsyncifyOptions: Sendable {
   public mutating func clearExtra() {self._extra = nil}
 
   public var platform: String = String()
+
+  /// user id
+  public var uid: String = String()
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
@@ -147,6 +151,14 @@ public struct AsyncifyAction: Sendable {
     set {action = .js(newValue)}
   }
 
+  public var fd: AsyncifyAction.FileDescriptor {
+    get {
+      if case .fd(let v)? = action {return v}
+      return AsyncifyAction.FileDescriptor()
+    }
+    set {action = .fd(newValue)}
+  }
+
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public enum OneOf_Action: Equatable, Sendable {
@@ -154,6 +166,7 @@ public struct AsyncifyAction: Sendable {
     case ws(AsyncifyAction.WebSocket)
     case regex(AsyncifyAction.Regex)
     case js(AsyncifyAction.JavaScript)
+    case fd(AsyncifyAction.FileDescriptor)
 
   }
 
@@ -300,6 +313,176 @@ public struct AsyncifyAction: Sendable {
 
       /// function arguments
       public var args: [AsyncifyFieldEntry] = []
+
+      public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+      public init() {}
+    }
+
+    public init() {}
+  }
+
+  public struct FileDescriptor: Sendable {
+    // SwiftProtobuf.Message conformance is added in an extension below. See the
+    // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+    // methods supported on all messages.
+
+    public var url: String = String()
+
+    public var action: AsyncifyAction.FileDescriptor.OneOf_Action? = nil
+
+    public var write: AsyncifyAction.FileDescriptor.Write {
+      get {
+        if case .write(let v)? = action {return v}
+        return AsyncifyAction.FileDescriptor.Write()
+      }
+      set {action = .write(newValue)}
+    }
+
+    public var read: AsyncifyAction.FileDescriptor.Read {
+      get {
+        if case .read(let v)? = action {return v}
+        return AsyncifyAction.FileDescriptor.Read()
+      }
+      set {action = .read(newValue)}
+    }
+
+    public var metadata: AsyncifyAction.FileDescriptor.Metadata {
+      get {
+        if case .metadata(let v)? = action {return v}
+        return AsyncifyAction.FileDescriptor.Metadata()
+      }
+      set {action = .metadata(newValue)}
+    }
+
+    public var delete: AsyncifyAction.FileDescriptor.Delete {
+      get {
+        if case .delete(let v)? = action {return v}
+        return AsyncifyAction.FileDescriptor.Delete()
+      }
+      set {action = .delete(newValue)}
+    }
+
+    public var mkdir: AsyncifyAction.FileDescriptor.Mkdir {
+      get {
+        if case .mkdir(let v)? = action {return v}
+        return AsyncifyAction.FileDescriptor.Mkdir()
+      }
+      set {action = .mkdir(newValue)}
+    }
+
+    public var move: AsyncifyAction.FileDescriptor.Move {
+      get {
+        if case .move(let v)? = action {return v}
+        return AsyncifyAction.FileDescriptor.Move()
+      }
+      set {action = .move(newValue)}
+    }
+
+    public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+    public enum OneOf_Action: Equatable, Sendable {
+      case write(AsyncifyAction.FileDescriptor.Write)
+      case read(AsyncifyAction.FileDescriptor.Read)
+      case metadata(AsyncifyAction.FileDescriptor.Metadata)
+      case delete(AsyncifyAction.FileDescriptor.Delete)
+      case mkdir(AsyncifyAction.FileDescriptor.Mkdir)
+      case move(AsyncifyAction.FileDescriptor.Move)
+
+    }
+
+    public struct Write: Sendable {
+      // SwiftProtobuf.Message conformance is added in an extension below. See the
+      // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+      // methods supported on all messages.
+
+      public var data: TypesBytes {
+        get {return _data ?? TypesBytes()}
+        set {_data = newValue}
+      }
+      /// Returns true if `data` has been explicitly set.
+      public var hasData: Bool {return self._data != nil}
+      /// Clears the value of `data`. Subsequent reads from it will return its default value.
+      public mutating func clearData() {self._data = nil}
+
+      /// base64, ...
+      public var enc: String {
+        get {return _enc ?? String()}
+        set {_enc = newValue}
+      }
+      /// Returns true if `enc` has been explicitly set.
+      public var hasEnc: Bool {return self._enc != nil}
+      /// Clears the value of `enc`. Subsequent reads from it will return its default value.
+      public mutating func clearEnc() {self._enc = nil}
+
+      /// append mode
+      public var append: Bool = false
+
+      public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+      public init() {}
+
+      fileprivate var _data: TypesBytes? = nil
+      fileprivate var _enc: String? = nil
+    }
+
+    public struct Read: Sendable {
+      // SwiftProtobuf.Message conformance is added in an extension below. See the
+      // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+      // methods supported on all messages.
+
+      public var enc: String {
+        get {return _enc ?? String()}
+        set {_enc = newValue}
+      }
+      /// Returns true if `enc` has been explicitly set.
+      public var hasEnc: Bool {return self._enc != nil}
+      /// Clears the value of `enc`. Subsequent reads from it will return its default value.
+      public mutating func clearEnc() {self._enc = nil}
+
+      public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+      public init() {}
+
+      fileprivate var _enc: String? = nil
+    }
+
+    public struct Metadata: Sendable {
+      // SwiftProtobuf.Message conformance is added in an extension below. See the
+      // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+      // methods supported on all messages.
+
+      public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+      public init() {}
+    }
+
+    public struct Delete: Sendable {
+      // SwiftProtobuf.Message conformance is added in an extension below. See the
+      // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+      // methods supported on all messages.
+
+      public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+      public init() {}
+    }
+
+    public struct Mkdir: Sendable {
+      // SwiftProtobuf.Message conformance is added in an extension below. See the
+      // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+      // methods supported on all messages.
+
+      public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+      public init() {}
+    }
+
+    public struct Move: Sendable {
+      // SwiftProtobuf.Message conformance is added in an extension below. See the
+      // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+      // methods supported on all messages.
+
+      public var to: String = String()
 
       public var unknownFields = SwiftProtobuf.UnknownStorage()
 
@@ -552,6 +735,14 @@ public struct AsyncifyCommand: @unchecked Sendable {
       set {action = .js(newValue)}
     }
 
+    public var fd: AsyncifyCommand.Sync.FileDescriptor {
+      get {
+        if case .fd(let v)? = action {return v}
+        return AsyncifyCommand.Sync.FileDescriptor()
+      }
+      set {action = .fd(newValue)}
+    }
+
     public var unknownFields = SwiftProtobuf.UnknownStorage()
 
     public enum OneOf_Action: Equatable, Sendable {
@@ -559,6 +750,7 @@ public struct AsyncifyCommand: @unchecked Sendable {
       case ws(AsyncifyCommand.Sync.WebSocket)
       case regex(AsyncifyCommand.Sync.Regex)
       case js(AsyncifyCommand.Sync.JavaScript)
+      case fd(AsyncifyCommand.Sync.FileDescriptor)
 
     }
 
@@ -679,6 +871,39 @@ public struct AsyncifyCommand: @unchecked Sendable {
       public init() {}
     }
 
+    public struct FileDescriptor: Sendable {
+      // SwiftProtobuf.Message conformance is added in an extension below. See the
+      // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+      // methods supported on all messages.
+
+      public var status: Int32 = 0
+
+      public var metadata: SwiftProtobuf.Google_Protobuf_Struct {
+        get {return _metadata ?? SwiftProtobuf.Google_Protobuf_Struct()}
+        set {_metadata = newValue}
+      }
+      /// Returns true if `metadata` has been explicitly set.
+      public var hasMetadata: Bool {return self._metadata != nil}
+      /// Clears the value of `metadata`. Subsequent reads from it will return its default value.
+      public mutating func clearMetadata() {self._metadata = nil}
+
+      public var content: TypesBytes {
+        get {return _content ?? TypesBytes()}
+        set {_content = newValue}
+      }
+      /// Returns true if `content` has been explicitly set.
+      public var hasContent: Bool {return self._content != nil}
+      /// Clears the value of `content`. Subsequent reads from it will return its default value.
+      public mutating func clearContent() {self._content = nil}
+
+      public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+      public init() {}
+
+      fileprivate var _metadata: SwiftProtobuf.Google_Protobuf_Struct? = nil
+      fileprivate var _content: TypesBytes? = nil
+    }
+
     public init() {}
   }
 
@@ -775,6 +1000,7 @@ extension AsyncifyOptions: SwiftProtobuf.Message, SwiftProtobuf._MessageImplemen
     8: .standard(proto: "app_version"),
     9: .same(proto: "extra"),
     10: .same(proto: "platform"),
+    11: .same(proto: "uid"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -793,6 +1019,7 @@ extension AsyncifyOptions: SwiftProtobuf.Message, SwiftProtobuf._MessageImplemen
       case 8: try { try decoder.decodeSingularStringField(value: &self.appVersion) }()
       case 9: try { try decoder.decodeSingularMessageField(value: &self._extra) }()
       case 10: try { try decoder.decodeSingularStringField(value: &self.platform) }()
+      case 11: try { try decoder.decodeSingularStringField(value: &self.uid) }()
       default: break
       }
     }
@@ -833,6 +1060,9 @@ extension AsyncifyOptions: SwiftProtobuf.Message, SwiftProtobuf._MessageImplemen
     if !self.platform.isEmpty {
       try visitor.visitSingularStringField(value: self.platform, fieldNumber: 10)
     }
+    if !self.uid.isEmpty {
+      try visitor.visitSingularStringField(value: self.uid, fieldNumber: 11)
+    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
@@ -847,6 +1077,7 @@ extension AsyncifyOptions: SwiftProtobuf.Message, SwiftProtobuf._MessageImplemen
     if lhs.appVersion != rhs.appVersion {return false}
     if lhs._extra != rhs._extra {return false}
     if lhs.platform != rhs.platform {return false}
+    if lhs.uid != rhs.uid {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
@@ -920,6 +1151,7 @@ extension AsyncifyAction: SwiftProtobuf.Message, SwiftProtobuf._MessageImplement
     3: .same(proto: "ws"),
     4: .same(proto: "regex"),
     5: .same(proto: "js"),
+    6: .same(proto: "fd"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -981,6 +1213,19 @@ extension AsyncifyAction: SwiftProtobuf.Message, SwiftProtobuf._MessageImplement
           self.action = .js(v)
         }
       }()
+      case 6: try {
+        var v: AsyncifyAction.FileDescriptor?
+        var hadOneofValue = false
+        if let current = self.action {
+          hadOneofValue = true
+          if case .fd(let m) = current {v = m}
+        }
+        try decoder.decodeSingularMessageField(value: &v)
+        if let v = v {
+          if hadOneofValue {try decoder.handleConflictingOneOf()}
+          self.action = .fd(v)
+        }
+      }()
       default: break
       }
     }
@@ -1010,6 +1255,10 @@ extension AsyncifyAction: SwiftProtobuf.Message, SwiftProtobuf._MessageImplement
     case .js?: try {
       guard case .js(let v)? = self.action else { preconditionFailure() }
       try visitor.visitSingularMessageField(value: v, fieldNumber: 5)
+    }()
+    case .fd?: try {
+      guard case .fd(let v)? = self.action else { preconditionFailure() }
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 6)
     }()
     case nil: break
     }
@@ -1326,6 +1575,327 @@ extension AsyncifyAction.JavaScript.Eval: SwiftProtobuf.Message, SwiftProtobuf._
   }
 }
 
+extension AsyncifyAction.FileDescriptor: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = AsyncifyAction.protoMessageName + ".FileDescriptor"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "url"),
+    2: .same(proto: "write"),
+    3: .same(proto: "read"),
+    4: .same(proto: "metadata"),
+    5: .same(proto: "delete"),
+    6: .same(proto: "mkdir"),
+    7: .same(proto: "move"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularStringField(value: &self.url) }()
+      case 2: try {
+        var v: AsyncifyAction.FileDescriptor.Write?
+        var hadOneofValue = false
+        if let current = self.action {
+          hadOneofValue = true
+          if case .write(let m) = current {v = m}
+        }
+        try decoder.decodeSingularMessageField(value: &v)
+        if let v = v {
+          if hadOneofValue {try decoder.handleConflictingOneOf()}
+          self.action = .write(v)
+        }
+      }()
+      case 3: try {
+        var v: AsyncifyAction.FileDescriptor.Read?
+        var hadOneofValue = false
+        if let current = self.action {
+          hadOneofValue = true
+          if case .read(let m) = current {v = m}
+        }
+        try decoder.decodeSingularMessageField(value: &v)
+        if let v = v {
+          if hadOneofValue {try decoder.handleConflictingOneOf()}
+          self.action = .read(v)
+        }
+      }()
+      case 4: try {
+        var v: AsyncifyAction.FileDescriptor.Metadata?
+        var hadOneofValue = false
+        if let current = self.action {
+          hadOneofValue = true
+          if case .metadata(let m) = current {v = m}
+        }
+        try decoder.decodeSingularMessageField(value: &v)
+        if let v = v {
+          if hadOneofValue {try decoder.handleConflictingOneOf()}
+          self.action = .metadata(v)
+        }
+      }()
+      case 5: try {
+        var v: AsyncifyAction.FileDescriptor.Delete?
+        var hadOneofValue = false
+        if let current = self.action {
+          hadOneofValue = true
+          if case .delete(let m) = current {v = m}
+        }
+        try decoder.decodeSingularMessageField(value: &v)
+        if let v = v {
+          if hadOneofValue {try decoder.handleConflictingOneOf()}
+          self.action = .delete(v)
+        }
+      }()
+      case 6: try {
+        var v: AsyncifyAction.FileDescriptor.Mkdir?
+        var hadOneofValue = false
+        if let current = self.action {
+          hadOneofValue = true
+          if case .mkdir(let m) = current {v = m}
+        }
+        try decoder.decodeSingularMessageField(value: &v)
+        if let v = v {
+          if hadOneofValue {try decoder.handleConflictingOneOf()}
+          self.action = .mkdir(v)
+        }
+      }()
+      case 7: try {
+        var v: AsyncifyAction.FileDescriptor.Move?
+        var hadOneofValue = false
+        if let current = self.action {
+          hadOneofValue = true
+          if case .move(let m) = current {v = m}
+        }
+        try decoder.decodeSingularMessageField(value: &v)
+        if let v = v {
+          if hadOneofValue {try decoder.handleConflictingOneOf()}
+          self.action = .move(v)
+        }
+      }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every if/case branch local when no optimizations
+    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+    // https://github.com/apple/swift-protobuf/issues/1182
+    if !self.url.isEmpty {
+      try visitor.visitSingularStringField(value: self.url, fieldNumber: 1)
+    }
+    switch self.action {
+    case .write?: try {
+      guard case .write(let v)? = self.action else { preconditionFailure() }
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 2)
+    }()
+    case .read?: try {
+      guard case .read(let v)? = self.action else { preconditionFailure() }
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 3)
+    }()
+    case .metadata?: try {
+      guard case .metadata(let v)? = self.action else { preconditionFailure() }
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 4)
+    }()
+    case .delete?: try {
+      guard case .delete(let v)? = self.action else { preconditionFailure() }
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 5)
+    }()
+    case .mkdir?: try {
+      guard case .mkdir(let v)? = self.action else { preconditionFailure() }
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 6)
+    }()
+    case .move?: try {
+      guard case .move(let v)? = self.action else { preconditionFailure() }
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 7)
+    }()
+    case nil: break
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: AsyncifyAction.FileDescriptor, rhs: AsyncifyAction.FileDescriptor) -> Bool {
+    if lhs.url != rhs.url {return false}
+    if lhs.action != rhs.action {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension AsyncifyAction.FileDescriptor.Write: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = AsyncifyAction.FileDescriptor.protoMessageName + ".Write"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "data"),
+    2: .same(proto: "enc"),
+    3: .same(proto: "append"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularMessageField(value: &self._data) }()
+      case 2: try { try decoder.decodeSingularStringField(value: &self._enc) }()
+      case 3: try { try decoder.decodeSingularBoolField(value: &self.append) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every if/case branch local when no optimizations
+    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+    // https://github.com/apple/swift-protobuf/issues/1182
+    try { if let v = self._data {
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
+    } }()
+    try { if let v = self._enc {
+      try visitor.visitSingularStringField(value: v, fieldNumber: 2)
+    } }()
+    if self.append != false {
+      try visitor.visitSingularBoolField(value: self.append, fieldNumber: 3)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: AsyncifyAction.FileDescriptor.Write, rhs: AsyncifyAction.FileDescriptor.Write) -> Bool {
+    if lhs._data != rhs._data {return false}
+    if lhs._enc != rhs._enc {return false}
+    if lhs.append != rhs.append {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension AsyncifyAction.FileDescriptor.Read: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = AsyncifyAction.FileDescriptor.protoMessageName + ".Read"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "enc"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularStringField(value: &self._enc) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every if/case branch local when no optimizations
+    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+    // https://github.com/apple/swift-protobuf/issues/1182
+    try { if let v = self._enc {
+      try visitor.visitSingularStringField(value: v, fieldNumber: 1)
+    } }()
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: AsyncifyAction.FileDescriptor.Read, rhs: AsyncifyAction.FileDescriptor.Read) -> Bool {
+    if lhs._enc != rhs._enc {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension AsyncifyAction.FileDescriptor.Metadata: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = AsyncifyAction.FileDescriptor.protoMessageName + ".Metadata"
+  public static let _protobuf_nameMap = SwiftProtobuf._NameMap()
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    // Load everything into unknown fields
+    while try decoder.nextFieldNumber() != nil {}
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: AsyncifyAction.FileDescriptor.Metadata, rhs: AsyncifyAction.FileDescriptor.Metadata) -> Bool {
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension AsyncifyAction.FileDescriptor.Delete: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = AsyncifyAction.FileDescriptor.protoMessageName + ".Delete"
+  public static let _protobuf_nameMap = SwiftProtobuf._NameMap()
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    // Load everything into unknown fields
+    while try decoder.nextFieldNumber() != nil {}
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: AsyncifyAction.FileDescriptor.Delete, rhs: AsyncifyAction.FileDescriptor.Delete) -> Bool {
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension AsyncifyAction.FileDescriptor.Mkdir: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = AsyncifyAction.FileDescriptor.protoMessageName + ".Mkdir"
+  public static let _protobuf_nameMap = SwiftProtobuf._NameMap()
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    // Load everything into unknown fields
+    while try decoder.nextFieldNumber() != nil {}
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: AsyncifyAction.FileDescriptor.Mkdir, rhs: AsyncifyAction.FileDescriptor.Mkdir) -> Bool {
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension AsyncifyAction.FileDescriptor.Move: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = AsyncifyAction.FileDescriptor.protoMessageName + ".Move"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "to"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularStringField(value: &self.to) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if !self.to.isEmpty {
+      try visitor.visitSingularStringField(value: self.to, fieldNumber: 1)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: AsyncifyAction.FileDescriptor.Move, rhs: AsyncifyAction.FileDescriptor.Move) -> Bool {
+    if lhs.to != rhs.to {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
 extension AsyncifyFieldEntry: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   public static let protoMessageName: String = _protobuf_package + ".FieldEntry"
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
@@ -1602,6 +2172,7 @@ extension AsyncifyCommand.Sync: SwiftProtobuf.Message, SwiftProtobuf._MessageImp
     2: .same(proto: "ws"),
     3: .same(proto: "regex"),
     4: .same(proto: "js"),
+    5: .same(proto: "fd"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -1662,6 +2233,19 @@ extension AsyncifyCommand.Sync: SwiftProtobuf.Message, SwiftProtobuf._MessageImp
           self.action = .js(v)
         }
       }()
+      case 5: try {
+        var v: AsyncifyCommand.Sync.FileDescriptor?
+        var hadOneofValue = false
+        if let current = self.action {
+          hadOneofValue = true
+          if case .fd(let m) = current {v = m}
+        }
+        try decoder.decodeSingularMessageField(value: &v)
+        if let v = v {
+          if hadOneofValue {try decoder.handleConflictingOneOf()}
+          self.action = .fd(v)
+        }
+      }()
       default: break
       }
     }
@@ -1688,6 +2272,10 @@ extension AsyncifyCommand.Sync: SwiftProtobuf.Message, SwiftProtobuf._MessageImp
     case .js?: try {
       guard case .js(let v)? = self.action else { preconditionFailure() }
       try visitor.visitSingularMessageField(value: v, fieldNumber: 4)
+    }()
+    case .fd?: try {
+      guard case .fd(let v)? = self.action else { preconditionFailure() }
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 5)
     }()
     case nil: break
     }
@@ -1927,6 +2515,54 @@ extension AsyncifyCommand.Sync.JavaScript: SwiftProtobuf.Message, SwiftProtobuf.
 
   public static func ==(lhs: AsyncifyCommand.Sync.JavaScript, rhs: AsyncifyCommand.Sync.JavaScript) -> Bool {
     if lhs.data != rhs.data {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension AsyncifyCommand.Sync.FileDescriptor: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = AsyncifyCommand.Sync.protoMessageName + ".FileDescriptor"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "status"),
+    2: .same(proto: "metadata"),
+    3: .same(proto: "content"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularInt32Field(value: &self.status) }()
+      case 2: try { try decoder.decodeSingularMessageField(value: &self._metadata) }()
+      case 3: try { try decoder.decodeSingularMessageField(value: &self._content) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every if/case branch local when no optimizations
+    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+    // https://github.com/apple/swift-protobuf/issues/1182
+    if self.status != 0 {
+      try visitor.visitSingularInt32Field(value: self.status, fieldNumber: 1)
+    }
+    try { if let v = self._metadata {
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 2)
+    } }()
+    try { if let v = self._content {
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 3)
+    } }()
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: AsyncifyCommand.Sync.FileDescriptor, rhs: AsyncifyCommand.Sync.FileDescriptor) -> Bool {
+    if lhs.status != rhs.status {return false}
+    if lhs._metadata != rhs._metadata {return false}
+    if lhs._content != rhs._content {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

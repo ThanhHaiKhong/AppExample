@@ -13,7 +13,7 @@ final class AsyncWasmTests: XCTestCase {
     override func setUp() async throws {
         try await super.setUp()
         self.sut = try AsyncWasmEngine(
-            file: Bundle.module.url(forResource: "music", withExtension: "wasm")!)
+            file: Bundle.module.url(forResource: "music_tube", withExtension: "wasm")!)
     }
     func testGetVersion() async throws {
         print(try await sut.version().jsonString())

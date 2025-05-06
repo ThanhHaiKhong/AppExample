@@ -19,7 +19,7 @@ actor StoreKitLiveActor {
         userDefaults: UserDefaults = .standard,
         logger: @escaping (String) -> Void = { message in
             #if DEBUG
-            print("🐞 [STORE_KIT_LIVE_ACTOR]: \(message)")
+            print("🛍️ [STORE_KIT_LIVE_ACTOR]: \(message)")
             #endif
         }
     ) {
@@ -100,6 +100,25 @@ actor StoreKitLiveActor {
         }
         logger("Restored \(restored.count) transactions")
         return restored
+    }
+    
+    func getLatestTransaction() async -> StoreKitClient.Transaction? {
+        var latestTransaction: Transaction?
+        
+        for await result in Transaction.currentEntitlements {
+            guard case .verified(let transaction) = result else {
+                continue
+            }
+            
+            let currentExpiration = latestTransaction?.expirationDate ?? Date.distantPast
+            let newExpiration = transaction.expirationDate ?? Date.distantPast
+            
+            if latestTransaction == nil || newExpiration > currentExpiration {
+                latestTransaction = transaction
+            }
+        }
+        
+        return StoreKitClient.Transaction(rawValue: latestTransaction)
     }
     
     // MARK: - Private Helpers
@@ -194,7 +213,6 @@ actor StoreKitLiveActor {
     }
     
     private func currentWindowScene() async -> UIWindowScene? {
-        await UIApplication.shared.connectedScenes
-            .first(where: { $0 is UIWindowScene }) as? UIWindowScene
+        await UIApplication.shared.connectedScenes.first(where: { $0 is UIWindowScene }) as? UIWindowScene
     }
 }

@@ -15,18 +15,20 @@ public class Constants: NSObject {
         case requiredRecreateEngineError = 50000
         case maximumRetryExceededError
         case missingSharedPrefereceError
+        case invalidEngineBuilderInstanceType
         public var errorDescription: String? {
             switch self {
             case .requiredRecreateEngineError: "recreate the engine to use."
             case .maximumRetryExceededError: "maximum retry count exceeded"
             case .missingSharedPrefereceError: "missing shared preference"
+            case .invalidEngineBuilderInstanceType: "invalid engine builder instance type"
             }
         }
-        
-        public func error(reason: Swift.Error? = nil) -> Swift.Error {
+   
+        public func error(reason: String? = nil) -> Swift.Error {
             var info = [NSLocalizedDescriptionKey: self.localizedDescription]
             if let reason {
-                info[NSLocalizedFailureReasonErrorKey] = reason.localizedDescription
+                info[NSLocalizedFailureReasonErrorKey] = reason
             }
             return NSError(domain: Constants.errorDomain,
                            code: self.rawValue,

@@ -676,9 +676,9 @@ public protocol AsyncifyWasmProvider: AnyObject {
     
     func stateChanged(state: EngineState) 
     
-    func setSharedPreference(key: String, value: Data) 
+    func setSharedPreferences(key: String, value: Data) 
     
-    func getSharedPreference(key: String)  -> Data?
+    func getSharedPreferences(key: String)  -> Data?
     
 }
 open class AsyncifyWasmProviderImpl: AsyncifyWasmProvider, @unchecked Sendable {
@@ -751,17 +751,17 @@ open func stateChanged(state: EngineState)  {try! rustCall() {
 }
 }
     
-open func setSharedPreference(key: String, value: Data)  {try! rustCall() {
-    uniffi_asyncify_wasm_fn_method_asyncifywasmprovider_set_shared_preference(self.uniffiClonePointer(),
+open func setSharedPreferences(key: String, value: Data)  {try! rustCall() {
+    uniffi_asyncify_wasm_fn_method_asyncifywasmprovider_set_shared_preferences(self.uniffiClonePointer(),
         FfiConverterString.lower(key),
         FfiConverterData.lower(value),$0
     )
 }
 }
     
-open func getSharedPreference(key: String) -> Data?  {
+open func getSharedPreferences(key: String) -> Data?  {
     return try!  FfiConverterOptionData.lift(try! rustCall() {
-    uniffi_asyncify_wasm_fn_method_asyncifywasmprovider_get_shared_preference(self.uniffiClonePointer(),
+    uniffi_asyncify_wasm_fn_method_asyncifywasmprovider_get_shared_preferences(self.uniffiClonePointer(),
         FfiConverterString.lower(key),$0
     )
 })
@@ -856,7 +856,7 @@ fileprivate struct UniffiCallbackInterfaceAsyncifyWasmProvider {
                 writeReturn: writeReturn
             )
         },
-        setSharedPreference: { (
+        setSharedPreferences: { (
             uniffiHandle: UInt64,
             key: RustBuffer,
             value: RustBuffer,
@@ -868,7 +868,7 @@ fileprivate struct UniffiCallbackInterfaceAsyncifyWasmProvider {
                 guard let uniffiObj = try? FfiConverterTypeAsyncifyWasmProvider.handleMap.get(handle: uniffiHandle) else {
                     throw UniffiInternalError.unexpectedStaleHandle
                 }
-                return uniffiObj.setSharedPreference(
+                return uniffiObj.setSharedPreferences(
                      key: try FfiConverterString.lift(key),
                      value: try FfiConverterData.lift(value)
                 )
@@ -882,7 +882,7 @@ fileprivate struct UniffiCallbackInterfaceAsyncifyWasmProvider {
                 writeReturn: writeReturn
             )
         },
-        getSharedPreference: { (
+        getSharedPreferences: { (
             uniffiHandle: UInt64,
             key: RustBuffer,
             uniffiOutReturn: UnsafeMutablePointer<RustBuffer>,
@@ -893,7 +893,7 @@ fileprivate struct UniffiCallbackInterfaceAsyncifyWasmProvider {
                 guard let uniffiObj = try? FfiConverterTypeAsyncifyWasmProvider.handleMap.get(handle: uniffiHandle) else {
                     throw UniffiInternalError.unexpectedStaleHandle
                 }
-                return uniffiObj.getSharedPreference(
+                return uniffiObj.getSharedPreferences(
                      key: try FfiConverterString.lift(key)
                 )
             }
@@ -1368,6 +1368,8 @@ public enum EngineState {
     case running(EngineVersion
     )
     case releasing
+    case failed(String
+    )
 }
 
 
@@ -1399,6 +1401,9 @@ public struct FfiConverterTypeEngineState: FfiConverterRustBuffer {
         )
         
         case 6: return .releasing
+        
+        case 7: return .failed(try FfiConverterString.read(from: &buf)
+        )
         
         default: throw UniffiInternalError.unexpectedEnumCase
         }
@@ -1434,6 +1439,11 @@ public struct FfiConverterTypeEngineState: FfiConverterRustBuffer {
         case .releasing:
             writeInt(&buf, Int32(6))
         
+        
+        case let .failed(v1):
+            writeInt(&buf, Int32(7))
+            FfiConverterString.write(v1, into: &buf)
+            
         }
     }
 }
@@ -1477,7 +1487,7 @@ public enum WasmOptions {
          * By default, linear memory will not be limited.
          */storeMemorySize: UInt64?, 
         /**
-         * Default is 1
+         * Default is 5 on mobile
          */instancePoolSize: UInt64?
     )
 }
@@ -1848,10 +1858,10 @@ private let initializationResult: InitializationResult = {
     if (uniffi_asyncify_wasm_checksum_method_asyncifywasmprovider_state_changed() != 47016) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_asyncify_wasm_checksum_method_asyncifywasmprovider_set_shared_preference() != 18886) {
+    if (uniffi_asyncify_wasm_checksum_method_asyncifywasmprovider_set_shared_preferences() != 54901) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_asyncify_wasm_checksum_method_asyncifywasmprovider_get_shared_preference() != 14187) {
+    if (uniffi_asyncify_wasm_checksum_method_asyncifywasmprovider_get_shared_preferences() != 40935) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_asyncify_wasm_checksum_constructor_asyncifywasm_new() != 48304) {

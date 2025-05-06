@@ -8,19 +8,40 @@ import AsyncWasm
 import Foundation
 import SwiftProtobuf
 import WasmSwiftProtobuf
+import TaskWasm
 
-extension MusicCallID: CallerID {}
-
-public protocol MusicWasmProtocol: AsyncWasmProtocol {
-    func details(vid: String) async throws -> MusicTrackDetails
-    func suggestion(keyword: String) async throws -> MusicListSuggestions
-    func search(keyword: String, scope: String, continuation: String?) async throws -> MusicListTracks
-    func tracks(pid: String, continuation: String?) async throws -> MusicListTracks
-    func options() async throws -> MusicListOptions
-    func discover(category: String, continuation: String?) async throws -> MusicListTracks
+public enum MusicActionID: String, CaseIterable, Identifiable {
+    public var id: String { self.rawValue }
+    case suggestion = "c5edf8f6-e18d-4a9d-acef-27d19fbb909a"
+    case discover = "0e425df1-fcda-4489-969a-d4350392a016"
+    case details = "1b1bcaf6-01fc-40b4-83b8-36915d9e505c"
+    case tracks = "a9b31651-43b3-415a-b99c-00468be15e28"
+    case search = "5d922423-a6fb-4302-b951-ac074c681b7c"
+    case transcript = "47575b25-3d87-4c9d-96d5-a681d064884b"
 }
 
-public func music() async throws -> MusicWasmProtocol {
+public enum MusicDiscoverCategory: String, CaseIterable, Identifiable {
+    public var id: String { self.rawValue }
+    case trending = "a63edea2-0dea-4ff6-a473-aaaa40532d08"
+    case recommended = "46805b5e-681e-481f-af2f-4cd0d3463e9b"
+    case news = "029aeecf-fad6-4134-bb60-9fea34381dce"
+}
+public enum MusicSearchScope: String, CaseIterable, Identifiable {
+    public var id: String { self.rawValue }
+    case all = "all"
+    case playlist = "playlist"
+    case video = "video"
+}
+
+public protocol MusicWasmProtocol: TaskWasmProtocol {
+    func details(vid: String) async throws -> MusicTrackDetails
+    func suggestion(keyword: String) async throws -> MusicListSuggestions
+    func search(keyword: String, scope: MusicSearchScope, continuation: String?) async throws -> MusicListTracks
+    func tracks(pid: String, continuation: String?) async throws -> MusicListTracks
+    func discover(category: MusicDiscoverCategory, continuation: String?) async throws -> MusicListTracks
+}
+
+public func `default`() async throws -> MusicWasmProtocol {
     MusicWasmEngine()
 }
 
@@ -55,20 +76,16 @@ public extension MusicWasmEngine {
         try await cast(await transcript(vid: vid))
     }
 
-    func discover(category: String, continuation: String?) async throws -> MusicListTracks {
-        try await cast(await discover(category: category, continuation: continuation))
-    }
-
-    func options() async throws -> MusicListOptions {
-        try await cast(await options())
+    func discover(category: MusicDiscoverCategory, continuation: String?) async throws -> MusicListTracks {
+        try await cast(await discover(category: category.rawValue, continuation: continuation))
     }
 
     func suggestion(keyword: String) async throws -> MusicListSuggestions {
         try await cast(await suggestion(keyword: keyword))
     }
 
-    func search(keyword: String, scope: String, continuation: String?) async throws -> MusicListTracks {
-        try await cast(await search(keyword: keyword, scope: scope, continuation: continuation))
+    func search(keyword: String, scope: MusicSearchScope, continuation: String?) async throws -> MusicListTracks {
+        try await cast(await search(keyword: keyword, scope: scope.rawValue, continuation: continuation))
     }
 
     func tracks(pid: String, continuation: String?) async throws -> MusicListTracks {
@@ -77,24 +94,20 @@ public extension MusicWasmEngine {
 }
 
 @objc
-public class MusicWasmEngine: AsyncWasmEngine, MusicWasmProtocol {
+public class MusicWasmEngine: TaskWasmEngine, MusicWasmProtocol {
 
     @objc(detailsWithVideoId:completionHandler:)
     public func details(vid: String) async throws -> Data {
-        let args = [
+        try await self.data(id: MusicActionID.details, args: [
             "url": Google_Protobuf_Value(stringValue: vid),
-        ]
-        let caller = try AsyncifyCommand.Call(id: MusicCallID.getDetails, args: args)
-        return try await grpc_call(AsyncifyCommand(call: caller))
+        ])
     }
 
     @objc(transcriptWithVideoId:completionHandler:)
     public func transcript(vid: String) async throws -> Data {
-        let args = [
-            "vid": Google_Protobuf_Value(stringValue: vid),
-        ]
-        let caller = try AsyncifyCommand.Call(id: MusicCallID.getTranscript, args: args)
-        return try await grpc_call(AsyncifyCommand(call: caller))
+        try await self.data(id: MusicActionID.transcript, args: [
+            "url": Google_Protobuf_Value(stringValue: vid),
+        ])
     }
 
     @objc(getDiscoverWithCategory:continuation:completionHandler:)
@@ -105,14 +118,7 @@ public class MusicWasmEngine: AsyncWasmEngine, MusicWasmProtocol {
         if let continuation, !continuation.isEmpty {
             args["continuation"] = Google_Protobuf_Value(stringValue: continuation)
         }
-        let caller = try AsyncifyCommand.Call(id: MusicCallID.getDiscover, args: args)
-        return try await grpc_call(AsyncifyCommand(call: caller))
-    }
-
-    @objc(optionsWithCompletionHandler:)
-    public func options() async throws -> Data {
-        let caller = try AsyncifyCommand.Call(id: MusicCallID.getOptions)
-        return try await grpc_call(AsyncifyCommand(call: caller))
+        return try await self.data(id: MusicActionID.discover, args: args)
     }
 
     @objc(suggestionWithKeyword:completionHandler:)
@@ -120,11 +126,7 @@ public class MusicWasmEngine: AsyncWasmEngine, MusicWasmProtocol {
         let args = [
             "keyword": Google_Protobuf_Value(stringValue: keyword),
         ]
-        let caller = try AsyncifyCommand.Call(
-            id: MusicCallID.suggestion,
-            args: args
-        )
-        return try await grpc_call(AsyncifyCommand(call: caller))
+        return try await self.data(id: MusicActionID.suggestion, args: args)
     }
 
     @objc(searchWithKeyword:scope:continuation:completionHandler:)
@@ -136,11 +138,7 @@ public class MusicWasmEngine: AsyncWasmEngine, MusicWasmProtocol {
         if let continuation, !continuation.isEmpty {
             args["continuation"] = Google_Protobuf_Value(stringValue: continuation)
         }
-        let caller = try AsyncifyCommand.Call(
-            id: MusicCallID.search,
-            args: args
-        )
-        return try await grpc_call(AsyncifyCommand(call: caller))
+        return try await self.data(id: MusicActionID.search, args: args)
     }
 
     @objc(trackWithPlaylistId:continuation:completionHandler:)
@@ -151,10 +149,6 @@ public class MusicWasmEngine: AsyncWasmEngine, MusicWasmProtocol {
         if let continuation {
             args["continuation"] = Google_Protobuf_Value(stringValue: continuation)
         }
-        let caller = try AsyncifyCommand.Call(
-            id: MusicCallID.getPlaylistDetails,
-            args: args
-        )
-        return try await grpc_call(AsyncifyCommand(call: caller))
+        return try await self.data(id: MusicActionID.tracks, args: args)
     }
 }

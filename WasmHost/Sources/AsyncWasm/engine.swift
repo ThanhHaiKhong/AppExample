@@ -16,8 +16,13 @@ public protocol AsyncWasmProtocol {
     // value is serialized module options
     var copts: [String: Data] { get set }
     var delegate: WasmInstanceDelegate? { get set }
-    init()
-    init(file: URL?) throws
+    init(wasmDir: URL?)
+    /// Create a WebAssembly instance.
+    /// - Parameters:
+    ///   - wasmDir: The WebAssembly bundle directory.
+    ///   - file: The default wasm file to load.
+    ///   Throws an error if the parameters are invalid.
+    init(wasmDir: URL?, file: URL?) throws
     func start() async throws
     func call(_ data: Data) async throws -> Data
     func version() async throws -> Data
@@ -87,6 +92,9 @@ public extension AsyncWasmProtocol {
         return try await cast(await version())
     }
 }
+extension URL {
+    static var defaultWasmDir: URL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!.appendingPathComponent("wasm")
+}
 @objc
 open class AsyncWasmEngine: NSObject, AsyncWasmProtocol {
     @objc
@@ -97,21 +105,25 @@ open class AsyncWasmEngine: NSObject, AsyncWasmProtocol {
     public var copts: [String : Data] = [:]
     public weak var delegate: WasmInstanceDelegate?
     internal var _wasm: WasmInstance?
+    var wasmDir = URL.defaultWasmDir
     @objc
     public override required init() {
         super.init()
     }
     @objc
-    public required init(file: URL?) throws {
-        self.url = file
+    public required init(wasmDir: URL? = nil) {
+        self.wasmDir = wasmDir ?? URL.defaultWasmDir
         super.init()
     }
-    func tryRun<R>(body: () async throws -> R) async rethrows -> R {
-        do {
-            return try await body()
-        } catch {
-            throw error
-        }
+    @objc
+    public required convenience init(file: URL?) throws {
+        try self.init(wasmDir: nil, file: file)
+    }
+    @objc
+    public required init(wasmDir: URL? = nil, file: URL?) throws {
+        self.wasmDir = wasmDir ?? URL.defaultWasmDir
+        self.url = file
+        super.init()
     }
     @objc(versionWithCompletionHandler:)
     public func version() async throws -> Data {
@@ -120,9 +132,7 @@ open class AsyncWasmEngine: NSObject, AsyncWasmProtocol {
     }
     @objc(callWithData:completionHandler:)
     public func call(_ data: Data) async throws -> Data {
-        try await self.tryRun {
-            try await _wasm?.call(cmd: data) ?? Data()
-        }
+        try await _wasm?.call(cmd: data) ?? Data()
     }
     @objc(setCallOptions:completionHandler:)
     public func set(copts: [String: Data]) async throws {
