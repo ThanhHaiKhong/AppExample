@@ -6,6 +6,8 @@
 //
 
 import Dependencies
+import WasmSwiftProtobuf
+import MusicWasm
 
 extension DependencyValues {
 	public var musicWasmClient: MusicWasmClient {
@@ -16,7 +18,34 @@ extension DependencyValues {
 
 extension MusicWasmClient: TestDependencyKey {
 	
-	public static let testValue = MusicWasmClient()
+	public static let testValue = MusicWasmClient(
+		engineState: {
+			.loaded
+		},
+		engineStateStream: {
+			AsyncStream { continuation in
+				continuation.yield(.idle)
+				continuation.yield(.loading)
+				continuation.yield(.loaded)
+				continuation.finish()
+			}
+		},
+		details: { _ in
+			MusicTrackDetails()
+		},
+		suggestion: { _ in
+			MusicListSuggestions()
+		},
+		search: { _, _, _ in
+			MusicListTracks()
+		},
+		tracks: { _, _ in
+			MusicListTracks()
+		},
+		discover: { _, _ in
+			MusicListTracks()
+		}
+	)
 	
 	public static let previewValue = MusicWasmClient()
 }

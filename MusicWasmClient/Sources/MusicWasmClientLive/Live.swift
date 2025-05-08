@@ -16,6 +16,9 @@ extension MusicWasmClient: DependencyKey {
 			engineState: {
 				await actor.engineState()
 			},
+			engineStateStream: {
+				await actor.engineStateStream()
+			},
 			details: { vid in
 				try await actor.details(vid: vid)
 			},

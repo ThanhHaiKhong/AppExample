@@ -738,6 +738,7 @@ extension MediaPlayerViewController {
 	
 	@objc private func dismissButtonTapped(_ sender: UIButton) {
 		UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+		store.send(.dismissButtonTapped)
 	}
 	
 	@objc private func togglePlayPause(_ sender: UIButton) {

@@ -13,6 +13,8 @@
 		7F4A24072D599FB40036D1C7 /* NotificationsClient in Frameworks */ = {isa = PBXBuildFile; productRef = 7F4A24062D599FB40036D1C7 /* NotificationsClient */; };
 		7F5399B82CED7209003141AC /* UIConstants in Frameworks */ = {isa = PBXBuildFile; productRef = 7F5399B72CED7209003141AC /* UIConstants */; };
 		7F5399BA2CED72B1003141AC /* UIModifiers in Frameworks */ = {isa = PBXBuildFile; productRef = 7F5399B92CED72B1003141AC /* UIModifiers */; };
+		7F6167482DCC98DF00F20023 /* MusicWasmClient in Frameworks */ = {isa = PBXBuildFile; productRef = 7F6167472DCC98DF00F20023 /* MusicWasmClient */; };
+		7F61674A2DCC98DF00F20023 /* MusicWasmClientLive in Frameworks */ = {isa = PBXBuildFile; productRef = 7F6167492DCC98DF00F20023 /* MusicWasmClientLive */; };
 		7F76A20F2D5C5BA8001C9C6A /* TCAInitializableReducer in Frameworks */ = {isa = PBXBuildFile; productRef = 7F76A20E2D5C5BA8001C9C6A /* TCAInitializableReducer */; };
 		7F7DF8CC2DA76B8F004A2F42 /* ArchiveClient in Frameworks */ = {isa = PBXBuildFile; productRef = 7F7DF8CB2DA76B8F004A2F42 /* ArchiveClient */; };
 		7F7DF8CE2DA76BD2004A2F42 /* PhotosClient in Frameworks */ = {isa = PBXBuildFile; productRef = 7F7DF8CD2DA76BD2004A2F42 /* PhotosClient */; };
@@ -197,6 +199,8 @@
 				7F8C72AE2DC0471D003561D5 /* UIExtensions in Frameworks */,
 				7F4079D22DBA1EA2004FBE25 /* MediaPlayerClientLive in Frameworks */,
 				7F8C72BA2DC08284003561D5 /* MediaPlayerClient in Frameworks */,
+				7F6167482DCC98DF00F20023 /* MusicWasmClient in Frameworks */,
+				7F61674A2DCC98DF00F20023 /* MusicWasmClientLive in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -317,6 +321,8 @@
 				7F8C72BC2DC0BFCD003561D5 /* Kingfisher */,
 				7F8C72BE2DC0F8DB003561D5 /* TimerClient */,
 				7F8C72C02DC10322003561D5 /* TimerClientLive */,
+				7F6167472DCC98DF00F20023 /* MusicWasmClient */,
+				7F6167492DCC98DF00F20023 /* MusicWasmClientLive */,
 			);
 			productName = MediaPlayerPreview;
 			productReference = 7F4079A22DBA19FC004FBE25 /* MediaPlayerPreview.app */;
@@ -580,7 +586,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.thanhhaikhong.MediaPlayerPreview;
+				PRODUCT_BUNDLE_IDENTIFIER = com.zerooone.MusicPlayer;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -608,7 +614,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.thanhhaikhong.MediaPlayerPreview;
+				PRODUCT_BUNDLE_IDENTIFIER = com.zerooone.MusicPlayer;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -964,6 +970,14 @@
 		7F5399B92CED72B1003141AC /* UIModifiers */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = UIModifiers;
+		};
+		7F6167472DCC98DF00F20023 /* MusicWasmClient */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MusicWasmClient;
+		};
+		7F6167492DCC98DF00F20023 /* MusicWasmClientLive */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MusicWasmClientLive;
 		};
 		7F76A20E2D5C5BA8001C9C6A /* TCAInitializableReducer */ = {
 			isa = XCSwiftPackageProductDependency;

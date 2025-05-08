@@ -7,6 +7,7 @@
 
 import ComposableArchitecture
 import MediaPlayerClient
+import MusicWasmClient
 import AVFoundation
 import TimerClient
 import UIKit
@@ -43,6 +44,7 @@ public struct MediaPlayerStore {
 	}
 	
 	public enum Action: Equatable {
+		case dismissButtonTapped
 		case togglePlayPauseButtonTapped
 		case nextButtonTapped
 		case previousButtonTapped
@@ -67,6 +69,7 @@ public struct MediaPlayerStore {
 	}
 	
 	@Dependency(\.mediaPlayerClient) var mediaPlayerClient
+	@Dependency(\.musicWasmClient) var musicWasmClient
 	
 	public var body: some Reducer<State, Action> {
 		Reduce { state, action in
@@ -88,6 +91,29 @@ public struct MediaPlayerStore {
 				
 			case .repeatButtonTapped:
 				return handleRepeatButtonTapped(state: &state)
+				
+			case .dismissButtonTapped:
+				return .run { send in
+					for await state in await musicWasmClient.engineStateStream() {
+						switch state {
+						case .idle:
+							print("Engine state: idle")
+							
+						case .loading:
+							print("Engine state: loading")
+							
+						case .loaded:
+							print("Engine state: loaded")
+							let trendingList = try await musicWasmClient.discover(category: .trending, continuation: nil)
+							print("Trending List: \(trendingList.items.count)")
+							
+						case let .error(error):
+							print("Engine state: error \(error.localizedDescription)")
+						}
+					}
+				} catch: { error, send in
+					print("Music Wasm Client Error: \(error.localizedDescription)")
+				}
 				
 			case .sliderTouchedDown:
 				return handleSliderTouchedDown(state: &state)
@@ -193,7 +219,7 @@ extension MediaPlayerStore {
 				}
 			}
 		} catch: { error, send in
-			
+			print("Error initializing media player: \(error.localizedDescription)")
 		}
 	}
 	

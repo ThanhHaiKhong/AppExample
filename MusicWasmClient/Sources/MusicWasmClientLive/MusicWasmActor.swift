@@ -32,6 +32,24 @@ actor MusicWasmActor {
 
 extension MusicWasmActor {
 	
+	func engineStateStream() -> AsyncStream<MusicWasmClient.EngineState> {
+		return AsyncStream { continuation in
+			Task {
+				var lastState = engineState()
+				continuation.yield(lastState)
+				while !Task.isCancelled {
+					try await Task.sleep(nanoseconds: 100_000_000) // Poll every 100ms
+					let currentState = engineState()
+					if currentState != lastState {
+						continuation.yield(currentState)
+						lastState = currentState
+					}
+				}
+				continuation.finish()
+			}
+		}
+	}
+	
 	func engineState() -> MusicWasmClient.EngineState {
 		state
 	}

@@ -10,6 +10,11 @@ public struct MusicWasmClient: Sendable {
 	public var engineState: @Sendable () async throws -> MusicWasmClient.EngineState = {
 		return .idle
 	}
+	public var engineStateStream: @Sendable () async -> AsyncStream<EngineState> = {
+		AsyncStream { _ in
+			
+		}
+	}
 	public var details: @Sendable(_ vid: String) async throws -> MusicTrackDetails = { _ in
 		MusicTrackDetails()
 	}
