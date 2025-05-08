@@ -112,6 +112,7 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Previews/StoreKitPreview/App.swift,
+				Previews/StoreKitPreview/Assets.xcassets,
 				Previews/StoreKitPreview/ProductConfig.swift,
 				Previews/StoreKitPreview/StoreView.swift,
 				Previews/StoreKitPreview/Subscriptions.swift,
@@ -151,6 +152,7 @@
 				Previews/SQLiteExplorations/ContentView.swift,
 				Previews/SQLiteExplorations/SQLiteExplorationsApp.swift,
 				Previews/StoreKitPreview/App.swift,
+				Previews/StoreKitPreview/Assets.xcassets,
 				Previews/StoreKitPreview/ProductConfig.swift,
 				Previews/StoreKitPreview/StoreView.swift,
 				Previews/StoreKitPreview/Subscriptions.swift,

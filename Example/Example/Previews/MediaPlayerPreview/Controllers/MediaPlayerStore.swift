@@ -201,7 +201,8 @@ extension MediaPlayerStore {
 		guard let currentItem = state.currentItem,
 			  let currentIndex = state.shuffleMode == .on ?
 				state.shuffles.firstIndex(of: currentItem) :
-					state.originalTracks.firstIndex(of: currentItem) else {
+				state.originalTracks.firstIndex(of: currentItem)
+		else {
 			return .none
 		}
 		

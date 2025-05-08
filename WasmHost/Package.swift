@@ -25,13 +25,13 @@ let package = Package(
         .macOS(.v11), .iOS(.v15), .watchOS(.v7),
     ],
     products: [
-        .library(name: "AsyncWasm", targets: ["AsyncWasm"]),
-        .library(name: "MusicWasm", targets: ["MusicWasm"]),
-        .library(name: "TaskWasm", targets: ["TaskWasm"]),
-        .library(name: "WasmSwiftProtobuf", targets: ["WasmSwiftProtobuf"]),
-        .library(name: "WasmObjCProtobuf", type: .dynamic, targets: ["WasmObjCProtobuf"]),
-        .library(name: "MobileFFI", type: .dynamic, targets: ["MobileFFI"]),
-        .library(name: "AsyncWasmUI", type: .dynamic, targets: ["AsyncWasmUI"])
+		.singleTargetLibrary("AsyncWasm"),
+		.singleTargetLibrary("MusicWasm"),
+		.singleTargetLibrary("TaskWasm"),
+		.singleTargetLibrary("WasmSwiftProtobuf"),
+		.singleTargetLibrary("WasmObjCProtobuf", type: .dynamic),
+		.singleTargetLibrary("MobileFFI", type: .dynamic),
+		.singleTargetLibrary("AsyncWasmUI", type: .dynamic)
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-system", .upToNextMinor(from: "1.3.0")),
@@ -160,7 +160,7 @@ let package = Package(
 )
 
 extension Product {
-    static func singleTargetLibrary(_ name: String) -> Product {
-        return .library(name: name, targets: [name])
+    static func singleTargetLibrary(_ name: String, type: PackageDescription.Product.Library.LibraryType? = nil) -> Product {
+		return .library(name: name, type: type, targets: [name])
     }
 }

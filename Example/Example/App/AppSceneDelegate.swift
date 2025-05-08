@@ -22,16 +22,11 @@ class AppSceneDelegate: UIResponder, UIWindowSceneDelegate {
         return PhotoViewController(store: store)
     }()
     
-    private lazy var playerViewController: PlayerViewController = {
-        let playerViewController = PlayerViewController()
-        return playerViewController
-    }()
-    
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let windowScene = scene as? UIWindowScene else { return }
         
         let window = AppUIWindow(windowScene: windowScene)
-        window.rootViewController = UINavigationController(rootViewController: playerViewController)
+        window.rootViewController = UINavigationController(rootViewController: photoViewController)
         window.makeKeyAndVisible()
         
         self.window = window
