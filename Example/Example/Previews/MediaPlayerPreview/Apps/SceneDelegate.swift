@@ -15,7 +15,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let windowScene = scene as? UIWindowScene else { return }
 		
-		let store = Store(initialState: PlayerStore.State()) {
+		let store = Store(initialState: MediaPlayerStore.State()) {
+			MediaPlayerStore()
+		}
+		
+		let _ = Store(initialState: PlayerStore.State()) {
 			PlayerStore()
 		}
 		
@@ -24,7 +28,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 		}
         
         let window = UIWindow(windowScene: windowScene)
-		window.rootViewController = PlayerViewController(store: store)
+		window.rootViewController = MediaPlayerViewController(store: store)
         window.makeKeyAndVisible()
         
         self.window = window
@@ -50,4 +54,3 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
     }
 }
-

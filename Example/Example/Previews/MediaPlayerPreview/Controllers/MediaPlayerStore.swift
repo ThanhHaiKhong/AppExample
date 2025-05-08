@@ -1,8 +1,8 @@
 //
-//  PlayerStore.swift
+//  MediaPlayerStore.swift
 //  Example
 //
-//  Created by Thanh Hai Khong on 26/4/25.
+//  Created by Thanh Hai Khong on 7/5/25.
 //
 
 import ComposableArchitecture
@@ -11,26 +11,18 @@ import AVFoundation
 import TimerClient
 import UIKit
 
-public struct PlayableWitness: Sendable, Equatable, Hashable {
-	public var id: String
-	public var title: String
-	public var artist: String
-	public var thumbnailURL: URL?
-	public var url: URL
-}
-
 @Reducer
-public struct PlayerStore {
-    @ObservableState
-    public struct State: Sendable {
-        public var isPlaying: Bool = false
-        public var isLoading: Bool = false
+public struct MediaPlayerStore {
+	@ObservableState
+	public struct State: Sendable {
+		public var isPlaying: Bool = false
+		public var isLoading: Bool = false
 		public var isDragging: Bool = false
-        
+		
 		public var shuffleMode: ShuffleMode = .off
-        public var repeatMode: RepeatMode = .off
-        public var speedMode: SpeedMode = .normal
-        public var sleepMode: SleepMode = .off
+		public var repeatMode: RepeatMode = .off
+		public var speedMode: SpeedMode = .normal
+		public var sleepMode: SleepMode = .off
 		public var playbackEvent: MediaPlayerClient.PlaybackEvent = .idle
 		public var playMode: MediaPlayerClient.PlayMode = .audioOnly
 		
@@ -41,25 +33,25 @@ public struct PlayerStore {
 		internal var shuffles: [PlayableWitness] = []
 		public var upnexts: [PlayableWitness] = []
 		public var currentItem: PlayableWitness?
-        
+		
 		public var sleepTimer = SleepTimer.State()
 		public var equalizerStore = EqualizerStore.State()
 		
-        public init() {
-            
-        }
-    }
-    
-    public enum Action: Equatable {
-        case togglePlayPauseButtonTapped
-        case nextButtonTapped
-        case previousButtonTapped
-        case shuffleButtonTapped
-        case repeatButtonTapped
-        case speedButtonTapped
-        case timerButtonTapped
-        case equalizerButtonTapped
-        case moreButtonTapped
+		public init() {
+			
+		}
+	}
+	
+	public enum Action: Equatable {
+		case togglePlayPauseButtonTapped
+		case nextButtonTapped
+		case previousButtonTapped
+		case shuffleButtonTapped
+		case repeatButtonTapped
+		case speedButtonTapped
+		case timerButtonTapped
+		case equalizerButtonTapped
+		case moreButtonTapped
 		case sliderTouchedUp(Float)
 		case sliderTouchedDown
 		case initializeMediaPlayer(UIView)
@@ -72,13 +64,13 @@ public struct PlayerStore {
 		case sleepTimer(SleepTimer.Action)
 		case equalizerStore(EqualizerStore.Action)
 		case speedModeChanged(State.SpeedMode)
-    }
-    
-    @Dependency(\.mediaPlayerClient) var mediaPlayerClient
-    
-    public var body: some Reducer<State, Action> {
-        Reduce { state, action in
-            switch action {
+	}
+	
+	@Dependency(\.mediaPlayerClient) var mediaPlayerClient
+	
+	public var body: some Reducer<State, Action> {
+		Reduce { state, action in
+			switch action {
 			case let .initializeMediaPlayer(containerView):
 				return initializeMediaPlayer(containerView: containerView, state: &state)
 				
@@ -137,10 +129,10 @@ public struct PlayerStore {
 			case let .equalizerStore(action):
 				return handleEqualizerStoreAction(state: &state, action: action)
 				
-            default:
-                return .none
-            }
-        }
+			default:
+				return .none
+			}
+		}
 		
 		Scope(state: \.sleepTimer, action: \.sleepTimer) {
 			SleepTimer()
@@ -149,18 +141,18 @@ public struct PlayerStore {
 		Scope(state: \.equalizerStore, action: \.equalizerStore) {
 			EqualizerStore()
 		}
-    }
-    
-    public init() { }
+	}
+	
+	public init() { }
 }
 
-extension PlayerStore {
+extension MediaPlayerStore {
 	
 	private func initializeMediaPlayer(containerView: UIView, state: inout State) -> Effect<Action> {
 		return .run { send in
 			try await mediaPlayerClient.initialize(containerView, .video)
 			try await mediaPlayerClient.setListEQ([0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
-		
+			
 			for await event in mediaPlayerClient.events() {
 				switch event {
 				case .idle:
@@ -209,7 +201,7 @@ extension PlayerStore {
 		guard let currentItem = state.currentItem,
 			  let currentIndex = state.shuffleMode == .on ?
 				state.shuffles.firstIndex(of: currentItem) :
-				state.originalTracks.firstIndex(of: currentItem) else {
+					state.originalTracks.firstIndex(of: currentItem) else {
 			return .none
 		}
 		
@@ -220,11 +212,11 @@ extension PlayerStore {
 		}
 		
 		let previousItem = state.shuffleMode == .on ?
-			state.shuffles[previousIndex] :
-			state.originalTracks[previousIndex]
+		state.shuffles[previousIndex] :
+		state.originalTracks[previousIndex]
 		state.upnexts = state.shuffleMode == .on ?
-			state.shuffles.subarray(from: previousIndex + 1) :
-			state.originalTracks.subarray(from: previousIndex + 1)
+		state.shuffles.subarray(from: previousIndex + 1) :
+		state.originalTracks.subarray(from: previousIndex + 1)
 		
 		return .run { send in
 			await send(.currentItemChanged(previousItem))
@@ -235,7 +227,7 @@ extension PlayerStore {
 		guard let currentItem = state.currentItem,
 			  let currentIndex = state.shuffleMode == .on ?
 				state.shuffles.firstIndex(of: currentItem) :
-				state.originalTracks.firstIndex(of: currentItem) else {
+					state.originalTracks.firstIndex(of: currentItem) else {
 			return .none
 		}
 		
@@ -388,7 +380,7 @@ extension PlayerStore {
 	}
 	
 	private func handleSleepTimerAction(state: inout State, action: SleepTimer.Action) -> Effect<Action> {
-		switch action {	
+		switch action {
 		case .timerDidFinish:
 			return .run { send in
 				try await mediaPlayerClient.pause()
@@ -425,45 +417,45 @@ extension PlayerStore {
 	}
 }
 
-extension PlayerStore.State {
+extension MediaPlayerStore.State {
 	
-    public enum ShuffleMode: String, CaseIterable, Sendable, Equatable {
-        case off
-        case on
-        
-        public var tinColor: UIColor {
-            switch self {
-            case .off:
-                return .blueBerry
-            case .on:
-                return .redPink
-            }
-        }
-    }
-    
-    public enum RepeatMode: String, CaseIterable, Sendable, Equatable {
-        case off
-        case one
-        case all
-        
-        public var tintColor: UIColor {
-            switch self {
-            case .off:
-                return .blueBerry
-            case .one:
-                return .redPink
-            case .all:
-                return .redPink
-            }
-        }
-    }
-    
-    public enum SpeedMode: Float, CaseIterable, Sendable, Equatable, Hashable {
-        case verySlow
-        case slow
-        case normal
-        case fast
-        case veryFast
+	public enum ShuffleMode: String, CaseIterable, Sendable, Equatable {
+		case off
+		case on
+		
+		public var tinColor: UIColor {
+			switch self {
+			case .off:
+				return .blueBerry
+			case .on:
+				return .redPink
+			}
+		}
+	}
+	
+	public enum RepeatMode: String, CaseIterable, Sendable, Equatable {
+		case off
+		case one
+		case all
+		
+		public var tintColor: UIColor {
+			switch self {
+			case .off:
+				return .blueBerry
+			case .one:
+				return .redPink
+			case .all:
+				return .redPink
+			}
+		}
+	}
+	
+	public enum SpeedMode: Float, CaseIterable, Sendable, Equatable, Hashable {
+		case verySlow
+		case slow
+		case normal
+		case fast
+		case veryFast
 		
 		public var title: String {
 			switch self {
@@ -479,125 +471,125 @@ extension PlayerStore.State {
 				return "2.0x"
 			}
 		}
-        
-        public var description: String {
-            switch self {
-            case .verySlow:
-                return "Very Slow"
-            case .slow:
-                return "Slow"
-            case .normal:
-                return "Normal"
-            case .fast:
-                return "Fast"
-            case .veryFast:
-                return "Very Fast"
-            }
-        }
-        
-        public var rawValue: Float {
-            switch self {
-            case .verySlow:
-                return 0.25
-            case .slow:
-                return 0.5
-            case .normal:
-                return 1.0
-            case .fast:
-                return 1.5
-            case .veryFast:
-                return 2.0
-            }
-        }
-        
-        public var tintColor: UIColor {
-            switch self {
-            case .verySlow:
-                return .systemTeal
-            case .slow:
-                return .systemGreen
-            case .normal:
-                return .systemBlue
-            case .fast:
-                return .systemOrange
-            case .veryFast:
-                return .systemRed
-            }
-        }
-        
-        public var imageNamed: String {
-            switch self {
-            case .verySlow:
-                return "arrow.down.circle.fill"
-            case .slow:
-                return "arrow.down.right.circle.fill"
-            case .normal:
-                return "arrow.right.circle.fill"
-            case .fast:
-                return "arrow.up.right.circle.fill"
-            case .veryFast:
-                return "arrow.up.circle.fill"
-            }
-        }
-    }
-    
-    public enum SleepMode: String, CaseIterable, Sendable, Equatable, Hashable {
-        case off
-        case fiveMinutes
-        case tenMinutes
-        case fifteenMinutes
-        case thirtyMinutes
-        case oneHour
-        
-        public var description: String {
-            switch self {
-            case .off:
-                return "Off"
-            case .fiveMinutes:
-                return "5 Minutes"
-            case .tenMinutes:
-                return "10 Minutes"
-            case .fifteenMinutes:
-                return "15 Minutes"
-            case .thirtyMinutes:
-                return "30 Minutes"
-            case .oneHour:
-                return "1 Hour"
-            }
-        }
-        
-        public var duration: TimeInterval {
-            switch self {
-            case .off:
-                return 0
-            case .fiveMinutes:
-                return 5 * 60
-            case .tenMinutes:
-                return 10 * 60
-            case .fifteenMinutes:
-                return 15 * 60
-            case .thirtyMinutes:
-                return 30 * 60
-            case .oneHour:
-                return 60 * 60
-            }
-        }
-        
-        public var tintColor: UIColor {
-            switch self {
-            case .off:
-                return .systemGray
-            case .fiveMinutes:
-                return .systemGreen
-            case .tenMinutes:
-                return .systemBlue
-            case .fifteenMinutes:
-                return .systemYellow
-            case .thirtyMinutes:
-                return .systemOrange
-            case .oneHour:
-                return .systemRed
-            }
-        }
-    }
+		
+		public var description: String {
+			switch self {
+			case .verySlow:
+				return "Very Slow"
+			case .slow:
+				return "Slow"
+			case .normal:
+				return "Normal"
+			case .fast:
+				return "Fast"
+			case .veryFast:
+				return "Very Fast"
+			}
+		}
+		
+		public var rawValue: Float {
+			switch self {
+			case .verySlow:
+				return 0.25
+			case .slow:
+				return 0.5
+			case .normal:
+				return 1.0
+			case .fast:
+				return 1.5
+			case .veryFast:
+				return 2.0
+			}
+		}
+		
+		public var tintColor: UIColor {
+			switch self {
+			case .verySlow:
+				return .systemTeal
+			case .slow:
+				return .systemGreen
+			case .normal:
+				return .systemBlue
+			case .fast:
+				return .systemOrange
+			case .veryFast:
+				return .systemRed
+			}
+		}
+		
+		public var imageNamed: String {
+			switch self {
+			case .verySlow:
+				return "arrow.down.circle.fill"
+			case .slow:
+				return "arrow.down.right.circle.fill"
+			case .normal:
+				return "arrow.right.circle.fill"
+			case .fast:
+				return "arrow.up.right.circle.fill"
+			case .veryFast:
+				return "arrow.up.circle.fill"
+			}
+		}
+	}
+	
+	public enum SleepMode: String, CaseIterable, Sendable, Equatable, Hashable {
+		case off
+		case fiveMinutes
+		case tenMinutes
+		case fifteenMinutes
+		case thirtyMinutes
+		case oneHour
+		
+		public var description: String {
+			switch self {
+			case .off:
+				return "Off"
+			case .fiveMinutes:
+				return "5 Minutes"
+			case .tenMinutes:
+				return "10 Minutes"
+			case .fifteenMinutes:
+				return "15 Minutes"
+			case .thirtyMinutes:
+				return "30 Minutes"
+			case .oneHour:
+				return "1 Hour"
+			}
+		}
+		
+		public var duration: TimeInterval {
+			switch self {
+			case .off:
+				return 0
+			case .fiveMinutes:
+				return 5 * 60
+			case .tenMinutes:
+				return 10 * 60
+			case .fifteenMinutes:
+				return 15 * 60
+			case .thirtyMinutes:
+				return 30 * 60
+			case .oneHour:
+				return 60 * 60
+			}
+		}
+		
+		public var tintColor: UIColor {
+			switch self {
+			case .off:
+				return .systemGray
+			case .fiveMinutes:
+				return .systemGreen
+			case .tenMinutes:
+				return .systemBlue
+			case .fifteenMinutes:
+				return .systemYellow
+			case .thirtyMinutes:
+				return .systemOrange
+			case .oneHour:
+				return .systemRed
+			}
+		}
+	}
 }
