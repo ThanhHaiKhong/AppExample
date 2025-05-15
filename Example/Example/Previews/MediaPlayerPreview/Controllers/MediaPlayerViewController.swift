@@ -36,7 +36,9 @@ class MediaPlayerViewController: UIViewController {
 		super.viewDidLoad()
 		
 		setupViews()
+		
 		store.send(.initializeMediaPlayer(containerView))
+		store.send(.initializeNowPlaying)
 		
 		upnextView.didReorder = { [weak self] items in
 			guard let `self` = self else {

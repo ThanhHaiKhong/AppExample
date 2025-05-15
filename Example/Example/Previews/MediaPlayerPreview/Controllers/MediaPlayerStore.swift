@@ -69,6 +69,7 @@ public struct MediaPlayerStore {
 		case equalizerStore(EqualizerStore.Action)
 		case speedModeChanged(State.SpeedMode)
 		case didReorderTracks([PlayableWitness])
+		case initializeNowPlaying
 	}
 	
 	@Dependency(\.mediaPlayerClient) var mediaPlayerClient
@@ -78,6 +79,50 @@ public struct MediaPlayerStore {
 	public var body: some Reducer<State, Action> {
 		Reduce { state, action in
 			switch action {
+			case .initializeNowPlaying:
+				return .run { send in
+					var handlers = NowPlayingClient.RemoteCommandHandlers()
+					handlers = handlers
+						.withHandler(.nextTrack, .action {
+							print("Next track")
+							return .success
+						})
+						.withHandler(.changePlaybackRate(rates: [0.25, 0.5, 1.0, 1.25, 1.5, 2.0]), .floatAction { rate in
+							print("Setting playback rate: \(rate)")
+							return .success
+						})
+						.withHandler(.togglePlayPause, .action {
+							print("Toggle play/pause")
+							return .success
+						})
+						.withHandler(.previousTrack, .action {
+							print("Previous track")
+							return .success
+						})
+						.withHandler(.like(isActive: false, title: "Like"), .boolAction { isNagative in
+							print("Like: \(isNagative)")
+							return .success
+						})
+						.withHandler(.dislike(isActive: false, title: "Dislike"), .boolAction { isNagative in
+							print("Dislike: \(isNagative)")
+							return .success
+						})
+					
+					let enabledCommands: Set<NowPlayingClient.RemoteCommand> = [
+						.nextTrack,
+						.changePlaybackRate(rates: [0.25, 0.5, 1.0, 1.25, 1.5, 2.0]),
+						.togglePlayPause,
+						.previousTrack,
+						.like(isActive: false, title: "Like"),
+						.dislike(isActive: false, title: "Dislike"),
+					]
+					
+					try await nowPlayingClient.initializeAudioSession(category: .playback, mode: .default, options: [])
+					await nowPlayingClient.setupRemoteCommands(enabledCommands, handlers)
+				} catch: { error, send in
+					print("🤪 Error initializing NowPlaying: \(error.localizedDescription)")
+				}
+				
 			case let .initializeMediaPlayer(containerView):
 				return initializeMediaPlayer(containerView: containerView, state: &state)
 				
@@ -114,7 +159,12 @@ public struct MediaPlayerStore {
 				
 			case let .currentTimeChanged(currentTime):
 				state.currentTime = currentTime
-				return .none
+				return .run { [rate = state.speedMode.rawValue] send in
+					let dynamicInfo = NowPlayingClient.DynamicNowPlayingInfo(elapsedTime: currentTime, playbackRate: rate)
+					try await nowPlayingClient.updateDynamicInfo(dynamicInfo)
+				} catch: { error, send in
+					print("Error updating dynamic info: \(error.localizedDescription)")
+				}
 				
 			case let .durationChanged(duration):
 				state.duration = duration
@@ -402,6 +452,12 @@ extension MediaPlayerStore {
 				
 				if currentDuration != duration {
 					await send(.durationChanged(currentDuration))
+					var staticInfo = NowPlayingClient.StaticNowPlayingInfo()
+					staticInfo.title = item.title
+					staticInfo.artist = item.artist
+					staticInfo.duration = currentDuration
+					staticInfo.mediaType = .audio
+					try await nowPlayingClient.updateStaticInfo(info: staticInfo)
 				}
 				await send(.currentTimeChanged(currentTime))
 			}
