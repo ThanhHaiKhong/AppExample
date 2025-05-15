@@ -21,8 +21,10 @@ public struct EqualizerStore: Sendable {
 	
 	public enum Action: Sendable, Equatable {
 		case onDidLoad
-		case setEnabled(Bool)
+		case isEnabled(Bool)
+		case setEnabled(Bool, [Float])
 		case setEqualizer(Float, Int)
+		case setEqualizerWith(MediaPlayerClient.AudioEqualizer.Preset)
 		case initializeMediaPlayer(UIView)
 	}
 	
@@ -34,19 +36,17 @@ public struct EqualizerStore: Sendable {
 			case .onDidLoad:
 				return .run { send in
 					let isEnabled = await mediaPlayerClient.isEqualizerEnabled()
-					await send(.setEnabled(isEnabled))
-				} catch: { error, send in
-					print("Error loading equalizer: \(error.localizedDescription)")
+					await send(.isEnabled(isEnabled))
 				}
 				
-			case let .setEnabled(isEnabled):
+			case let .isEnabled(isEnabled):
+				state.isEnabled = isEnabled
+				return .none
+				
+			case let .setEnabled(isEnabled, listEQ):
 				state.isEnabled = isEnabled
 				return .run { send in
-					try await mediaPlayerClient.setEnableEqualizer(enabled: isEnabled)
-					if isEnabled {
-						let listEQ: [Float] = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-						try await mediaPlayerClient.setListEQ(listEQ: listEQ)
-					}
+					try await mediaPlayerClient.setEnableEqualizer(isEnabled, listEQ)
 				} catch: { error, send in
 					print("Error setting equalizer: \(error.localizedDescription)")
 				}
@@ -58,14 +58,20 @@ public struct EqualizerStore: Sendable {
 					print("Error setting equalizer: \(error.localizedDescription)")
 				}
 				
+			case let .setEqualizerWith(preset):
+				return .run { send in
+					try await mediaPlayerClient.setEqualizerWith(preset)
+				} catch: { error, send in
+					print("Error setting equalizer: \(error.localizedDescription)")
+				}
+				
 			case let .initializeMediaPlayer(containerView):
 				guard let url = Bundle.main.url(forResource: "sample_track_4", withExtension: "mp4") else {
 					return .none
 				}
 				
 				return .run { send in
-					try await mediaPlayerClient.initialize(containerView, .video)
-					try await mediaPlayerClient.setListEQ([0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
+					await mediaPlayerClient.initialize(containerView, .video)
 					try await mediaPlayerClient.setTrack(url: url)
 				} catch: { error, send in
 					print("Error initializing media player: \(error.localizedDescription)")

@@ -16,6 +16,8 @@
 		7F6167482DCC98DF00F20023 /* MusicWasmClient in Frameworks */ = {isa = PBXBuildFile; productRef = 7F6167472DCC98DF00F20023 /* MusicWasmClient */; };
 		7F61674A2DCC98DF00F20023 /* MusicWasmClientLive in Frameworks */ = {isa = PBXBuildFile; productRef = 7F6167492DCC98DF00F20023 /* MusicWasmClientLive */; };
 		7F76A20F2D5C5BA8001C9C6A /* TCAInitializableReducer in Frameworks */ = {isa = PBXBuildFile; productRef = 7F76A20E2D5C5BA8001C9C6A /* TCAInitializableReducer */; };
+		7F79E4B22DD48D7A008EAA8D /* NowPlayingClient in Frameworks */ = {isa = PBXBuildFile; productRef = 7F79E4B12DD48D7A008EAA8D /* NowPlayingClient */; };
+		7F79E4B42DD48D7A008EAA8D /* NowPlayingClientLive in Frameworks */ = {isa = PBXBuildFile; productRef = 7F79E4B32DD48D7A008EAA8D /* NowPlayingClientLive */; };
 		7F7DF8CC2DA76B8F004A2F42 /* ArchiveClient in Frameworks */ = {isa = PBXBuildFile; productRef = 7F7DF8CB2DA76B8F004A2F42 /* ArchiveClient */; };
 		7F7DF8CE2DA76BD2004A2F42 /* PhotosClient in Frameworks */ = {isa = PBXBuildFile; productRef = 7F7DF8CD2DA76BD2004A2F42 /* PhotosClient */; };
 		7F7DF8D02DA76BD2004A2F42 /* PhotosClientLive in Frameworks */ = {isa = PBXBuildFile; productRef = 7F7DF8CF2DA76BD2004A2F42 /* PhotosClientLive */; };
@@ -193,9 +195,11 @@
 				7F8C72B82DC07180003561D5 /* DataExtensions in Frameworks */,
 				7F4079DA2DBA21A7004FBE25 /* UIKitPreviews in Frameworks */,
 				7F8C72BD2DC0BFCD003561D5 /* Kingfisher in Frameworks */,
+				7F79E4B22DD48D7A008EAA8D /* NowPlayingClient in Frameworks */,
 				7F8C72C12DC10322003561D5 /* TimerClientLive in Frameworks */,
 				7F8C72BF2DC0F8DB003561D5 /* TimerClient in Frameworks */,
 				7F02B85A2DBB490E002A4F1F /* Hero in Frameworks */,
+				7F79E4B42DD48D7A008EAA8D /* NowPlayingClientLive in Frameworks */,
 				7F8C72AE2DC0471D003561D5 /* UIExtensions in Frameworks */,
 				7F4079D22DBA1EA2004FBE25 /* MediaPlayerClientLive in Frameworks */,
 				7F8C72BA2DC08284003561D5 /* MediaPlayerClient in Frameworks */,
@@ -323,6 +327,8 @@
 				7F8C72C02DC10322003561D5 /* TimerClientLive */,
 				7F6167472DCC98DF00F20023 /* MusicWasmClient */,
 				7F6167492DCC98DF00F20023 /* MusicWasmClientLive */,
+				7F79E4B12DD48D7A008EAA8D /* NowPlayingClient */,
+				7F79E4B32DD48D7A008EAA8D /* NowPlayingClientLive */,
 			);
 			productName = MediaPlayerPreview;
 			productReference = 7F4079A22DBA19FC004FBE25 /* MediaPlayerPreview.app */;
@@ -982,6 +988,14 @@
 		7F76A20E2D5C5BA8001C9C6A /* TCAInitializableReducer */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = TCAInitializableReducer;
+		};
+		7F79E4B12DD48D7A008EAA8D /* NowPlayingClient */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = NowPlayingClient;
+		};
+		7F79E4B32DD48D7A008EAA8D /* NowPlayingClientLive */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = NowPlayingClientLive;
 		};
 		7F7DF8CB2DA76B8F004A2F42 /* ArchiveClient */ = {
 			isa = XCSwiftPackageProductDependency;

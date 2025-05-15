@@ -16,9 +16,11 @@ import Hero
 
 class EqualizerViewController: UIViewController {
 	
+	typealias Section = Int
+	
 	enum Item: Hashable {
-		case preset(MediaPlayerClient.EqualizerPreset)
-		case band(MediaPlayerClient.EqualizerBand)
+		case preset(MediaPlayerClient.AudioEqualizer.Preset)
+		case band(MediaPlayerClient.AudioEqualizer.Band)
 		case accessory(AccessoryCell.Position)
 	}
 	
@@ -34,8 +36,6 @@ class EqualizerViewController: UIViewController {
 		fatalError("init(coder:) has not been implemented")
 	}
     
-    typealias Section = Int
-    
     private var dataSource: UICollectionViewDiffableDataSource<Section, Item>!
     private var selectedIndexPath: IndexPath? {
         didSet {
@@ -47,18 +47,21 @@ class EqualizerViewController: UIViewController {
             }
             
             collectionView.scrollToItem(at: selectedIndexPath, at: .centeredHorizontally, animated: true)
-            let bands: [MediaPlayerClient.EqualizerBand] = preset.bands
+			
+			let equalizer = preset.toEqualizer()
+			let bands: [MediaPlayerClient.AudioEqualizer.Band] = equalizer.bands
             
             for i in 0..<bands.count {
 				let indexPath = IndexPath(item: i + 1, section: 0)
 				if let cell = collectionView.cellForItem(at: indexPath) as? BandCell {
-					let gain = bands[i].gain
+					let gain = bands[i].amplification
 					cell.configureCell(gain)
-					if store.isEnabled {
-						store.send(.setEqualizer(gain, i))
-					}
 				}
             }
+			
+			if store.isEnabled {
+				store.send(.setEqualizerWith(preset))
+			}
         }
     }
     
@@ -73,11 +76,16 @@ class EqualizerViewController: UIViewController {
         initialSnapshot()
 		
 		observe { [weak self] in
-			guard let `self` = self else { return }
+			guard let `self` = self else {
+				return
+			}
+			
 			UIView.animate(withDuration: 0.3) {
 				self.collectionView.isUserInteractionEnabled = self.store.isEnabled
-				self.containerView.alpha = self.store.isEnabled ? 1.0 : 0.5
+				self.collectionView.alpha = self.store.isEnabled ? 1.0 : 0.5
 				self.toggleSwitch.isOn = self.store.isEnabled
+			} completion: { _ in
+				
 			}
 		}
 		
@@ -248,7 +256,7 @@ extension EqualizerViewController {
 			}
 			cell.titleLabel.text = band.displayFrequency
 			cell.slider.tag = indexPath.item - 1
-			cell.slider.value = band.gain
+			cell.slider.value = band.amplification
 			cell.delegate = self
         }
 		
@@ -277,11 +285,11 @@ extension EqualizerViewController {
     }
     
     private func initialSnapshot() {
-		var bands: [Item] = MediaPlayerClient.EqualizerBand.default.map { Item.band($0) }
+		var bands: [Item] = MediaPlayerClient.AudioEqualizer.Band.allBands.map { Item.band($0) }
 		bands.insert(.accessory(.left), at: 0)
 		bands.append(.accessory(.right))
 		
-		let presets: [Item] = MediaPlayerClient.EqualizerPreset.allPresets.map { Item.preset($0) }
+		let presets: [Item] = MediaPlayerClient.AudioEqualizer.presets.map { Item.preset($0) }
 		
         var snapshot = NSDiffableDataSourceSnapshot<Section, Item>()
         snapshot.appendSections([0, 1])
@@ -298,7 +306,15 @@ extension EqualizerViewController {
     
     @objc private func toggleEqualizer(_ sender: UISwitch) {
         UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-		store.send(.setEnabled(sender.isOn))
+		var listEQ: [Float] = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+		
+		for indexPath in collectionView.indexPathsForVisibleItems {
+			if let cell = collectionView.cellForItem(at: indexPath) as? BandCell {
+				listEQ[indexPath.item - 1] = cell.slider.value
+			}
+		}
+		
+		store.send(.setEnabled(sender.isOn, sender.isOn ? listEQ : []))
     }
     
     @objc private func handleTap(_ gesture: UITapGestureRecognizer) {

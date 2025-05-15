@@ -16,7 +16,7 @@ public struct PlayableWitness: Sendable, Equatable, Hashable {
 	public var title: String
 	public var artist: String
 	public var thumbnailURL: URL?
-	public var url: URL
+	public var url: URL?
 }
 
 @Reducer
@@ -161,7 +161,7 @@ extension PlayerStore {
 			try await mediaPlayerClient.initialize(containerView, .video)
 			try await mediaPlayerClient.setListEQ([0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
 		
-			for await event in mediaPlayerClient.events() {
+			for await event in await mediaPlayerClient.events() {
 				switch event {
 				case .idle:
 					print("PLAYBACK_EVENT: idle")
@@ -372,9 +372,12 @@ extension PlayerStore {
 		state.isLoading = true
 		
 		return .run { [duration = state.duration] send in
-			try await mediaPlayerClient.setTrack(url: item.url)
+			guard let url = item.url else {
+				return
+			}
+			try await mediaPlayerClient.setTrack(url: url)
 			
-			for await timeRecord in mediaPlayerClient.currentTime() {
+			for await timeRecord in await mediaPlayerClient.currentTime() {
 				let currentTime = timeRecord.0
 				let currentDuration = timeRecord.1
 				if currentDuration != duration {

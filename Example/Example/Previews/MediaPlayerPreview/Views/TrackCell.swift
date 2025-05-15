@@ -7,6 +7,7 @@
 
 import SwiftUI
 import UIKit
+import Kingfisher
 import UIKitPreviews
 import UIExtensions
 
@@ -54,15 +55,6 @@ public class TrackCell: UICollectionViewListCell {
 		return label
 	}()
 	
-	public lazy var moveableImageView: UIImageView = {
-		let imageView = UIImageView()
-		imageView.translatesAutoresizingMaskIntoConstraints = false
-		imageView.contentMode = .scaleAspectFit
-		imageView.image = UIImage(systemName: "line.3.horizontal")
-		imageView.tintColor = .secondaryLabel
-		return imageView
-	}()
-	
 	public lazy var moreButton: UIButton = {
 		let button = UIButton()
 		button.translatesAutoresizingMaskIntoConstraints = false
@@ -74,12 +66,12 @@ public class TrackCell: UICollectionViewListCell {
 		configuration.contentInsets = NSDirectionalEdgeInsets(top: 20, leading: 0, bottom: 0, trailing: 0)
 		
 		button.configuration = configuration
+		button.addTarget(self, action: #selector(moreButtonTapped(_:)), for: .touchUpInside)
 		return button
 	}()
 	
 	private func setupViews() {
 		contentView.backgroundColor = .white
-		moveableImageView.isHidden = true
 		
 		let titleStackView: UIStackView = {
 			let stackView = UIStackView(arrangedSubviews: [titleLabel, subtitleLabel])
@@ -89,31 +81,49 @@ public class TrackCell: UICollectionViewListCell {
 			return stackView
 		}()
 		
-		contentView.addSubview(imageView)
-		contentView.addSubview(titleStackView)
-		contentView.addSubview(moveableImageView)
+		let stackView: UIStackView = {
+			let stackView = UIStackView(arrangedSubviews: [imageView, titleStackView])
+			stackView.translatesAutoresizingMaskIntoConstraints = false
+			stackView.axis = .horizontal
+			stackView.spacing = 12
+			stackView.distribution = .fill
+			stackView.alignment = .leading
+			return stackView
+		}()
+		
+		contentView.addSubview(stackView)
 		contentView.addSubview(moreButton)
 		
 		NSLayoutConstraint.activate([
-			imageView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8),
-			imageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 12),
-			imageView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -8),
+			stackView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 6),
+			stackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 12),
+			stackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -8),
+			stackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -42),
+			
 			imageView.heightAnchor.constraint(equalToConstant: 48),
 			imageView.widthAnchor.constraint(equalTo: imageView.heightAnchor, multiplier: 1.25),
+			imageView.centerYAnchor.constraint(equalTo: stackView.centerYAnchor),
 			
-			titleStackView.centerYAnchor.constraint(equalTo: imageView.centerYAnchor),
-			titleStackView.leadingAnchor.constraint(equalTo: imageView.trailingAnchor, constant: 12),
-			
-			moveableImageView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-			moveableImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -8),
-			moveableImageView.widthAnchor.constraint(equalToConstant: 44),
-			moveableImageView.heightAnchor.constraint(equalToConstant: 25),
-			
+			moreButton.widthAnchor.constraint(equalToConstant: 30),
+			moreButton.heightAnchor.constraint(equalToConstant: 30),
 			moreButton.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-			moreButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -8),
-			moreButton.widthAnchor.constraint(equalToConstant: 44),
-			moreButton.heightAnchor.constraint(equalToConstant: 44),
+			moreButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -12),
 		])
+	}
+	
+	public func configureCell(_ track: PlayableWitness, isMovable: Bool) {
+		titleLabel.text = track.title
+		subtitleLabel.text = track.artist
+		
+		if let thumbnailURL = track.thumbnailURL {
+			imageView.kf.setImage(with: thumbnailURL)
+		}
+		
+		moreButton.isHidden = isMovable
+	}
+	
+	@objc private func moreButtonTapped(_ sender: UIButton) {
+		
 	}
 }
 

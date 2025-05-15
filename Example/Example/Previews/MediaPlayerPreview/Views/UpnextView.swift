@@ -7,6 +7,7 @@
 
 import UIKit
 import SwiftUI
+import Kingfisher
 import UIKitPreviews
 
 class UpnextView: UIView {
@@ -15,6 +16,9 @@ class UpnextView: UIView {
 	typealias Item = PlayableWitness
 	
 	private var dataSource: UICollectionViewDiffableDataSource<Section, Item>!
+	public var didReorder: (([Item]) -> Void)?
+	
+	// MARK: - View Lifecycle
 	
 	public override init(frame: CGRect) {
 		super.init(frame: frame)
@@ -27,6 +31,8 @@ class UpnextView: UIView {
 	public required init?(coder: NSCoder) {
 		fatalError("init(coder:) has not been implemented")
 	}
+	
+	// MARK: - Setup Views
 	
 	private lazy var titleLabel: UILabel = {
 		let label = UILabel()
@@ -45,6 +51,8 @@ class UpnextView: UIView {
 		return collectionView
 	}()
 }
+
+// MARK: - Private Methods
 
 extension UpnextView {
 	
@@ -71,33 +79,49 @@ extension UpnextView {
 	
 	private func setupDataSource() {
 		let cellRegistration = UICollectionView.CellRegistration<TrackCell, Item> { cell, indexPath, item in
-			
+			cell.configureCell(item, isMovable: true)
+			let reorderAccessory = UICellAccessory.reorder(displayed: .always)
+			cell.accessories = [reorderAccessory]
 		}
 		
 		dataSource = UICollectionViewDiffableDataSource<Section, Item>(collectionView: collectionView) { collectionView, indexPath, item in
 			let cell = collectionView.dequeueConfiguredReusableCell(using: cellRegistration, for: indexPath, item: item)
 			return cell
 		}
+		
+		dataSource.reorderingHandlers.canReorderItem = { _ in
+			return true
+		}
+		
+		dataSource.reorderingHandlers.didReorder = { [weak self] transaction in
+			guard let `self` else { return }
+			let newSnapshot = transaction.finalSnapshot
+			self.didReorder?(newSnapshot.itemIdentifiers)
+		}
 	}
 	
 	private func initialSnapshot() {
-		var playableWitnesses: [PlayableWitness] = []
-		
-		for i in 1..<5 {
-			let bundleName = "sample_track_\(i)"
-			let thumbnailURL = URL(string: "https://picsum.photos/id/\(i * 2)/1024")
-			let ext = i % 4 == 0 ? "mp4" : "mp3"
-			if let bundleURL = Bundle.main.url(forResource: bundleName, withExtension: ext) {
-				let playableWitness = PlayableWitness(id: bundleName, title: "Sample Track \(i)", artist: "Artist \(i)", thumbnailURL: thumbnailURL, url: bundleURL)
-				playableWitnesses.append(playableWitness)
-			}
-		}
-		
-		
 		var snapshot = NSDiffableDataSourceSnapshot<Section, Item>()
 		snapshot.appendSections([0])
-		snapshot.appendItems(playableWitnesses, toSection: 0)
+		snapshot.appendItems([], toSection: 0)
 		
-		dataSource.apply(snapshot, animatingDifferences: false)
+		DispatchQueue.main.async {
+			self.dataSource.apply(snapshot, animatingDifferences: false)
+		}
+	}
+}
+
+// MARK: - Public Methods
+
+extension UpnextView {
+	public func configureView(_ items: [PlayableWitness]) {
+		var snapshot = dataSource.snapshot()
+		snapshot.deleteAllItems()
+		snapshot.appendSections([0])
+		snapshot.appendItems(items, toSection: 0)
+		
+		DispatchQueue.main.async {
+			self.dataSource.apply(snapshot, animatingDifferences: true)
+		}
 	}
 }

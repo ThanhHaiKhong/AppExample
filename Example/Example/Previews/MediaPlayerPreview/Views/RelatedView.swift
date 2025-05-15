@@ -71,7 +71,7 @@ extension RelatedView {
 	
 	private func setupDataSource() {
 		let cellRegistration = UICollectionView.CellRegistration<TrackCell, Item> { cell, indexPath, item in
-			
+			cell.configureCell(item, isMovable: false)
 		}
 		
 		dataSource = UICollectionViewDiffableDataSource<Section, Item>(collectionView: collectionView) { collectionView, indexPath, item in
@@ -81,22 +81,9 @@ extension RelatedView {
 	}
 	
 	private func initialSnapshot() {
-		var playableWitnesses: [PlayableWitness] = []
-		
-		for i in 1..<5 {
-			let bundleName = "sample_track_\(i)"
-			let thumbnailURL = URL(string: "https://picsum.photos/id/\(i * 2)/1024")
-			let ext = i % 4 == 0 ? "mp4" : "mp3"
-			if let bundleURL = Bundle.main.url(forResource: bundleName, withExtension: ext) {
-				let playableWitness = PlayableWitness(id: bundleName, title: "Sample Track \(i)", artist: "Artist \(i)", thumbnailURL: thumbnailURL, url: bundleURL)
-				playableWitnesses.append(playableWitness)
-			}
-		}
-		
-		
 		var snapshot = NSDiffableDataSourceSnapshot<Section, Item>()
 		snapshot.appendSections([0])
-		snapshot.appendItems(playableWitnesses, toSection: 0)
+		snapshot.appendItems([], toSection: 0)
 		
 		dataSource.apply(snapshot, animatingDifferences: false)
 	}

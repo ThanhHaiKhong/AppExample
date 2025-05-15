@@ -14,6 +14,7 @@ import Kingfisher
 import SwiftUI
 import UIKit
 import Hero
+import AVKit
 
 class MediaPlayerViewController: UIViewController {
 	
@@ -36,6 +37,14 @@ class MediaPlayerViewController: UIViewController {
 		
 		setupViews()
 		store.send(.initializeMediaPlayer(containerView))
+		
+		upnextView.didReorder = { [weak self] items in
+			guard let `self` = self else {
+				return
+			}
+
+			self.store.send(.didReorderTracks(items))
+		}
 		
 		observe { [weak self] in
 			guard let `self` = self else {
@@ -61,20 +70,26 @@ class MediaPlayerViewController: UIViewController {
 				return
 			}
 			
-			self.playPauseButton.isSelected = self.store.isPlaying
-			self.titleLabel.text = self.store.currentItem?.title ?? "You belong with me"
-			self.artistLabel.text = self.store.currentItem?.artist ?? "Taylor Swift"
+			let configuration: UIImage.Configuration = UIImage.SymbolConfiguration.mediumLargeSymbol
+			let playImage = UIImage(systemName: "play.fill", withConfiguration: configuration)
+			let pauseImage = UIImage(systemName: "pause.fill", withConfiguration: configuration)
 			
-			if let thumbnailURL = store.currentItem?.thumbnailURL {
-				self.imageView.kf.setImage(with: thumbnailURL)
-			}
-			
-			if store.isLoading {
-				self.loadingIndicator.startAnimating()
-				self.playPauseButton.alpha = 0
-			} else {
-				self.loadingIndicator.stopAnimating()
-				self.playPauseButton.alpha = 1
+			UIView.animate(withDuration: 0.3) {
+				self.playPauseButton.setImage(self.store.isPlaying ? pauseImage : playImage, for: .normal)
+				self.titleLabel.text = self.store.currentItem?.title ?? "Unknown"
+				self.artistLabel.text = self.store.currentItem?.artist ?? "Unknown"
+				
+				if let thumbnailURL = self.store.currentItem?.thumbnailURL {
+					self.imageView.kf.setImage(with: thumbnailURL)
+				}
+				
+				if self.store.isLoading {
+					self.loadingIndicator.startAnimating()
+					self.playPauseButton.alpha = 0
+				} else {
+					self.loadingIndicator.stopAnimating()
+					self.playPauseButton.alpha = 1
+				}
 			}
 		}
 		
@@ -148,6 +163,33 @@ class MediaPlayerViewController: UIViewController {
 			
 			UIView.transition(with: self.rateButton, duration: 0.3, options: [.transitionFlipFromTop]) {
 				self.rateButton.configuration = configuration
+			}
+		}
+		
+		observe { [weak self] in
+			guard let `self` = self else {
+				return
+			}
+			
+			self.upnextView.configureView(self.store.upnexts)
+		}
+		
+		NotificationCenter.default.addObserver(forName: AVAudioSession.routeChangeNotification, object: nil, queue: .main) { notification in
+			let currentRoute = AVAudioSession.sharedInstance().currentRoute
+			for output in currentRoute.outputs {
+				if output.portType == .airPlay ||
+					output.portType == .bluetoothA2DP ||
+					output.portType == .bluetoothLE ||
+					output.portType == .bluetoothHFP ||
+					output.portType == .usbAudio {
+					UIView.animate(withDuration: 0.5) {
+						self.airplayButton.tintColor = .redPink
+					}
+				} else {
+					UIView.animate(withDuration: 0.5) {
+						self.airplayButton.tintColor = .secondaryLabel
+					}
+				}
 			}
 		}
 	}
@@ -326,9 +368,7 @@ class MediaPlayerViewController: UIViewController {
 		button.translatesAutoresizingMaskIntoConstraints = false
 		let configuration: UIImage.Configuration = UIImage.SymbolConfiguration.mediumLargeSymbol
 		let image = UIImage(systemName: "play.fill", withConfiguration: configuration)
-		let selectedImage = UIImage(systemName: "pause.fill", withConfiguration: configuration)
 		button.setImage(image, for: .normal)
-		button.setImage(selectedImage, for: .selected)
 		button.tintColor = .black
 		button.addTarget(self, action: #selector(togglePlayPause(_:)), for: .touchUpInside)
 		return button
@@ -560,8 +600,19 @@ extension MediaPlayerViewController {
 		upnextView.alpha = 0.0
 		lyricsView.alpha = 0.0
 		relatedView.alpha = 0.0
-		containerView.alpha = 0.0
 		captionLabel.alpha = 0.0
+		
+		let routePickerView = AVRoutePickerView()
+		routePickerView.translatesAutoresizingMaskIntoConstraints = false
+		routePickerView.alpha = 0.0
+		airplayButton.addSubview(routePickerView)
+		
+		NSLayoutConstraint.activate([
+			routePickerView.centerXAnchor.constraint(equalTo: airplayButton.centerXAnchor),
+			routePickerView.centerYAnchor.constraint(equalTo: airplayButton.centerYAnchor),
+			routePickerView.widthAnchor.constraint(equalTo: airplayButton.widthAnchor),
+			routePickerView.heightAnchor.constraint(equalTo: airplayButton.heightAnchor)
+		])
 		
 		headerStackView.addArrangedSubview(dismissButton)
 		headerStackView.addArrangedSubview(captionLabel)
@@ -845,7 +896,17 @@ extension MediaPlayerViewController {
 	}
 	
 	@objc private func airplayButtonTapped(_ sender: UIButton) {
+		UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+		guard let routePickerView = sender.subviews.first(where: { $0 is AVRoutePickerView }) as? AVRoutePickerView else {
+			return
+		}
 		
+		for view: UIView in routePickerView.subviews {
+			if let button = view as? UIButton {
+				button.sendActions(for: .touchUpInside)
+				break
+			}
+		}
 	}
 	
 	@objc private func favoriteButtonTapped(_ sender: UIButton) {
@@ -855,6 +916,8 @@ extension MediaPlayerViewController {
 		UIView.transition(with: sender, duration: 0.3, options: [.transitionFlipFromLeft]) {
 			sender.tintColor = sender.isSelected ? .redPink : .secondaryLabel
 		}
+		
+		store.send(.favoriteButtonTapped)
 	}
 	
 	@objc private func upnextButtonTapped(_ sender: UIButton) {

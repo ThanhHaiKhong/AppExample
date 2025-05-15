@@ -7,6 +7,7 @@
 
 import ComposableArchitecture
 import MediaPlayerClient
+import NowPlayingClient
 import MusicWasmClient
 import AVFoundation
 import TimerClient
@@ -53,6 +54,7 @@ public struct MediaPlayerStore {
 		case speedButtonTapped
 		case timerButtonTapped
 		case equalizerButtonTapped
+		case favoriteButtonTapped
 		case moreButtonTapped
 		case sliderTouchedUp(Float)
 		case sliderTouchedDown
@@ -66,10 +68,12 @@ public struct MediaPlayerStore {
 		case sleepTimer(SleepTimer.Action)
 		case equalizerStore(EqualizerStore.Action)
 		case speedModeChanged(State.SpeedMode)
+		case didReorderTracks([PlayableWitness])
 	}
 	
 	@Dependency(\.mediaPlayerClient) var mediaPlayerClient
 	@Dependency(\.musicWasmClient) var musicWasmClient
+	@Dependency(\.nowPlayingClient) var nowPlayingClient
 	
 	public var body: some Reducer<State, Action> {
 		Reduce { state, action in
@@ -93,30 +97,13 @@ public struct MediaPlayerStore {
 				return handleRepeatButtonTapped(state: &state)
 				
 			case .dismissButtonTapped:
-				return .run { send in
-					for await state in await musicWasmClient.engineStateStream() {
-						switch state {
-						case .idle:
-							print("Engine state: idle")
-							
-						case .loading:
-							print("Engine state: loading")
-							
-						case .loaded:
-							print("Engine state: loaded")
-							let trendingList = try await musicWasmClient.discover(category: .trending, continuation: nil)
-							print("Trending List: \(trendingList.items.count)")
-							
-						case let .error(error):
-							print("Engine state: error \(error.localizedDescription)")
-						}
-					}
-				} catch: { error, send in
-					print("Music Wasm Client Error: \(error.localizedDescription)")
-				}
+				return handleDismissButtonTapped(state: &state)
 				
 			case .sliderTouchedDown:
 				return handleSliderTouchedDown(state: &state)
+				
+			case .favoriteButtonTapped:
+				return .none
 				
 			case let .sliderTouchedUp(value):
 				return handleSliderTouchedUp(state: &state, value: value)
@@ -155,6 +142,10 @@ public struct MediaPlayerStore {
 			case let .equalizerStore(action):
 				return handleEqualizerStoreAction(state: &state, action: action)
 				
+			case let .didReorderTracks(tracks):
+				state.upnexts = tracks
+				return .none
+				
 			default:
 				return .none
 			}
@@ -176,10 +167,9 @@ extension MediaPlayerStore {
 	
 	private func initializeMediaPlayer(containerView: UIView, state: inout State) -> Effect<Action> {
 		return .run { send in
-			try await mediaPlayerClient.initialize(containerView, .video)
-			try await mediaPlayerClient.setListEQ([0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
+			await mediaPlayerClient.initialize(containerView, .video)
 			
-			for await event in mediaPlayerClient.events() {
+			for await event in await mediaPlayerClient.events() {
 				switch event {
 				case .idle:
 					print("PLAYBACK_EVENT: idle")
@@ -218,8 +208,6 @@ extension MediaPlayerStore {
 					await send(.playbackEventChanged(.error(error)))
 				}
 			}
-		} catch: { error, send in
-			print("Error initializing media player: \(error.localizedDescription)")
 		}
 	}
 	
@@ -380,6 +368,8 @@ extension MediaPlayerStore {
 			state.isLoading = false
 		} else if event == .didPause {
 			state.isPlaying = false
+		} else if event == .didStop {
+			state.isPlaying = false
 		} else if event == .didToEnd {
 			return handleDidToEnd(state: &state)
 		}
@@ -389,20 +379,34 @@ extension MediaPlayerStore {
 	private func handleCurrentItemChanged(state: inout State, item: PlayableWitness) -> Effect<Action> {
 		state.currentItem = item
 		state.isLoading = true
+		state.currentTime = .zero
+		state.duration = .zero
 		
 		return .run { [duration = state.duration] send in
-			try await mediaPlayerClient.setTrack(url: item.url)
+			if let url = item.url {
+				try await mediaPlayerClient.setTrack(url: url)
+			} else {
+				let details = try await musicWasmClient.details(vid: item.id)
+				print("GET_DETAILS: \(details)")
+				
+				if let urlString = details.formats.filter({ $0.mimeType.contains("audio")}).first?.url,
+				   let url = URL(string: urlString) {
+					print("URL: \(url)")
+					try await mediaPlayerClient.setTrack(url: url)
+				}
+			}
 			
-			for await timeRecord in mediaPlayerClient.currentTime() {
+			for await timeRecord in await mediaPlayerClient.currentTime() {
 				let currentTime = timeRecord.0
 				let currentDuration = timeRecord.1
+				
 				if currentDuration != duration {
 					await send(.durationChanged(currentDuration))
 				}
 				await send(.currentTimeChanged(currentTime))
 			}
 		} catch: { error, send in
-			print("Error setting track: \(error.localizedDescription)")
+			print("🐛 ERROR_GET_DETAILS: \(error.localizedDescription)")
 		}
 	}
 	
@@ -441,6 +445,35 @@ extension MediaPlayerStore {
 		state.isPlaying = false
 		state.currentTime = .zero
 		state.duration = .zero
+	}
+	
+	private func handleDismissButtonTapped(state: inout State) -> Effect<Action> {
+		return .run { send in
+			for await state in await musicWasmClient.engineStateStream() {
+				switch state {
+				case .idle:
+					print("Engine state: idle")
+					
+				case .loading:
+					print("Engine state: loading")
+					
+				case .loaded:
+					print("Engine state: loaded")
+					let trendingList = try await musicWasmClient.discover(category: .trending, continuation: nil)
+					print("Trending List: \(trendingList.items.count)")
+					let playableWitnesses = trendingList.items.map { item in
+						PlayableWitness(id: item.id, title: item.title, artist: item.author.name, thumbnailURL: URL(string: item.thumbnail))
+					}
+					
+					await send(.setTracks(playableWitnesses, 0))
+					
+				case let .error(error):
+					print("Engine state: error \(error.localizedDescription)")
+				}
+			}
+		} catch: { error, send in
+			print("Music Wasm Client Error: \(error.localizedDescription)")
+		}
 	}
 }
 
