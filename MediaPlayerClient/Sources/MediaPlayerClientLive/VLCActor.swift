@@ -89,8 +89,8 @@ final private class VLCPlayer: NSObject, @unchecked Sendable {
 	private let player = VLCMediaPlayer()
 	private var containerView: UIView?
 	private var playMode: MediaPlayerClient.PlayMode = .video
-	private var currentURL: URL?
 	private var isEnabledEqualizer: Bool = false
+	private var hasNotifiedDuration = false
 	private let audioEqualizer = VLCAudioEqualizer()
 	private var lastUpdateTime: TimeInterval = .zero
 	
@@ -99,6 +99,8 @@ final private class VLCPlayer: NSObject, @unchecked Sendable {
 	
 	deinit {
 		player.stop()
+		player.media = nil
+		player.media?.delegate = nil
 		player.drawable = nil
 		player.delegate = nil
 	}
@@ -116,15 +118,9 @@ final private class VLCPlayer: NSObject, @unchecked Sendable {
 	}
 	
 	func setTrack(url: URL) async throws {
-		guard url.isFileURL else {
-			throw MediaPlayerClient.PlayerError.invalidURL
-		}
-		
 		player.stop()
-		currentURL = url
-		
-		let media = VLCMedia(url: url)
-		player.media = media
+		player.media = VLCMedia(url: url)
+		hasNotifiedDuration = false
 		player.play()
 		lastUpdateTime = .zero
 	}
@@ -162,7 +158,10 @@ final private class VLCPlayer: NSObject, @unchecked Sendable {
 	}
 	
 	func duration() async throws -> TimeInterval {
-		return TimeInterval(player.media?.length.intValue ?? 0)
+		if let media = player.media {
+			return TimeInterval(media.length.intValue / 1000)
+		}
+		return 0.0
 	}
 	
 	func currentTimeStream() -> AsyncStream<MediaPlayerClient.TimeRecord> {
@@ -285,6 +284,11 @@ extension VLCPlayer: VLCMediaPlayerDelegate {
 		let currentTime = TimeInterval(player.time.intValue / 1000)
 		let duration = TimeInterval(media.length.intValue / 1000)
 		let now = Date().timeIntervalSince1970
+		
+		if !hasNotifiedDuration, duration > 0 {
+			eventContinuation?.yield(.readyToPlay)
+			hasNotifiedDuration = true
+		}
 		
 		if now - lastUpdateTime >= 1.0 {
 			lastUpdateTime = now

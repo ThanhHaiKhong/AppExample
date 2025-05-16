@@ -12,6 +12,7 @@ import MusicWasmClient
 import AVFoundation
 import TimerClient
 import UIKit
+import Kingfisher
 
 @Reducer
 public struct MediaPlayerStore {
@@ -30,9 +31,12 @@ public struct MediaPlayerStore {
 		
 		public var currentTime: TimeInterval = .zero
 		public var duration: TimeInterval = .zero
+		public var thumbnailImage: UIImage?
 		
 		internal var originalTracks: [PlayableWitness] = []
 		internal var shuffles: [PlayableWitness] = []
+		internal var handlers = NowPlayingClient.RemoteCommandHandlers()
+		
 		public var upnexts: [PlayableWitness] = []
 		public var currentItem: PlayableWitness?
 		
@@ -40,7 +44,18 @@ public struct MediaPlayerStore {
 		public var equalizerStore = EqualizerStore.State()
 		
 		public init() {
-			
+			handlers = handlers
+				.withHandler(.nextTrack, .action {
+					print("Next track")
+					return .success
+				})
+				.withHandler(.togglePlayPause, .action {
+					print("Toggle play/pause")
+					return .success
+				})
+				.withHandler(.previousTrack, .action {
+					return .success
+				})
 		}
 	}
 	
@@ -70,6 +85,7 @@ public struct MediaPlayerStore {
 		case speedModeChanged(State.SpeedMode)
 		case didReorderTracks([PlayableWitness])
 		case initializeNowPlaying
+		case retrievedThumbnail(UIImage)
 	}
 	
 	@Dependency(\.mediaPlayerClient) var mediaPlayerClient
@@ -85,40 +101,28 @@ public struct MediaPlayerStore {
 					handlers = handlers
 						.withHandler(.nextTrack, .action {
 							print("Next track")
-							return .success
-						})
-						.withHandler(.changePlaybackRate(rates: [0.25, 0.5, 1.0, 1.25, 1.5, 2.0]), .floatAction { rate in
-							print("Setting playback rate: \(rate)")
+							Task {
+								await send(.nextButtonTapped)
+							}
 							return .success
 						})
 						.withHandler(.togglePlayPause, .action {
 							print("Toggle play/pause")
+							Task {
+								await send(.togglePlayPauseButtonTapped)
+							}
 							return .success
 						})
 						.withHandler(.previousTrack, .action {
 							print("Previous track")
+							Task {
+								await send(.previousButtonTapped)
+							}
 							return .success
 						})
-						.withHandler(.like(isActive: false, title: "Like"), .boolAction { isNagative in
-							print("Like: \(isNagative)")
-							return .success
-						})
-						.withHandler(.dislike(isActive: false, title: "Dislike"), .boolAction { isNagative in
-							print("Dislike: \(isNagative)")
-							return .success
-						})
-					
-					let enabledCommands: Set<NowPlayingClient.RemoteCommand> = [
-						.nextTrack,
-						.changePlaybackRate(rates: [0.25, 0.5, 1.0, 1.25, 1.5, 2.0]),
-						.togglePlayPause,
-						.previousTrack,
-						.like(isActive: false, title: "Like"),
-						.dislike(isActive: false, title: "Dislike"),
-					]
 					
 					try await nowPlayingClient.initializeAudioSession(category: .playback, mode: .default, options: [])
-					await nowPlayingClient.setupRemoteCommands(enabledCommands, handlers)
+					await nowPlayingClient.setupRemoteCommands(handlers)
 				} catch: { error, send in
 					print("🤪 Error initializing NowPlaying: \(error.localizedDescription)")
 				}
@@ -153,6 +157,20 @@ public struct MediaPlayerStore {
 			case let .sliderTouchedUp(value):
 				return handleSliderTouchedUp(state: &state, value: value)
 				
+			case let .retrievedThumbnail(thumbnail):
+				state.thumbnailImage = thumbnail
+				return .run { [item = state.currentItem, duration = state.duration] send in
+					var staticInfo = NowPlayingClient.StaticNowPlayingInfo()
+					staticInfo.title = item?.title
+					staticInfo.artist = item?.artist
+					staticInfo.artwork = thumbnail
+					staticInfo.duration = duration
+					staticInfo.mediaType = .audio
+					try await nowPlayingClient.updateStaticInfo(info: staticInfo)
+				} catch: { error, send in
+					print("Error updating static info: \(error.localizedDescription)")
+				}
+				
 			case let .playModeChanged(playMode):
 				state.playMode = playMode
 				return .none
@@ -168,7 +186,21 @@ public struct MediaPlayerStore {
 				
 			case let .durationChanged(duration):
 				state.duration = duration
-				return .none
+				return .run { [item = state.currentItem, playMode = state.playMode, artwork = state.thumbnailImage] send in
+					var staticInfo = NowPlayingClient.StaticNowPlayingInfo()
+					staticInfo.title = item?.title
+					staticInfo.artist = item?.artist
+					staticInfo.artwork = artwork
+					staticInfo.duration = duration
+					staticInfo.mediaType = playMode == .audioOnly ? .audio : .video
+					
+					try await nowPlayingClient.updateStaticInfo(info: staticInfo)
+					
+					for await timeRecord in await mediaPlayerClient.currentTime() {
+						let currentTime = timeRecord.0
+						await send(.currentTimeChanged(currentTime))
+					}
+				}
 				
 			case let .speedModeChanged(speedMode):
 				return handleSpeedModeChanged(state: &state, speedMode: speedMode)
@@ -216,47 +248,11 @@ public struct MediaPlayerStore {
 extension MediaPlayerStore {
 	
 	private func initializeMediaPlayer(containerView: UIView, state: inout State) -> Effect<Action> {
-		return .run { send in
-			await mediaPlayerClient.initialize(containerView, .video)
+		return .run { [playMode = state.playMode] send in
+			await mediaPlayerClient.initialize(containerView, playMode)
 			
 			for await event in await mediaPlayerClient.events() {
-				switch event {
-				case .idle:
-					print("PLAYBACK_EVENT: idle")
-					await send(.playbackEventChanged(.idle))
-					
-				case .readyToPlay:
-					print("PLAYBACK_EVENT: Ready to play")
-					await send(.playbackEventChanged(.readyToPlay))
-					
-				case .didStartPlaying:
-					print("PLAYBACK_EVENT: Playback started")
-					await send(.playbackEventChanged(.didStartPlaying))
-					
-				case .didPause:
-					print("PLAYBACK_EVENT: Playback paused")
-					await send(.playbackEventChanged(.didPause))
-					
-				case .didStop:
-					print("PLAYBACK_EVENT: Playback stopped")
-					await send(.playbackEventChanged(.didStop))
-					
-				case .didFinish:
-					print("PLAYBACK_EVENT: Playback finished")
-					await send(.playbackEventChanged(.didFinish))
-					
-				case .didToEnd:
-					print("PLAYBACK_EVENT: Playback reached end")
-					await send(.playbackEventChanged(.didToEnd))
-					
-				case let .buffering(isBuffering):
-					print("PLAYBACK_EVENT: Buffering: \(isBuffering)")
-					await send(.playbackEventChanged(.buffering(isBuffering)))
-					
-				case let .error(error):
-					print("🐞 PLAYBACK_EVENT: error \(error.localizedDescription)")
-					await send(.playbackEventChanged(.error(error)))
-				}
+				await send(.playbackEventChanged(event))
 			}
 		}
 	}
@@ -413,17 +409,44 @@ extension MediaPlayerStore {
 	
 	private func handlePlaybackEventChanged(state: inout State, event: MediaPlayerClient.PlaybackEvent) -> Effect<Action> {
 		state.playbackEvent = event
-		if event == .didStartPlaying {
+		print("🎶 MEDIA_PLAYER playback event changed: \(event)")
+		switch event {
+		case .idle:
+			return .none
+			
+		case .readyToPlay:
+			return .run { send in
+				let duration = try await mediaPlayerClient.duration()
+				await send(.durationChanged(duration))
+			} catch: { error, send in
+				print("Error getting duration: \(error.localizedDescription)")
+			}
+			
+		case .didStartPlaying:
 			state.isPlaying = true
 			state.isLoading = false
-		} else if event == .didPause {
+			return .none
+			
+		case .didPause:
 			state.isPlaying = false
-		} else if event == .didStop {
+			return .none
+			
+		case .didStop:
 			state.isPlaying = false
-		} else if event == .didToEnd {
+			return .none
+			
+		case .didFinish:
+			return .none
+			
+		case .didToEnd:
 			return handleDidToEnd(state: &state)
+			
+		case .buffering:
+			return .none
+			
+		case .error:
+			return .none
 		}
-		return .none
 	}
 	
 	private func handleCurrentItemChanged(state: inout State, item: PlayableWitness) -> Effect<Action> {
@@ -432,7 +455,7 @@ extension MediaPlayerStore {
 		state.currentTime = .zero
 		state.duration = .zero
 		
-		return .run { [duration = state.duration] send in
+		return .run { send in
 			if let url = item.url {
 				try await mediaPlayerClient.setTrack(url: url)
 			} else {
@@ -441,25 +464,13 @@ extension MediaPlayerStore {
 				
 				if let urlString = details.formats.filter({ $0.mimeType.contains("audio")}).first?.url,
 				   let url = URL(string: urlString) {
-					print("URL: \(url)")
 					try await mediaPlayerClient.setTrack(url: url)
 				}
 			}
 			
-			for await timeRecord in await mediaPlayerClient.currentTime() {
-				let currentTime = timeRecord.0
-				let currentDuration = timeRecord.1
-				
-				if currentDuration != duration {
-					await send(.durationChanged(currentDuration))
-					var staticInfo = NowPlayingClient.StaticNowPlayingInfo()
-					staticInfo.title = item.title
-					staticInfo.artist = item.artist
-					staticInfo.duration = currentDuration
-					staticInfo.mediaType = .audio
-					try await nowPlayingClient.updateStaticInfo(info: staticInfo)
-				}
-				await send(.currentTimeChanged(currentTime))
+			if let thumbnailURL = item.thumbnailURL {
+				let result = try await KingfisherManager.shared.retrieveImage(with: thumbnailURL)
+				await send(.retrievedThumbnail(result.image))
 			}
 		} catch: { error, send in
 			print("🐛 ERROR_GET_DETAILS: \(error.localizedDescription)")

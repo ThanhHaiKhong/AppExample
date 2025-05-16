@@ -80,10 +80,7 @@ class MediaPlayerViewController: UIViewController {
 				self.playPauseButton.setImage(self.store.isPlaying ? pauseImage : playImage, for: .normal)
 				self.titleLabel.text = self.store.currentItem?.title ?? "Unknown"
 				self.artistLabel.text = self.store.currentItem?.artist ?? "Unknown"
-				
-				if let thumbnailURL = self.store.currentItem?.thumbnailURL {
-					self.imageView.kf.setImage(with: thumbnailURL)
-				}
+				self.imageView.image = self.store.thumbnailImage
 				
 				if self.store.isLoading {
 					self.loadingIndicator.startAnimating()
@@ -859,7 +856,7 @@ extension MediaPlayerViewController {
 			let thumbnailURL = URL(string: "https://picsum.photos/id/\(i * 2)/1024")
 			let ext = i % 4 == 0 ? "mp4" : "mp3"
 			if let bundleURL = Bundle.main.url(forResource: bundleName, withExtension: ext) {
-				let playableWitness = PlayableWitness(id: bundleName, title: "Sample Track \(i)", artist: "Artist \(i)", thumbnailURL: thumbnailURL, url: bundleURL)
+				let playableWitness = PlayableWitness(id: bundleName, title: "Sample Track \(i)", artist: "Artist \(i)", thumbnailURL: thumbnailURL, url: URL(string: "https://rr1---sn-i5ovpuj-i5oe.googlevideo.com/videoplayback?expire=1747388354&ei=YrMmaM_XEcfU2roP_IuE8AQ&ip=202.93.156.46&id=o-AEGKH5NE8iO1cq5fCGIJAdv-diXRjWFEgg4ZrCXaOQaH&itag=250&source=youtube&requiressl=yes&xpc=EgVo2aDSNQ%3D%3D&met=1747366754%2C&mh=7E&mm=31%2C29&mn=sn-i5ovpuj-i5oe%2Csn-i3b7knzl&ms=au%2Crdu&mv=m&mvi=1&pcm2cms=yes&pl=24&rms=au%2Cau&gcr=vn&initcwndbps=2162500&bui=AecWEAYkwo5dJ7QVahlhN2Zp-AS9AuoQrgvh8bKTY5dSvjvDpUzk3Q_JLQmfV5ZiEZjjcW74wf-WmmVR&spc=wk1kZjS_UNIj&vprv=1&svpuc=1&mime=audio%2Fwebm&rqh=1&gir=yes&clen=1369585&dur=173.401&lmt=1729642612264438&mt=1747366378&fvip=5&keepalive=yes&c=IOS&txp=4532434&sparams=expire%2Cei%2Cip%2Cid%2Citag%2Csource%2Crequiressl%2Cxpc%2Cgcr%2Cbui%2Cspc%2Cvprv%2Csvpuc%2Cmime%2Crqh%2Cgir%2Cclen%2Cdur%2Clmt&sig=AJfQdSswRQIgZcPDBSfxmDIaLFUrM6iOwBNPUizwy4ESQZxJ0tKe-pECIQCD7_v3bt1NyG7qiZ_5diMn3zjiKwNdMOitkXQiQJkooQ%3D%3D&lsparams=met%2Cmh%2Cmm%2Cmn%2Cms%2Cmv%2Cmvi%2Cpcm2cms%2Cpl%2Crms%2Cinitcwndbps&lsig=ACuhMU0wRQIgaCEV_QeRk8oB76ESfb3xM3CSfIzyWYZ--zMP5s5AvkYCIQCh4L-jJh47FNvT2hPFs-qHr4tgGLkyHCDgNM3xnRjjXQ%3D%3D"))
 				playableWitnesses.append(playableWitness)
 			}
 		}
@@ -930,7 +927,7 @@ extension MediaPlayerViewController {
 			self.upnextView.alpha = sender.isSelected ? 1.0 : 0.0
 			self.lyricsView.alpha = 0.0
 			self.relatedView.alpha = 0.0
-			self.containerView.alpha = sender.isSelected ? 1.0 : 0.0
+			self.containerView.alpha = sender.isSelected ? 0.0 : 1.0
 			self.captionLabel.alpha = sender.isSelected ? 1.0 : 0.0
 			self.captionLabel.text = "Up Next"
 			
@@ -947,7 +944,7 @@ extension MediaPlayerViewController {
 			self.lyricsView.alpha = sender.isSelected ? 1.0 : 0.0
 			self.upnextView.alpha = 0.0
 			self.relatedView.alpha = 0.0
-			self.containerView.alpha = sender.isSelected ? 1.0 : 0.0
+			self.containerView.alpha = sender.isSelected ? 0.0 : 1.0
 			self.captionLabel.alpha = sender.isSelected ? 1.0 : 0.0
 			self.captionLabel.text = "Lyrics"
 			
@@ -964,7 +961,7 @@ extension MediaPlayerViewController {
 			self.relatedView.alpha = sender.isSelected ? 1.0 : 0.0
 			self.upnextView.alpha = 0.0
 			self.lyricsView.alpha = 0.0
-			self.containerView.alpha = sender.isSelected ? 1.0 : 0.0
+			self.containerView.alpha = sender.isSelected ? 0.0 : 1.0
 			self.captionLabel.alpha = sender.isSelected ? 1.0 : 0.0
 			self.captionLabel.text = "Related"
 			

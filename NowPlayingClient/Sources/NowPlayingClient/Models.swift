@@ -90,6 +90,10 @@ extension NowPlayingClient {
 		
 		private let handlers: [RemoteCommand: Handler]
 		
+		public var enabledCommands: Set<RemoteCommand> {
+			Set(handlers.keys)
+		}
+		
 		public init(handlers: [RemoteCommand: Handler] = [:]) {
 			self.handlers = handlers
 		}
