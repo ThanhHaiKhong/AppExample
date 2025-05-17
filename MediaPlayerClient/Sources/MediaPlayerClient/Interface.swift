@@ -48,4 +48,8 @@ public struct MediaPlayerClient: Sendable {
     public var setEqualizer: @Sendable (_ value: Float, _ bandIndex: Int) async throws -> Void
 	
 	public var setEqualizerWith: @Sendable (_ preset: MediaPlayerClient.AudioEqualizer.Preset) async throws -> Void
+	
+	public var isPlaying: @Sendable () async -> Bool = {
+		false
+	}
 }

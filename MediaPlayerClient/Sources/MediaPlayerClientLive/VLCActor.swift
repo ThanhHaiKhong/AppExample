@@ -82,6 +82,10 @@ actor VLCActor: Sendable {
 	func setEqualizerWith(_ preset: MediaPlayerClient.AudioEqualizer.Preset) async throws {
 		try await player.setEqualizer(preset)
 	}
+	
+	func isPlaying() async -> Bool {
+		await player.isPlaying()
+	}
 }
 
 final private class VLCPlayer: NSObject, @unchecked Sendable {
@@ -246,6 +250,10 @@ final private class VLCPlayer: NSObject, @unchecked Sendable {
 		for band in audioEqualizer.bands {
 			band.amplification = mediaEqualizer.bands[Int(band.index)].amplification
 		}
+	}
+	
+	func isPlaying() async -> Bool {
+		player.isPlaying
 	}
 }
 

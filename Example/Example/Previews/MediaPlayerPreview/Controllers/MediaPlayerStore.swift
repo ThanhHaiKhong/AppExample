@@ -86,6 +86,7 @@ public struct MediaPlayerStore {
 		case didReorderTracks([PlayableWitness])
 		case initializeNowPlaying
 		case retrievedThumbnail(UIImage)
+		case remoteCommandEventChanged(NowPlayingClient.RemoteCommandEvent)
 	}
 	
 	@Dependency(\.mediaPlayerClient) var mediaPlayerClient
@@ -97,32 +98,17 @@ public struct MediaPlayerStore {
 			switch action {
 			case .initializeNowPlaying:
 				return .run { send in
-					var handlers = NowPlayingClient.RemoteCommandHandlers()
-					handlers = handlers
-						.withHandler(.nextTrack, .action {
-							print("Next track")
-							Task {
-								await send(.nextButtonTapped)
-							}
-							return .success
-						})
-						.withHandler(.togglePlayPause, .action {
-							print("Toggle play/pause")
-							Task {
-								await send(.togglePlayPauseButtonTapped)
-							}
-							return .success
-						})
-						.withHandler(.previousTrack, .action {
-							print("Previous track")
-							Task {
-								await send(.previousButtonTapped)
-							}
-							return .success
-						})
-					
 					try await nowPlayingClient.initializeAudioSession(category: .playback, mode: .default, options: [])
-					await nowPlayingClient.setupRemoteCommands(handlers)
+					
+					let enabledCommands: Set<NowPlayingClient.RemoteCommand> = [
+						.previousTrack,
+						.togglePlayPause,
+						.nextTrack,
+					]
+					
+					for await event in await nowPlayingClient.remoteCommandEvents(enabledCommands) {
+						await send(.remoteCommandEventChanged(event))
+					}
 				} catch: { error, send in
 					print("🤪 Error initializing NowPlaying: \(error.localizedDescription)")
 				}
@@ -156,6 +142,9 @@ public struct MediaPlayerStore {
 				
 			case let .sliderTouchedUp(value):
 				return handleSliderTouchedUp(state: &state, value: value)
+				
+			case let .remoteCommandEventChanged(event):
+				return handleRemoteCommandEventChanged(state: &state, event: event)
 				
 			case let .retrievedThumbnail(thumbnail):
 				state.thumbnailImage = thumbnail
@@ -540,6 +529,37 @@ extension MediaPlayerStore {
 			}
 		} catch: { error, send in
 			print("Music Wasm Client Error: \(error.localizedDescription)")
+		}
+	}
+	
+	private func handleRemoteCommandEventChanged(state: inout State, event: NowPlayingClient.RemoteCommandEvent) -> Effect<Action> {
+		switch event {
+		case .previousTrack:
+			return handlePreviousButtonTapped(state: &state)
+			
+		case .togglePlayPause:
+			return handleTogglePlayPauseButtonTapped(state: &state)
+			
+		case .nextTrack:
+			return handleNextButtonTapped(state: &state)
+			
+		default:
+			return .none
+		}
+	}
+}
+
+// MARK: - Supporting Methods
+
+extension MediaPlayerStore {
+	
+	private func togglePlayPause() async throws {
+		let isPlaying = await mediaPlayerClient.isPlaying()
+		
+		if isPlaying {
+			try await mediaPlayerClient.pause()
+		} else {
+			try await mediaPlayerClient.play()
 		}
 	}
 }

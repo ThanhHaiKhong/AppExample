@@ -65,6 +65,9 @@ extension MediaPlayerClient: DependencyKey {
 			setEqualizerWith: { preset in
 				try await vlcActor.setEqualizerWith(preset)
 			},
+			isPlaying: {
+				await vlcActor.isPlaying()
+			}
         )
     }()
 }
