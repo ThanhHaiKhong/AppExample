@@ -101,6 +101,7 @@ public struct MediaPlayerStore {
 					try await nowPlayingClient.initializeAudioSession(category: .playback, mode: .default, options: [])
 					
 					let enabledCommands: Set<NowPlayingClient.RemoteCommand> = [
+						.changePlaybackPosition,
 						.previousTrack,
 						.togglePlayPause,
 						.nextTrack,
@@ -377,10 +378,6 @@ extension MediaPlayerStore {
 		}
 	}
 	
-	private func handleSliderValueChanged(state: inout State, value: Float) -> Effect<Action> {
-		return .none
-	}
-	
 	private func handleDidToEnd(state: inout State) -> Effect<Action> {
 		resetPlaybackState(&state)
 		
@@ -460,6 +457,20 @@ extension MediaPlayerStore {
 			if let thumbnailURL = item.thumbnailURL {
 				let result = try await KingfisherManager.shared.retrieveImage(with: thumbnailURL)
 				await send(.retrievedThumbnail(result.image))
+			}
+			
+			for await event in await nowPlayingClient.interruptionEvents() {
+				switch event {
+				case .began:
+					print("Interruption began")
+					try await mediaPlayerClient.pause()
+					
+				case let .ended(shouldResume):
+					print("Interruption ended: \(shouldResume)")
+					if shouldResume {
+						try await mediaPlayerClient.play()
+					}
+				}
 			}
 		} catch: { error, send in
 			print("🐛 ERROR_GET_DETAILS: \(error.localizedDescription)")
@@ -542,6 +553,9 @@ extension MediaPlayerStore {
 			
 		case .nextTrack:
 			return handleNextButtonTapped(state: &state)
+			
+		case let .changePlaybackPosition(to: value):
+			return handleSliderTouchedUp(state: &state, value: value)
 			
 		default:
 			return .none
