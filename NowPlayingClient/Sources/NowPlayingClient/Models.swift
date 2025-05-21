@@ -5,9 +5,9 @@
 //  Created by Thanh Hai Khong on 14/5/25.
 //
 
+import AVFoundation
 import MediaPlayer
 import UIKit
-import AVFoundation
 
 extension NowPlayingClient {
 	
