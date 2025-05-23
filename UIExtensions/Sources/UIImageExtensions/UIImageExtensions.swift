@@ -38,8 +38,10 @@ extension UIImage.SymbolConfiguration {
 		let config = UIImage.SymbolConfiguration(pointSize: 15, weight: .semibold, scale: .default)
 		return config
 	}()
-	
-	private func createThumbImage(diameter: CGFloat, color: UIColor) -> UIImage {
+}
+
+extension UIImage {
+	public func createThumbImage(diameter: CGFloat, color: UIColor) -> UIImage {
 		let renderer = UIGraphicsImageRenderer(size: CGSize(width: diameter, height: diameter))
 		return renderer.image { context in
 			let rect = CGRect(x: 0, y: 0, width: diameter, height: diameter)
