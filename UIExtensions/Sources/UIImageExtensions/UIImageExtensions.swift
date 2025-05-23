@@ -47,4 +47,36 @@ extension UIImage.SymbolConfiguration {
 			context.cgContext.fillEllipse(in: rect)
 		}
 	}
+	
+	public func imageWithSystemSymbol(
+		name: String,
+		symbolColor: UIColor = .white,
+		backgroundColor: UIColor = .systemBlue,
+		size: CGSize = CGSize(width: 40, height: 40),
+		cornerRadius: CGFloat = 10
+	) -> UIImage? {
+		let config = UIImage.SymbolConfiguration(pointSize: size.height * 0.5, weight: .medium)
+		guard let symbol = UIImage(systemName: name, withConfiguration: config) else {
+			return nil
+		}
+		
+		let renderer = UIGraphicsImageRenderer(size: size)
+		return renderer.image { context in
+			let rect = CGRect(origin: .zero, size: size)
+			
+			// Draw background
+			let path = UIBezierPath(roundedRect: rect, cornerRadius: cornerRadius)
+			backgroundColor.setFill()
+			path.fill()
+			
+			// Draw symbol (centered)
+			let symbolSize = symbol.size
+			let symbolOrigin = CGPoint(
+				x: (size.width - symbolSize.width) / 2,
+				y: (size.height - symbolSize.height) / 2
+			)
+			symbol.withTintColor(symbolColor, renderingMode: .alwaysOriginal)
+				.draw(at: symbolOrigin)
+		}
+	}
 }
