@@ -102,7 +102,7 @@ extension CoreDataClient {
 			self.objectID = objectID
 		}
 		
-		public mutating func set(value: Any?, for key: String) {
+		public mutating func setValue(_ value: Any?, for key: String) {
 			if let value = value {
 				attributes[key] = CoreDataClient.valueToSendable(value)
 			} else {
@@ -110,7 +110,7 @@ extension CoreDataClient {
 			}
 		}
 		
-		public mutating func set(value: Any?, for keyPath: KeyPath<NSManagedObject, Any?>) {
+		public mutating func setValue(_ value: Any?, for keyPath: KeyPath<NSManagedObject, Any?>) {
 			guard let key = keyPath._kvcKeyPathString else {
 				assertionFailure("Invalid keyPath (cannot convert to KVC string)")
 				return
@@ -436,6 +436,21 @@ extension CoreDataClient {
 			
 		default:
 			fatalError("AnySendable: Unsupported type \(type(of: value))")
+		}
+	}
+}
+
+extension CoreDataClient {
+	
+	public struct AnyContainer: Sendable {
+		private let internalContainer: NSPersistentContainer
+		
+		public var container: NSPersistentContainer {
+			internalContainer
+		}
+		
+		public init(_ container: NSPersistentContainer) {
+			self.internalContainer = container
 		}
 	}
 }

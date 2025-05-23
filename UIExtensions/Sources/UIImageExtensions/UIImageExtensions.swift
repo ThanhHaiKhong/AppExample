@@ -48,7 +48,7 @@ extension UIImage.SymbolConfiguration {
 		}
 	}
 	
-	public func imageWithSystemSymbol(
+	public static func imageWithSystemSymbol(
 		name: String,
 		symbolColor: UIColor = .white,
 		backgroundColor: UIColor = .systemBlue,
