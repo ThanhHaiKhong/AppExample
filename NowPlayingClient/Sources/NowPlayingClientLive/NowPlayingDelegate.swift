@@ -299,7 +299,7 @@ extension NowPlayingDelegate {
 				let semaphore = DispatchSemaphore(value: 0)
 				
 				if let event = rawEvent as? MPChangeRepeatModeCommandEvent {
-					let repeatType = event.repeatType.rawValue
+					_ = event.repeatType.rawValue
 					Task {
 //						result = try await asyncAction(repeatType)
 						semaphore.signal()
@@ -323,7 +323,7 @@ extension NowPlayingDelegate {
 				let semaphore = DispatchSemaphore(value: 0)
 				
 				if let event = rawEvent as? MPChangePlaybackRateCommandEvent {
-					let playbackRate = event.playbackRate
+					_ = event.playbackRate
 					Task {
 //						result = try await asyncAction(playbackRate)
 						semaphore.signal()
@@ -347,7 +347,7 @@ extension NowPlayingDelegate {
 				let semaphore = DispatchSemaphore(value: 0)
 				
 				if let event = rawEvent as? MPChangePlaybackPositionCommandEvent {
-					let positionTime = event.positionTime
+					_ = event.positionTime
 					Task {
 //						result = try await asyncAction(positionTime)
 						semaphore.signal()
