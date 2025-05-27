@@ -116,7 +116,8 @@ public class TrackCell: UICollectionViewListCell {
 		subtitleLabel.text = track.artist
 		
 		if let thumbnailURL = track.thumbnailURL {
-			imageView.kf.setImage(with: thumbnailURL)
+			let processor = ResizingImageProcessor(referenceSize: CGSize(width: 100, height: 100), mode: .aspectFill)
+			imageView.kf.setImage(with: thumbnailURL, options: [.processor(processor)])
 		}
 		
 		moreButton.isHidden = isMovable

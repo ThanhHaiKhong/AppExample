@@ -455,7 +455,8 @@ extension MediaPlayerStore {
 			}
 			
 			if let thumbnailURL = item.thumbnailURL {
-				let result = try await KingfisherManager.shared.retrieveImage(with: thumbnailURL)
+				let processor = ResizingImageProcessor(referenceSize: CGSize(width: 100, height: 100), mode: .aspectFill)
+				let result = try await KingfisherManager.shared.retrieveImage(with: thumbnailURL, options: [.processor(processor)])
 				await send(.retrievedThumbnail(result.image))
 			}
 			
