@@ -417,9 +417,9 @@ extension CustomNativeAdView {
         let bodyHeight = adBodyLabel.frame.height
         let buttonHeight = actionButton.frame.height
         let totalHeight = contentHeight + headlineHeight + bodyHeight + buttonHeight + defaultSpacing * 3 + bottomPadding + verticalPadding
-#if DEBUG
-        print("✅ Total height: \(totalHeight) - Body height: \(bodyHeight) - Media height: \(contentHeight)")
-#endif
+		#if DEBUG
+			print("✅ Total height: \(totalHeight) - Body height: \(bodyHeight) - Media height: \(contentHeight)")
+		#endif
         return totalHeight
     }
 }
