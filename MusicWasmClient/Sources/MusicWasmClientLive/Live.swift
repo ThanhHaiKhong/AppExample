@@ -13,6 +13,9 @@ extension MusicWasmClient: DependencyKey {
 		let actor = MusicWasmActor()
 		
 		return MusicWasmClient(
+			initialize: { engine in
+				await actor.initialize(engine)
+			},
 			engineState: {
 				await actor.engineState()
 			},

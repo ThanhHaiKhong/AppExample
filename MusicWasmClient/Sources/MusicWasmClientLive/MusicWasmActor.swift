@@ -23,7 +23,7 @@ actor MusicWasmActor {
 	
 	init() {
 		Task {
-			await self.ensureEngineLoaded()
+			await ensureEngineLoaded()
 		}
 	}
 }
@@ -31,6 +31,14 @@ actor MusicWasmActor {
 // MARK: - Public Methods
 
 extension MusicWasmActor {
+	
+	func initialize(_ engine: MusicWasmEngine) async throws {
+		if state == .loaded {
+			return
+		}
+		self.engine = engine
+		state = .loaded
+	}
 	
 	func engineStateStream() -> AsyncStream<MusicWasmClient.EngineState> {
 		return AsyncStream { continuation in

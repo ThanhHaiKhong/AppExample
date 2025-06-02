@@ -19,6 +19,9 @@ extension DependencyValues {
 extension MusicWasmClient: TestDependencyKey {
 	
 	public static let testValue = MusicWasmClient(
+		initialize: { engine in
+			
+		},
 		engineState: {
 			.loaded
 		},

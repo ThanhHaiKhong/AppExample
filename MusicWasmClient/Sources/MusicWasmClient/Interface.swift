@@ -7,6 +7,7 @@ import MusicWasm
 
 @DependencyClient
 public struct MusicWasmClient: Sendable {
+	public var initialize: @Sendable (_ engine: MusicWasmEngine) async -> Void
 	public var engineState: @Sendable () async throws -> MusicWasmClient.EngineState = {
 		return .idle
 	}
