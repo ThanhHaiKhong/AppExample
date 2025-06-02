@@ -32,7 +32,7 @@ actor MusicWasmActor {
 
 extension MusicWasmActor {
 	
-	func initialize(_ engine: MusicWasmEngine) async throws {
+	func initialize(_ engine: MusicWasmEngine) async {
 		if state == .loaded {
 			return
 		}
