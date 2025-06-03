@@ -378,7 +378,7 @@ extension CustomNativeAdView {
             validViews.forEach { view, isVisible in
                 if let stackView = view.superview as? CustomStackView {
                     let viewName = view.accessibilityIdentifier ?? String(describing: type(of: view))
-#if DEBUG
+					#if DEBUG
                     print("- \(viewName) -> \(isVisible ? "Hiển thị ✅" : "Ẩn ❌") trong: \(stackView.accessibilityIdentifier ?? String(describing: type(of: stackView)))")
                     #endif
                     stackView.setVisibility(for: view, isVisible: isVisible)
