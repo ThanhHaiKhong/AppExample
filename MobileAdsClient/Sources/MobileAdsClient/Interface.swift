@@ -10,82 +10,8 @@ import UIKit
 public struct MobileAdsClient: Sendable {
     public var requestTrackingAuthorizationIfNeeded: @Sendable () async throws -> Void
     public var isUserSubscribed: @Sendable () async throws -> Bool
-    public var shouldShowAd: @Sendable (_ adType: AdType, _ rules: [AdRule]) async throws -> Bool
+	public var shouldShowAd: @Sendable (_ adType: MobileAdsClient.AdType, _ rules: [MobileAdsClient.AdRule]) async throws -> Bool
     public var showAd: @Sendable () async throws -> Void
-}
-
-extension MobileAdsClient {
-    public struct AdRule: Sendable, Identifiable, Equatable, CustomStringConvertible {
-        public let id: String = UUID().uuidString
-        public let name: String
-        public let priority: Int
-        public let evaluate: @Sendable () async -> Bool
-        
-        public init(name: String, priority: Int = 0, evaluate: @escaping @Sendable () async -> Bool) {
-            self.name = name
-            self.priority = priority
-            self.evaluate = evaluate
-        }
-        
-        public static func == (lhs: AdRule, rhs: AdRule) -> Bool {
-            lhs.id == rhs.id
-        }
-        
-        public var description: String {
-            """
-            AdRule {
-                id: \(id)
-                name: "\(name)"
-                priority: \(priority)
-            }
-            """
-        }
-        
-        public func detailedDescription() async -> String {
-            let result = await evaluate()
-            return """
-            AdRule {
-                id: \(id)
-                name: "\(name)"
-                priority: \(priority)
-                evaluate result: \(result ? "✅ Passed" : "❌ Failed")
-            }
-            """
-        }
-    }
-    
-    public enum AdType: Sendable, Equatable, CustomStringConvertible {
-        case appOpen(AdUnitID)
-        case interstitial(AdUnitID)
-        case rewarded(AdUnitID)
-        
-        public typealias AdUnitID = String
-        
-        public var description: String {
-            switch self {
-            case .appOpen: return "APP OPEN"
-            case .interstitial: return "INTERSTITIAL"
-            case .rewarded: return "REWARDED"
-            }
-        }
-    }
-    
-    public enum AdError: Error, Sendable, Equatable, CustomStringConvertible {
-        case adNotReady
-        
-        public var description: String {
-            switch self {
-            case .adNotReady: return "The ad is not ready to be shown."
-            }
-        }
-    }
-}
-
-extension DependencyValues {
-    public var mobileAdsClient: MobileAdsClient {
-        get { self[MobileAdsClient.self] }
-        set { self[MobileAdsClient.self] = newValue }
-    }
 }
 
 extension Effect {

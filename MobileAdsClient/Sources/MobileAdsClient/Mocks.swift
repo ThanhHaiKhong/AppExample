@@ -7,6 +7,13 @@
 
 import ComposableArchitecture
 
+extension DependencyValues {
+	public var mobileAdsClient: MobileAdsClient {
+		get { self[MobileAdsClient.self] }
+		set { self[MobileAdsClient.self] = newValue }
+	}
+}
+
 extension MobileAdsClient: TestDependencyKey {
     public static let testValue: MobileAdsClient = {
         return Self()

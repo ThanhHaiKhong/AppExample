@@ -27,7 +27,7 @@ final internal class NativeAdManager: NSObject, @unchecked Sendable {
 
 extension NativeAdManager {
     
-    public func loadAd(adUnitID: String, from viewController: UIViewController?, options: [AnyNativeLoaderOptions]?) async throws -> NativeAd {
+	public func loadAd(adUnitID: String, from viewController: UIViewController?, options: [NativeAdClient.AnyNativeLoaderOptions]?) async throws -> NativeAd {
         return try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<NativeAd, Error>) in
             queue.async(flags: .barrier) {
                 self.pendingContinuations[adUnitID] = continuation
@@ -80,9 +80,9 @@ extension NativeAdManager: NativeAdLoaderDelegate {
     public func adLoader(_ adLoader: AdLoader, didReceive nativeAd: NativeAd) {
         let adUnitID = adLoader.adUnitID
         nativeAd.delegate = self
-#if DEBUG
+		#if DEBUG
         print("✅ Native Ad: \(nativeAd.description) loaded for \(adUnitID)")
-#endif
+		#endif
         queue.async(flags: .barrier) {
             if self.nativeAds[adUnitID] != nil {
                 self.nativeAds[adUnitID]?.append(nativeAd)
@@ -100,9 +100,9 @@ extension NativeAdManager: NativeAdLoaderDelegate {
 
     public func adLoader(_ adLoader: AdLoader, didFailToReceiveAdWithError error: Error) {
         let adUnitID = adLoader.adUnitID
-#if DEBUG
+		#if DEBUG
         print("❌ Failed to load Native Ad for \(adUnitID): \(error.localizedDescription)")
-#endif
+		#endif
         queue.async(flags: .barrier) {
             if let continuation = self.pendingContinuations.removeValue(forKey: adUnitID) {
                 continuation.resume(throwing: error)
