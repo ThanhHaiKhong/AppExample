@@ -151,3 +151,9 @@ extension MusicWasm.MusicSearchScope: @unchecked @retroactive Sendable {
 extension MusicWasm.MusicDiscoverCategory: @unchecked @retroactive Sendable {
 	
 }
+
+extension WasmSwiftProtobuf.MusicTranscript {
+	public var fullTranscript: String {
+		return segments.map { $0.text }.joined(separator: " ")
+	}
+}
