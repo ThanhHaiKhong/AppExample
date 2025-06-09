@@ -5,7 +5,7 @@
 //  Created by Thanh Hai Khong on 13/2/25.
 //
 
-import ComposableArchitecture
+import Dependencies
 
 extension DependencyValues {
 	public var nativeAdClient: NativeAdClient {

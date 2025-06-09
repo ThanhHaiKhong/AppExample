@@ -16,11 +16,11 @@ public struct Native: TCAInitializableReducer, Sendable {
     public struct State: Identifiable, Sendable, Equatable {
         public let id : String = UUID().uuidString
         public let adUnitID: String
-        public let adLoaderOptions: [AnyNativeLoaderOptions]
+		public let adLoaderOptions: [NativeAdClient.AnyNativeLoaderOptions]
         public var nativeAd: NativeAd?
         public var adHeight: CGFloat = 300.0
         
-        public init(adUnitID: String, adLoaderOptions: [AnyNativeLoaderOptions] = []) {
+		public init(adUnitID: String, adLoaderOptions: [NativeAdClient.AnyNativeLoaderOptions] = []) {
             self.adUnitID = adUnitID
             self.adLoaderOptions = adLoaderOptions
         }
@@ -50,9 +50,9 @@ public struct Native: TCAInitializableReducer, Sendable {
                     let nativeAd = try await nativeAdClient.loadAd(adUnitID, rootViewController, adLoaderOptions)
                     await send(.receivedNativeAd(nativeAd), animation: .default)
                 } catch: { error, send in
-#if DEBUG
+					#if DEBUG
                     print("Error LOADING native ad: \(error.localizedDescription)")
-#endif
+					#endif
                 }
                 
             case let .receivedNativeAd(nativeAd):
@@ -72,9 +72,9 @@ public struct Native: TCAInitializableReducer, Sendable {
                     let nativeAd = try await nativeAdClient.loadAd(adUnitID, rootViewController, adLoaderOptions)
                     await send(.receivedNativeAd(nativeAd), animation: .default)
                 } catch: { error, send in
-#if DEBUG
+					#if DEBUG
                     print("Error REFRESH native ad: \(error.localizedDescription)")
-#endif
+					#endif
                 }
                 
                 default:

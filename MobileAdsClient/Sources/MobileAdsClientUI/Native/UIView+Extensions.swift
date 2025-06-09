@@ -10,14 +10,14 @@ import UIKit
 extension UIView {
     
     public func addBlur(style: UIBlurEffect.Style = .light, cornerRadius: CGFloat = 0) {
-        if self.subviews.contains(where: { $0 is UIVisualEffectView }) {
+        if subviews.contains(where: { $0 is UIVisualEffectView }) {
             return
         }
         
         let blurEffect = UIBlurEffect(style: style)
         let blurView = UIVisualEffectView(effect: blurEffect)
         
-        blurView.frame = self.bounds
+        blurView.frame = bounds
         blurView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         
         if cornerRadius > 0 {
@@ -25,12 +25,12 @@ extension UIView {
             blurView.clipsToBounds = true
         }
         
-        self.addSubview(blurView)
-        self.sendSubviewToBack(blurView)
+        addSubview(blurView)
+        sendSubviewToBack(blurView)
     }
     
     public func removeBlur() {
-        self.subviews
+        subviews
             .filter { $0 is UIVisualEffectView }
             .forEach { $0.removeFromSuperview() }
     }

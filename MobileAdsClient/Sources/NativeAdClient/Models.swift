@@ -12,6 +12,34 @@ import GoogleMobileAds
 
 extension NativeAdClient {
 	
+	public protocol NativeLoaderOptions: Sendable, Equatable {
+		func toAdLoaderOptions() -> GADAdLoaderOptions
+	}
+}
+
+extension NativeAdClient {
+	
+	public struct AnyNativeLoaderOptions: Sendable, Equatable {
+		private let base: any NativeLoaderOptions
+		private let equals: @Sendable (any NativeLoaderOptions) -> Bool
+		
+		public init<T: NativeLoaderOptions & Equatable>(_ base: T) {
+			self.base = base
+			self.equals = { ($0 as? T) == base }
+		}
+		
+		public var unwrapped: any NativeLoaderOptions {
+			return base
+		}
+		
+		public static func == (lhs: AnyNativeLoaderOptions, rhs: AnyNativeLoaderOptions) -> Bool {
+			return lhs.equals(rhs.base)
+		}
+	}
+}
+
+extension NativeAdClient {
+	
 	public struct AdChoicesOptions: NativeLoaderOptions {
 		private let position: Position
 		
@@ -45,6 +73,9 @@ extension NativeAdClient {
 			return nativeOptions
 		}
 	}
+}
+
+extension NativeAdClient {
 	
 	public struct MediaLoaderOptions: NativeLoaderOptions {
 		
@@ -83,29 +114,10 @@ extension NativeAdClient {
 			return mediaOptions
 		}
 	}
-	
-	public protocol NativeLoaderOptions: Sendable, Equatable {
-		func toAdLoaderOptions() -> GADAdLoaderOptions
-	}
-	
-	public struct AnyNativeLoaderOptions: Sendable, Equatable {
-		private let base: any NativeLoaderOptions
-		private let equals: @Sendable (any NativeLoaderOptions) -> Bool
-		
-		public init<T: NativeLoaderOptions & Equatable>(_ base: T) {
-			self.base = base
-			self.equals = { ($0 as? T) == base }
-		}
-		
-		public var unwrapped: any NativeLoaderOptions {
-			return base
-		}
-		
-		public static func == (lhs: AnyNativeLoaderOptions, rhs: AnyNativeLoaderOptions) -> Bool {
-			return lhs.equals(rhs.base)
-		}
-	}
+}
 
+extension NativeAdClient {
+	
 	public struct VideoLoaderOptions: NativeLoaderOptions {
 		private let shouldStartMuted: Bool
 		private let areCustomControlsRequested: Bool
@@ -135,3 +147,23 @@ extension NativeAdClient {
 extension NativeAd: @retroactive @unchecked Sendable {
 	
 }
+
+/*
+ public struct AnyNativeLoaderOptions: Sendable, Equatable {
+ private let base: any NativeLoaderOptions
+ private let equals: @Sendable (any NativeLoaderOptions) -> Bool
+ 
+ public init<T: NativeLoaderOptions & Equatable>(_ base: T) {
+ self.base = base
+ self.equals = { ($0 as? T) == base }
+ }
+ 
+ public var unwrapped: any NativeLoaderOptions {
+ return base
+ }
+ 
+ public static func == (lhs: AnyNativeLoaderOptions, rhs: AnyNativeLoaderOptions) -> Bool {
+ return lhs.equals(rhs.base)
+ }
+ }
+ */
