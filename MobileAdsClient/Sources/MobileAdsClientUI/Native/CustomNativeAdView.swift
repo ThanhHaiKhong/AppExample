@@ -164,7 +164,7 @@ public class CustomNativeAdView: NativeAdView {
     
     public override init(frame: CGRect) {
         super.init(frame: frame)
-        setupUI()
+        setupViews()
     }
     
     required init?(coder: NSCoder) {
@@ -175,7 +175,7 @@ public class CustomNativeAdView: NativeAdView {
 // MARK: - Private Methods
 
 extension CustomNativeAdView {
-    private func setupUI() {
+    private func setupViews() {
         addBlur(style: .dark)
         layer.cornerRadius = 5
         layer.masksToBounds = true

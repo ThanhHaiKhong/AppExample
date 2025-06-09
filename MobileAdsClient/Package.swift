@@ -6,7 +6,7 @@ import PackageDescription
 let package = Package(
     name: "MobileAdsClient",
     platforms: [
-        .iOS(.v15)
+		.iOS(.v15), .macOS(.v11), .watchOS(.v8),
     ],
     products: [
         .singleTargetLibrary("MobileAdsClient"),
@@ -18,7 +18,7 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/pointfreeco/swift-composable-architecture.git", branch: "main"),
         .package(url: "https://github.com/googleads/swift-package-manager-google-mobile-ads.git", branch: "main"),
-        .package(path: "/Users/thanhhaikhong/Desktop/AppExample/TCAInitializableReducer"),
+        .package(url: "https://github.com/ThanhHaiKhong/TCAInitializableReducer.git", branch: "master"),
     ],
     targets: [
         .target(
