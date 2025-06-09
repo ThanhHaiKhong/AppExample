@@ -6,7 +6,7 @@ import PackageDescription
 let package = Package(
     name: "MobileAdsClient",
     platforms: [
-		.iOS(.v15), .macOS(.v11), .watchOS(.v8),
+		.iOS(.v15)
     ],
     products: [
         .singleTargetLibrary("MobileAdsClient"),
@@ -26,7 +26,7 @@ let package = Package(
             dependencies: [
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
                 .product(name: "GoogleMobileAds", package: "swift-package-manager-google-mobile-ads"),
-                "TCAInitializableReducer",
+				.product(name: "TCAInitializableReducer", package: "TCAInitializableReducer"),
             ]
         ),
         .target(
@@ -42,7 +42,7 @@ let package = Package(
             dependencies: [
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
                 .product(name: "GoogleMobileAds", package: "swift-package-manager-google-mobile-ads"),
-                "TCAInitializableReducer",
+				.product(name: "TCAInitializableReducer", package: "TCAInitializableReducer"),
                 "NativeAdClient",
             ],
             resources: [
@@ -57,7 +57,7 @@ let package = Package(
             dependencies: [
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
                 .product(name: "GoogleMobileAds", package: "swift-package-manager-google-mobile-ads"),
-                "TCAInitializableReducer",
+				.product(name: "TCAInitializableReducer", package: "TCAInitializableReducer"),
             ]
         ),
         .target(

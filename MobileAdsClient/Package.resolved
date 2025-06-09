@@ -1,5 +1,5 @@
 {
-  "originHash" : "58e77f8b55cf8011f1b16a6649c87cc43d94791a157c126b9988d7a3af25b76d",
+  "originHash" : "72a41fe9e00b1c5cbd60eb0d5ef8e463b374a0d0ffbfae81d200f9fc00996219",
   "pins" : [
     {
       "identity" : "combine-schedulers",
@@ -134,6 +134,15 @@
       "state" : {
         "revision" : "0687f71944021d616d34d922343dcef086855920",
         "version" : "600.0.1"
+      }
+    },
+    {
+      "identity" : "tcainitializablereducer",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/ThanhHaiKhong/TCAInitializableReducer.git",
+      "state" : {
+        "branch" : "master",
+        "revision" : "bfa5a94ac733a6e03921fc356d9261cc6f97eeda"
       }
     },
     {
