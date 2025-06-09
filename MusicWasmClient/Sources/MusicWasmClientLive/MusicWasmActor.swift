@@ -95,6 +95,16 @@ extension MusicWasmActor {
 			try await engine.search(keyword: keyword, scope: scope, continuation: continuation)
 		}
 	}
+	
+	func transcript(vid: String) async throws -> MusicTranscript {
+		try await withEngine { engine in
+			if let engine = engine as? MusicWasmEngine {
+				return try await engine.transcript(vid: vid)
+			} else {
+				return MusicTranscript()
+			}
+		}
+	}
 }
 
 // MARK: - Private Methods

@@ -47,7 +47,10 @@ extension MusicWasmClient: TestDependencyKey {
 		},
 		discover: { _, _ in
 			MusicListTracks()
-		}
+		},
+		transcript: { _ in
+			MusicTranscript()
+		},
 	)
 	
 	public static let previewValue = MusicWasmClient()

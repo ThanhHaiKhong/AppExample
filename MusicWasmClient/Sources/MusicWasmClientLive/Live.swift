@@ -37,6 +37,9 @@ extension MusicWasmClient: DependencyKey {
 			discover: { category, continuation in
 				try await actor.discover(category: category, continuation: continuation)
 			},
+			transcript: { vid in
+				try await actor.transcript(vid: vid)
+			},
 		)
 	}()
 }
