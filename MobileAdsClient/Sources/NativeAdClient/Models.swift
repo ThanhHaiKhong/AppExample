@@ -12,27 +12,27 @@ import GoogleMobileAds
 
 extension NativeAdClient {
 	
-	public protocol NativeLoaderOptions: Sendable, Equatable {
-		func toAdLoaderOptions() -> GADAdLoaderOptions
+	public protocol AdLoaderOption: Sendable, Equatable {
+		func toGADAdLoaderOptions() -> GADAdLoaderOptions
 	}
 }
 
 extension NativeAdClient {
 	
-	public struct AnyNativeLoaderOptions: Sendable, Equatable {
-		private let base: any NativeLoaderOptions
-		private let equals: @Sendable (any NativeLoaderOptions) -> Bool
+	public struct AnyAdLoaderOption: Sendable, Equatable {
+		private let base: any AdLoaderOption
+		private let equals: @Sendable (any AdLoaderOption) -> Bool
 		
-		public init<T: NativeLoaderOptions & Equatable>(_ base: T) {
+		public init<T: AdLoaderOption & Equatable>(_ base: T) {
 			self.base = base
 			self.equals = { ($0 as? T) == base }
 		}
 		
-		public var unwrapped: any NativeLoaderOptions {
+		public var unwrapped: any AdLoaderOption {
 			return base
 		}
 		
-		public static func == (lhs: AnyNativeLoaderOptions, rhs: AnyNativeLoaderOptions) -> Bool {
+		public static func == (lhs: AnyAdLoaderOption, rhs: AnyAdLoaderOption) -> Bool {
 			return lhs.equals(rhs.base)
 		}
 	}
@@ -40,23 +40,23 @@ extension NativeAdClient {
 
 extension NativeAdClient {
 	
-	public struct AdChoicesOptions: NativeLoaderOptions {
-		private let position: Position
+	public struct AdChoicesPositionOption: AdLoaderOption {
+		private let corner: AdChoicesCorner
 		
-		public init(position: Position) {
-			self.position = position
+		public init(corner: AdChoicesCorner) {
+			self.corner = corner
 		}
 		
-		public enum Position: Int, Sendable, Equatable {
+		public enum AdChoicesCorner: Int, Sendable, Equatable {
 			case topLeft
 			case topRight
 			case bottomRight
 			case bottomLeft
 		}
 		
-		public func toAdLoaderOptions() -> GADAdLoaderOptions {
+		public func toGADAdLoaderOptions() -> GADAdLoaderOptions {
 			let adChoicesPosition: AdChoicesPosition
-			switch position {
+			switch corner {
 			case .topLeft:
 				adChoicesPosition = .topLeftCorner
 			case .topRight:
@@ -77,15 +77,15 @@ extension NativeAdClient {
 
 extension NativeAdClient {
 	
-	public struct MediaLoaderOptions: NativeLoaderOptions {
+	public struct MediaAspectRatioOption: AdLoaderOption {
 		
-		private let aspectRatio: AspectRatio
+		private let type: MediaAspectRatioType
 		
-		public init(aspectRatio: AspectRatio) {
-			self.aspectRatio = aspectRatio
+		public init(type: MediaAspectRatioType) {
+			self.type = type
 		}
 		
-		public enum AspectRatio: Int, Sendable, Equatable {
+		public enum MediaAspectRatioType: Int, Sendable, Equatable {
 			case unknown
 			case any
 			case landscape
@@ -108,9 +108,9 @@ extension NativeAdClient {
 			}
 		}
 		
-		public func toAdLoaderOptions() -> GADAdLoaderOptions {
+		public func toGADAdLoaderOptions() -> GADAdLoaderOptions {
 			let mediaOptions = NativeAdMediaAdLoaderOptions()
-			mediaOptions.mediaAspectRatio = aspectRatio.toMediaAspectRatio()
+			mediaOptions.mediaAspectRatio = type.toMediaAspectRatio()
 			return mediaOptions
 		}
 	}
@@ -118,7 +118,7 @@ extension NativeAdClient {
 
 extension NativeAdClient {
 	
-	public struct VideoLoaderOptions: NativeLoaderOptions {
+	public struct VideoPlaybackOption: AdLoaderOption {
 		private let shouldStartMuted: Bool
 		private let areCustomControlsRequested: Bool
 		private let isClickToExpandRequested: Bool
@@ -133,7 +133,7 @@ extension NativeAdClient {
 			self.isClickToExpandRequested = isClickToExpandRequested
 		}
 		
-		public func toAdLoaderOptions() -> GADAdLoaderOptions {
+		public func toGADAdLoaderOptions() -> GADAdLoaderOptions {
 			let videoOptions = VideoOptions()
 			videoOptions.shouldStartMuted = shouldStartMuted
 			videoOptions.areCustomControlsRequested = areCustomControlsRequested
@@ -147,23 +147,3 @@ extension NativeAdClient {
 extension NativeAd: @retroactive @unchecked Sendable {
 	
 }
-
-/*
- public struct AnyNativeLoaderOptions: Sendable, Equatable {
- private let base: any NativeLoaderOptions
- private let equals: @Sendable (any NativeLoaderOptions) -> Bool
- 
- public init<T: NativeLoaderOptions & Equatable>(_ base: T) {
- self.base = base
- self.equals = { ($0 as? T) == base }
- }
- 
- public var unwrapped: any NativeLoaderOptions {
- return base
- }
- 
- public static func == (lhs: AnyNativeLoaderOptions, rhs: AnyNativeLoaderOptions) -> Bool {
- return lhs.equals(rhs.base)
- }
- }
- */

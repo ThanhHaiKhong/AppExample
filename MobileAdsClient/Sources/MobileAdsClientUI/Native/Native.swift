@@ -16,13 +16,13 @@ public struct Native: TCAInitializableReducer, Sendable {
     public struct State: Identifiable, Sendable, Equatable {
         public let id : String = UUID().uuidString
         public let adUnitID: String
-		public let adLoaderOptions: [NativeAdClient.AnyNativeLoaderOptions]
+		public let adLoaderOptions: [NativeAdClient.AnyAdLoaderOption]
         public var nativeAd: NativeAd?
         public var adHeight: CGFloat = 300.0
         
-		public init(adUnitID: String, adLoaderOptions: [NativeAdClient.AnyNativeLoaderOptions] = []) {
+		public init(adUnitID: String, options: [NativeAdClient.AnyAdLoaderOption] = []) {
             self.adUnitID = adUnitID
-            self.adLoaderOptions = adLoaderOptions
+            self.adLoaderOptions = options
         }
     }
     

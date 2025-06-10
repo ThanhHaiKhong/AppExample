@@ -19,7 +19,7 @@ public class FlexibleNativeAdView: NativeAdView {
 		view.translatesAutoresizingMaskIntoConstraints = false
 		view.layer.cornerRadius = 5
 		view.layer.masksToBounds = true
-		view.backgroundColor = UIColor(red: 122 / 255, green: 159 / 255, blue: 126 / 255, alpha: 1)
+		view.backgroundColor = UIColor(red: 234 / 255, green: 240 / 255, blue: 253 / 255, alpha: 1)
 		
 		return view
 	}()
@@ -29,7 +29,7 @@ public class FlexibleNativeAdView: NativeAdView {
 		label.accessibilityIdentifier = "Ad Headline Label"
 		label.translatesAutoresizingMaskIntoConstraints = false
 		label.numberOfLines = 0
-		label.font = .boldSystemFont(ofSize: 18)
+		label.font = .boldSystemFont(ofSize: 15)
 		label.textColor = UIColor(red: 66 / 255, green: 66 / 255, blue: 66 / 255, alpha: 1)
 		label.text = "Ad Headline"
 		
@@ -53,12 +53,12 @@ public class FlexibleNativeAdView: NativeAdView {
 		label.accessibilityIdentifier = "Ad Attribution Label"
 		label.translatesAutoresizingMaskIntoConstraints = false
 		label.textColor = .white
-		label.text = "Sponsored"
+		label.text = "Ad"
 		label.textAlignment = .center
-		label.backgroundColor = .systemBlue
+		label.backgroundColor = .systemYellow
 		label.layer.cornerRadius = 5
 		label.layer.masksToBounds = true
-		label.font = .systemFont(ofSize: 13, weight: .semibold)
+		label.font = .systemFont(ofSize: 14, weight: .bold)
 		
 		return label
 	}()
@@ -68,7 +68,7 @@ public class FlexibleNativeAdView: NativeAdView {
 		imageView.accessibilityIdentifier = "Ad Icon Image View"
 		imageView.translatesAutoresizingMaskIntoConstraints = false
 		imageView.contentMode = .scaleAspectFill
-		imageView.layer.cornerRadius = 10
+		imageView.layer.cornerRadius = 5
 		imageView.layer.masksToBounds = true
 		
 		return imageView
@@ -90,8 +90,8 @@ public class FlexibleNativeAdView: NativeAdView {
 		button.setTitle("Install Now", for: .normal)
 		button.backgroundColor = .systemBlue
 		button.setTitleColor(.white, for: .normal)
-		button.titleLabel?.font = .boldSystemFont(ofSize: 18)
-		button.layer.cornerRadius = 10
+		button.titleLabel?.font = .boldSystemFont(ofSize: 14)
+		button.layer.cornerRadius = 5
 		button.layer.masksToBounds = true
 		button.isUserInteractionEnabled = false
 		
@@ -103,7 +103,7 @@ public class FlexibleNativeAdView: NativeAdView {
 		label.accessibilityIdentifier = "Ad Body Label"
 		label.translatesAutoresizingMaskIntoConstraints = false
 		label.numberOfLines = 0
-		label.font = .systemFont(ofSize: 15, weight: .medium)
+		label.font = .systemFont(ofSize: 14, weight: .regular)
 		label.textAlignment = .left
 		label.textColor = .secondaryLabel
 		
@@ -172,7 +172,34 @@ public class FlexibleNativeAdView: NativeAdView {
 	}
 }
 
-// MARK: - Private Methods
+// MARK: - Public Methods
+
+extension FlexibleNativeAdView {
+	
+	public func configure(with nativeAd: NativeAd) {
+		updateUI(with: nativeAd)
+		updateViewBindings(for: nativeAd)
+		updateVisibility(for: nativeAd)
+		
+		self.nativeAd = nativeAd
+	}
+	
+	public func calculateTotalHeight() -> CGFloat {
+		let bottomPadding: CGFloat = 20
+		let verticalPadding: CGFloat = 16
+		let contentHeight = contentView.frame.height
+		let headlineHeight = headlineStack.frame.height
+		let bodyHeight = adBodyLabel.frame.height
+		let buttonHeight = actionButton.frame.height
+		let totalHeight = contentHeight + headlineHeight + bodyHeight + buttonHeight + defaultSpacing * 3 + bottomPadding + verticalPadding
+		#if DEBUG
+		print("✅ Total height: \(totalHeight) - Body height: \(bodyHeight) - Media height: \(contentHeight)")
+		#endif
+		return totalHeight
+	}
+}
+
+// MARK: - Supporting Methods
 
 extension FlexibleNativeAdView {
 	
@@ -190,8 +217,9 @@ extension FlexibleNativeAdView {
 		storeStack.translatesAutoresizingMaskIntoConstraints = false
 		storeStack.addArrangedSubview(adStoreLabel)
 		storeStack.addArrangedSubview(adPriceLabel)
+		storeStack.addArrangedSubview(actionButton)
 		
-		let attributionStack = UIStackView()
+		let attributionStack = CustomStackView()
 		attributionStack.accessibilityIdentifier = "Attribution Stack"
 		attributionStack.axis = .horizontal
 		attributionStack.spacing = 8
@@ -204,35 +232,39 @@ extension FlexibleNativeAdView {
 		let labelStack = CustomStackView()
 		labelStack.accessibilityIdentifier = "Label Stack"
 		labelStack.axis = .vertical
-		labelStack.spacing = 8
+		labelStack.spacing = 4
 		labelStack.alignment = .leading
 		labelStack.distribution = .fill
 		labelStack.translatesAutoresizingMaskIntoConstraints = false
 		labelStack.addArrangedSubview(adHeadlineLabel)
 		labelStack.addArrangedSubview(adSponsorLabel)
 		labelStack.addArrangedSubview(attributionStack)
-		labelStack.addArrangedSubview(storeStack)
 		
-		headlineStack.addArrangedSubview(adIconImageView)
-		headlineStack.addArrangedSubview(labelStack)
+		let headerStack = UIStackView()
+		headerStack.accessibilityIdentifier = "Header Stack"
+		headerStack.axis = .horizontal
+		headerStack.spacing = 8
+		headerStack.alignment = .top
+		headerStack.distribution = .fill
+		headerStack.translatesAutoresizingMaskIntoConstraints = false
+		headerStack.addArrangedSubview(adIconImageView)
+		headerStack.addArrangedSubview(labelStack)
 		
 		let bodyStack = CustomStackView()
 		bodyStack.accessibilityIdentifier = "Body Stack"
 		bodyStack.axis = .vertical
-		bodyStack.spacing = defaultSpacing
+		bodyStack.spacing = 4
 		bodyStack.alignment = .leading
 		bodyStack.distribution = .fill
 		bodyStack.translatesAutoresizingMaskIntoConstraints = false
-		bodyStack.addArrangedSubview(headlineStack)
+		bodyStack.addArrangedSubview(headerStack)
 		bodyStack.addArrangedSubview(adBodyLabel)
-		bodyStack.addArrangedSubview(actionButton)
+		bodyStack.addArrangedSubview(storeStack)
 		
 		adContainerView.addSubview(contentView)
 		adContainerView.addSubview(bodyStack)
 		
 		addSubview(adContainerView)
-		
-		heightConstraint = NSLayoutConstraint(item: contentView, attribute: .height, relatedBy: .equal, toItem: contentView, attribute: .width, multiplier: currentMultiplier, constant: 0)
 		
 		NSLayoutConstraint.activate([
 			adContainerView.topAnchor.constraint(equalTo: topAnchor, constant: 8),
@@ -243,35 +275,23 @@ extension FlexibleNativeAdView {
 			contentView.topAnchor.constraint(equalTo: adContainerView.topAnchor),
 			contentView.leadingAnchor.constraint(equalTo: adContainerView.leadingAnchor),
 			contentView.trailingAnchor.constraint(equalTo: adContainerView.trailingAnchor),
+			contentView.bottomAnchor.constraint(equalTo: bodyStack.topAnchor, constant: -8),
 			
-			bodyStack.topAnchor.constraint(equalTo: contentView.bottomAnchor, constant: defaultSpacing),
-			bodyStack.leadingAnchor.constraint(equalTo: adContainerView.leadingAnchor, constant: 20),
-			bodyStack.trailingAnchor.constraint(equalTo: adContainerView.trailingAnchor, constant: -20),
+			bodyStack.bottomAnchor.constraint(equalTo: adContainerView.bottomAnchor, constant: -8),
+			bodyStack.leadingAnchor.constraint(equalTo: adContainerView.leadingAnchor, constant: 8),
+			bodyStack.trailingAnchor.constraint(equalTo: adContainerView.trailingAnchor, constant: -8),
 			
-			actionButton.leadingAnchor.constraint(equalTo: bodyStack.leadingAnchor),
-			actionButton.trailingAnchor.constraint(equalTo: bodyStack.trailingAnchor),
-			actionButton.heightAnchor.constraint(equalToConstant: 46),
+			adIconImageView.widthAnchor.constraint(equalToConstant: 54),
+			adIconImageView.heightAnchor.constraint(equalToConstant: 54),
 			
-			adIconImageView.widthAnchor.constraint(equalToConstant: 80),
-			adIconImageView.heightAnchor.constraint(equalToConstant: 80),
+			storeStack.leadingAnchor.constraint(equalTo: bodyStack.leadingAnchor),
+			storeStack.trailingAnchor.constraint(equalTo: bodyStack.trailingAnchor),
+			storeStack.heightAnchor.constraint(equalToConstant: 30),
+			
+			adStoreLabel.heightAnchor.constraint(equalToConstant: 30),
+			adPriceLabel.heightAnchor.constraint(equalToConstant: 30),
 		])
 	}
-}
-
-// MARK: - Public Methods
-
-extension FlexibleNativeAdView {
-	
-	public func configure(with nativeAd: NativeAd) {
-		updateAspectRatio(for: nativeAd.mediaContent.aspectRatio)
-		updateUI(with: nativeAd)
-		updateViewBindings(for: nativeAd)
-		updateVisibility(for: nativeAd)
-		
-		self.nativeAd = nativeAd
-	}
-	
-	// MARK: - Update Aspect Ratio
 	
 	private func updateAspectRatio(for aspectRatio: CGFloat) {
 		guard aspectRatio > 0, aspectRatio != currentMultiplier else { return }
@@ -291,12 +311,8 @@ extension FlexibleNativeAdView {
 		
 		UIView.animate(withDuration: 0.5) {
 			self.layoutIfNeeded()
-		} completion: { completed in
-			
 		}
 	}
-	
-	// MARK: - Update UI Elements
 	
 	private func updateUI(with nativeAd: NativeAd) {
 		let viewsToAnimate: [UIView] = [
@@ -316,31 +332,38 @@ extension FlexibleNativeAdView {
 				switch view {
 				case self.adIconImageView:
 					self.adIconImageView.image = nativeAd.icon?.image
+					
 				case self.adHeadlineLabel:
 					self.adHeadlineLabel.text = nativeAd.headline?.capitalized
+					
 				case self.adRatingImageView:
 					self.adRatingImageView.image = self.imageOfStars(from: nativeAd.starRating)
+					
 				case self.adSponsorLabel:
 					self.adSponsorLabel.text = nativeAd.advertiser
+					
 				case self.adStoreLabel:
 					self.adStoreLabel.text = nativeAd.store?.capitalized
+					
 				case self.adPriceLabel:
 					self.adPriceLabel.text = nativeAd.price?.capitalized
+					
 				case self.adBodyLabel:
 					self.adBodyLabel.text = nativeAd.body
+					
 				case self.actionButton:
 					self.actionButton.setTitle(nativeAd.callToAction?.uppercased(), for: .normal)
+					
 				case self.contentView:
 					self.contentView.mediaContent = nativeAd.mediaContent
 					self.contentView.contentMode = .scaleAspectFit
+					
 				default:
 					break
 				}
 			})
 		}
 	}
-	
-	// MARK: - Bind Views to Native Ad
 	
 	private func updateViewBindings(for nativeAd: NativeAd) {
 		self.iconView = adIconImageView
@@ -353,8 +376,6 @@ extension FlexibleNativeAdView {
 		self.bodyView = adBodyLabel
 		self.mediaView = contentView
 	}
-	
-	// MARK: - Update View Visibility
 	
 	private func updateVisibility(for nativeAd: NativeAd) {
 		let views: [(UIView?, Any?)] = [
@@ -380,9 +401,9 @@ extension FlexibleNativeAdView {
 			validViews.forEach { view, isVisible in
 				if let stackView = view.superview as? CustomStackView {
 					let viewName = view.accessibilityIdentifier ?? String(describing: type(of: view))
-#if DEBUG
-					print("- \(viewName) -> \(isVisible ? "Hiển thị ✅" : "Ẩn ❌") trong: \(stackView.accessibilityIdentifier ?? String(describing: type(of: stackView)))")
-#endif
+					#if DEBUG
+					// print("- \(viewName) -> \(isVisible ? "Visible ✅" : "Hidden ❌") IN: \(stackView.accessibilityIdentifier ?? String(describing: type(of: stackView)))")
+					#endif
 					stackView.setVisibility(for: view, isVisible: isVisible)
 				} else {
 					view.isHidden = !isVisible
@@ -407,21 +428,5 @@ extension FlexibleNativeAdView {
 		} else {
 			return nil
 		}
-	}
-	
-	// MARK: - Calculate Total Height
-	
-	public func calculateTotalHeight() -> CGFloat {
-		let bottomPadding: CGFloat = 20
-		let verticalPadding: CGFloat = 16
-		let contentHeight = contentView.frame.height
-		let headlineHeight = headlineStack.frame.height
-		let bodyHeight = adBodyLabel.frame.height
-		let buttonHeight = actionButton.frame.height
-		let totalHeight = contentHeight + headlineHeight + bodyHeight + buttonHeight + defaultSpacing * 3 + bottomPadding + verticalPadding
-#if DEBUG
-		print("✅ Total height: \(totalHeight) - Body height: \(bodyHeight) - Media height: \(contentHeight)")
-#endif
-		return totalHeight
 	}
 }

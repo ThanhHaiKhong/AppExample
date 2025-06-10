@@ -10,5 +10,5 @@ import GoogleMobileAds
 
 @DependencyClient
 public struct NativeAdClient: Sendable {
-	public var loadAd: @Sendable (_ adUnitID: String, _ rootViewController: UIViewController?, _ options: [NativeAdClient.AnyNativeLoaderOptions]?) async throws -> NativeAd
+	public var loadAd: @Sendable (_ adUnitID: String, _ rootViewController: UIViewController?, _ options: [NativeAdClient.AnyAdLoaderOption]?) async throws -> NativeAd
 }

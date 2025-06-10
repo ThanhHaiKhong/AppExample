@@ -10,9 +10,10 @@ import NativeAdClient
 
 extension NativeAdClient: DependencyKey {
     public static let liveValue: NativeAdClient = {
+		let actor = NativeActor()
         return NativeAdClient(
             loadAd: { adUnitID, viewController, options in
-                return try await AdsManager.shared.loadAd(adUnitID: adUnitID, from: viewController, options: options)
+				return try await actor.loadAd(adUnitID: adUnitID, from: viewController, options: options)
             }
         )
     }()
