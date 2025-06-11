@@ -14,11 +14,13 @@ public class CustomStackView: UIStackView {
         if !viewsOrder.contains(view) {
             viewsOrder.append(view)
         }
+		setCustomSpacing(8, after: view)
         super.addArrangedSubview(view)
     }
     
     public override func removeArrangedSubview(_ view: UIView) {
         view.isHidden = true
+		setCustomSpacing(0, after: view)
         super.removeArrangedSubview(view)
     }
     

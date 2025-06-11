@@ -262,9 +262,14 @@ extension FlexibleNativeAdView {
 		bodyStack.alignment = .leading
 		bodyStack.distribution = .fill
 		bodyStack.translatesAutoresizingMaskIntoConstraints = false
+		bodyStack.setContentHuggingPriority(.required, for: .vertical)
+		bodyStack.setContentCompressionResistancePriority(.required, for: .vertical)
 		bodyStack.addArrangedSubview(headerStack)
 		bodyStack.addArrangedSubview(adBodyLabel)
 		bodyStack.addArrangedSubview(storeStack)
+		
+		adIconImageView.setContentHuggingPriority(.required, for: .horizontal)
+		adIconImageView.setContentCompressionResistancePriority(.required, for: .horizontal)
 		
 		adContainerView.addSubview(contentView)
 		adContainerView.addSubview(bodyStack)
@@ -280,11 +285,11 @@ extension FlexibleNativeAdView {
 			contentView.topAnchor.constraint(equalTo: adContainerView.topAnchor),
 			contentView.leadingAnchor.constraint(equalTo: adContainerView.leadingAnchor),
 			contentView.trailingAnchor.constraint(equalTo: adContainerView.trailingAnchor),
-			contentView.bottomAnchor.constraint(equalTo: bodyStack.topAnchor, constant: -8),
 			
-			bodyStack.bottomAnchor.constraint(equalTo: adContainerView.bottomAnchor, constant: -8),
+			bodyStack.topAnchor.constraint(greaterThanOrEqualTo: contentView.bottomAnchor, constant: 8),
 			bodyStack.leadingAnchor.constraint(equalTo: adContainerView.leadingAnchor, constant: 8),
 			bodyStack.trailingAnchor.constraint(equalTo: adContainerView.trailingAnchor, constant: -8),
+			bodyStack.bottomAnchor.constraint(equalTo: adContainerView.bottomAnchor, constant: -8),
 			
 			adIconImageView.widthAnchor.constraint(equalToConstant: 54),
 			adIconImageView.heightAnchor.constraint(equalToConstant: 54),
@@ -421,22 +426,17 @@ extension FlexibleNativeAdView {
 			return (view, isVisibleData(data))
 		}.compactMap { $0 }
 		
-		print("🔍 Updating visibility: \(values)")
-		
 		UIView.animate(withDuration: 0.3, delay: 0, options: [.curveEaseInOut], animations: {
 			validViews.forEach { view, isVisible in
 				view.alpha = isVisible ? 1 : 0
 			}
 		}, completion: { _ in
-			validViews.forEach { view, isVisible in
-				if let stackView = view.superview as? CustomStackView {
-					let viewName = view.accessibilityIdentifier ?? String(describing: type(of: view))
-					#if DEBUG
-					print("- \(viewName) -> \(isVisible ? "Visible ✅" : "Hidden ❌") IN: \(stackView.accessibilityIdentifier ?? String(describing: type(of: stackView)))")
-					#endif
-					stackView.setVisibility(for: view, isVisible: isVisible)
-				} else {
+			UIView.animate(withDuration: 0.3) {
+				validViews.forEach { view, isVisible in
 					view.isHidden = !isVisible
+					if let stackView = view.superview as? CustomStackView {
+						stackView.setCustomSpacing(isVisible ? 8 : 0, after: view)
+					}
 				}
 			}
 		})
@@ -460,3 +460,10 @@ extension FlexibleNativeAdView {
 		}
 	}
 }
+
+/*
+ #if DEBUG
+ let viewName = view.accessibilityIdentifier ?? String(describing: type(of: view))
+ print("- \(viewName) -> \(isVisible ? "Visible ✅" : "Hidden ❌") IN: \(stackView.accessibilityIdentifier ?? String(describing: type(of: stackView)))")
+ #endif
+ */
