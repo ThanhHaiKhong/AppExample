@@ -71,12 +71,12 @@ public struct GoogleAds: Sendable {
                 state.items = .init(uniqueElements: items.enumerated().map(\.element))
                 */
                 
-				let options: [NativeAdClient.AnyNativeLoaderOptions] = [
-					NativeAdClient.AnyNativeLoaderOptions(MediaLoaderOptions(aspectRatio: .landscape)),
-					NativeAdClient.AnyNativeLoaderOptions(AdChoicesOptions(position: .topRight)),
+				let options: [NativeAdClient.AnyAdLoaderOption] = [
+					NativeAdClient.AnyAdLoaderOption(NativeAdClient.MediaAspectRatioOption(type: .landscape)),
+					NativeAdClient.AnyAdLoaderOption(NativeAdClient.AdChoicesPositionOption(corner: .topRight)),
                 ]
                 
-                let native = Native.State.init(adUnitID: "ca-app-pub-3940256099942544/3986624511", adLoaderOptions: options)
+                let native = Native.State.init(adUnitID: "ca-app-pub-3940256099942544/3986624511", options: options)
                 state.native = native
                 
                 return .none

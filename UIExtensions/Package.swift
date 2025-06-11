@@ -13,6 +13,7 @@ let package = Package(
         .singleTargetLibrary(name: "UIFontExtensions"),
 		.singleTargetLibrary(name: "UIImageExtensions"),
 		.singleTargetLibrary(name: "UITabBarExtensions"),
+		.singleTargetLibrary(name: "UIApplicationExtensions"),
     ],
 	dependencies: [
 		
@@ -23,7 +24,8 @@ let package = Package(
 			dependencies: [
 				"UIFontExtensions",
 				"UIImageExtensions",
-				"UITabBarExtensions"
+				"UITabBarExtensions",
+				"UIApplicationExtensions"
 			]
 		),
         .target(
@@ -37,6 +39,9 @@ let package = Package(
 			dependencies: [
 				"UIImageExtensions",
 			]
+		),
+		.target(
+			name: "UIApplicationExtensions"
 		),
     ]
 )

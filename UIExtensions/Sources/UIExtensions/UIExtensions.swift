@@ -8,3 +8,4 @@
 @_exported import UIFontExtensions
 @_exported import UIImageExtensions
 @_exported import UITabBarExtensions
+@_exported import UIApplicationExtensions
