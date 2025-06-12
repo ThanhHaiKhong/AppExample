@@ -57,20 +57,20 @@ extension EditorChoice {
     
     public static let contacts: EditorChoice = EditorChoice(appStorePath: "https://apps.apple.com/app/id6484267417",
                                                             caption: "New App",
-                                                            description: "Transfer.Backup.Share Contacts",
+                                                            description: "Transfer • Backup • Share Contacts",
                                                             enabled: true,
                                                             artworkPath: "https://drive.google.com/uc?export=view&id=1t0tEoa_xFqFSG8GBtD_MowQQS1RqeGrv",
                                                             miniIconPath: "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/e3/7e/f5/e37ef519-ff14-3940-2e51-d51548c7b863/AppIcon-0-0-1x_U007epad-0-0-85-220.png/540x540bb.jpg",
-                                                            title: "Contacts Backup . Restore . Clean")
+                                                            title: "Contacts Backup - Restore - Clean")
     
     
     public static let pixelAI: EditorChoice = EditorChoice(appStorePath: "https://apps.apple.com/app/id6450380621",
                                                            caption: "New App Update",
-                                                           description: "AI Effect. AI Removal. AI Edit",
+                                                           description: "AI Effect • AI Removal • AI Edit",
                                                            enabled: true,
                                                            artworkPath: "https://drive.google.com/uc?export=view&id=1MuvWFzgWd9ZLrvIZdLJvf-4eWPSIW4AF",
                                                            miniIconPath: "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/96/65/b5/9665b508-6ac2-b3e4-421a-374642f61494/AppIcon-0-0-1x_U007epad-0-0-85-220.png/540x540bb.jpg",
-                                                           title: "PixeAI - AI Video Photo Editor ")
+                                                           title: "PixeAI - AI Video - Photo Editor ")
    
     public static let randonauting: EditorChoice = EditorChoice(appStorePath: "https://apps.apple.com/app/id1616481958",
                                                                 caption: "New App Update",
@@ -82,15 +82,15 @@ extension EditorChoice {
     
     public static let idPassport: EditorChoice = EditorChoice(appStorePath: "https://apple.co/41PdGCo",
                                                               caption: "New App Update",
-                                                              description: "ID Passport CV Resume Photo.",
+                                                              description: "ID Passport • CV Resume Photo",
                                                               enabled: true,
                                                               artworkPath: "https://drive.google.com/uc?export=view&id=1Yqcy7Nm1R5pei1hfJbZIZ4AY8Dga2lDO",
                                                               miniIconPath: "https://is1-ssl.mzstatic.com/image/thumb/Purple126/v4/3a/7a/8f/3a7a8f33-2f35-1da9-e1fa-3f584659e9a4/AppIcon-0-0-1x_U007epad-0-0-85-220.png/540x540bb.jpg",
-                                                              title: "ID Passport Photo Booth AI")
+                                                              title: "ID Passport - Photo Booth AI")
     
     public static let cartoonPhoto: EditorChoice = EditorChoice(appStorePath: "https://apps.apple.com/app/id1614396365",
                                                                 caption: "New App Update",
-                                                                description: "Cartoon Photo - AI Cartoon",
+                                                                description: "Cartoon Photo • AI Cartoon",
                                                                 enabled: true,
                                                                 artworkPath: "https://drive.google.com/uc?export=view&id=1I1L-xErsZXSoQzlbMw09IeVUusTYK1Xw",
                                                                 miniIconPath: "https://is1-ssl.mzstatic.com/image/thumb/Purple126/v4/2f/e6/a0/2fe6a048-8e46-229e-1ece-1c0fa0c08d05/AppIcon-1x_U007emarketing-0-7-0-85-220.png/540x540bb.jpg",
@@ -98,15 +98,15 @@ extension EditorChoice {
     
     public static let compressPhoto: EditorChoice = EditorChoice(appStorePath: "https://apps.apple.com/app/id1615572010",
                                                                  caption: "New App Update",
-                                                                 description: "Compress Photo & Save Space",
+                                                                 description: "Compress Photo • Save Space",
                                                                  enabled: true,
                                                                  artworkPath: "https://drive.google.com/uc?export=view&id=1piIi2WPzGCHQugVLvp9CCay3bxqBvUcn",
                                                                  miniIconPath: "https://is1-ssl.mzstatic.com/image/thumb/Purple126/v4/6a/53/90/6a5390db-5e03-b563-d83b-e5ba0f63460d/AppIcon-1x_U007emarketing-0-7-0-85-220-0.png/540x540bb.jpg",
-                                                                 title: "Compress Photo & Save Space")
+                                                                 title: "Compress Photo - Save Space")
     
     public static let compressVideo: EditorChoice = EditorChoice(appStorePath: "https://apps.apple.com/app/id1615883784",
                                                                  caption: "New App Update",
-                                                                 description: "Compress Videos - Shrink Video",
+                                                                 description: "Compress Videos • Shrink Video",
                                                                  enabled: true,
                                                                  artworkPath: "https://drive.google.com/uc?export=view&id=1hS6jW6TThM848IfygDBUlW_yNNPdbc8f",
                                                                  miniIconPath: "https://is1-ssl.mzstatic.com/image/thumb/Purple116/v4/af/bc/f6/afbcf612-6331-7a1f-ffe7-de324e094741/AppIcon-1x_U007emarketing-0-7-0-85-220-0.png/540x540bb.jpg",

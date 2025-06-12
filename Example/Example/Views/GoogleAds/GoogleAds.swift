@@ -37,7 +37,6 @@ public struct GoogleAds: Sendable {
         Reduce { state, action in
             switch action {
             case .onTask:
-                /*
                 let staticSize: StandardSize = .banner
                 let staticType = BannerType.static(staticSize)
                 
@@ -69,7 +68,6 @@ public struct GoogleAds: Sendable {
                 }
                 
                 state.items = .init(uniqueElements: items.enumerated().map(\.element))
-                */
                 
 				let options: [NativeAdClient.AnyAdLoaderOption] = [
 					NativeAdClient.AnyAdLoaderOption(NativeAdClient.MediaAspectRatioOption(type: .landscape)),
