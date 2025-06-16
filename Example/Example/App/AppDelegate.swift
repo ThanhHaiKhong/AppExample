@@ -5,9 +5,10 @@
 //  Created by Thanh Hai Khong on 5/2/25.
 //
 
-import UIKit
 import UserNotifications
 import FirebaseCore
+import UIKit
+import MCP
 
 @main
 class AppDelegate: UIResponder {
@@ -33,7 +34,23 @@ extension AppDelegate: UIApplicationDelegate {
         })
         
         application.registerForRemoteNotifications()
-        
+		
+		let client = Client(name: "AppExample", version: "1.0.0")
+		let transport = StdioTransport()
+		Task {
+			do {
+				let result = try await client.connect(transport: transport)
+				
+				if result.capabilities.tools != nil {
+					print("Tools are supported")
+				} else {
+					print("Tools are not supported")
+				}
+			} catch {
+				print("Failed to register client: \(error)")
+			}
+		}
+		
         return true
     }
     

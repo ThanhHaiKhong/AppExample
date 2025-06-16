@@ -15,6 +15,7 @@
 		7F5399BA2CED72B1003141AC /* UIModifiers in Frameworks */ = {isa = PBXBuildFile; productRef = 7F5399B92CED72B1003141AC /* UIModifiers */; };
 		7F6167482DCC98DF00F20023 /* MusicWasmClient in Frameworks */ = {isa = PBXBuildFile; productRef = 7F6167472DCC98DF00F20023 /* MusicWasmClient */; };
 		7F61674A2DCC98DF00F20023 /* MusicWasmClientLive in Frameworks */ = {isa = PBXBuildFile; productRef = 7F6167492DCC98DF00F20023 /* MusicWasmClientLive */; };
+		7F6CB3372DFBDC4E003CB3A5 /* MCP in Frameworks */ = {isa = PBXBuildFile; productRef = 7F6CB3362DFBDC4E003CB3A5 /* MCP */; };
 		7F76A20F2D5C5BA8001C9C6A /* TCAInitializableReducer in Frameworks */ = {isa = PBXBuildFile; productRef = 7F76A20E2D5C5BA8001C9C6A /* TCAInitializableReducer */; };
 		7F79E4B22DD48D7A008EAA8D /* NowPlayingClient in Frameworks */ = {isa = PBXBuildFile; productRef = 7F79E4B12DD48D7A008EAA8D /* NowPlayingClient */; };
 		7F79E4B42DD48D7A008EAA8D /* NowPlayingClientLive in Frameworks */ = {isa = PBXBuildFile; productRef = 7F79E4B32DD48D7A008EAA8D /* NowPlayingClientLive */; };
@@ -237,6 +238,7 @@
 				7F7DF8CC2DA76B8F004A2F42 /* ArchiveClient in Frameworks */,
 				7F7DF8CE2DA76BD2004A2F42 /* PhotosClient in Frameworks */,
 				7FDD6FCF2D6FF67D00082A78 /* NotificationsClientUI in Frameworks */,
+				7F6CB3372DFBDC4E003CB3A5 /* MCP in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -376,6 +378,7 @@
 				7F7DF8D52DA77BDF004A2F42 /* PHAssetClient */,
 				7F7DF8D72DA77BDF004A2F42 /* PHAssetClientLive */,
 				7FEB9FCC2DB8800A00CE85BB /* MediaPlayerClientLive */,
+				7F6CB3362DFBDC4E003CB3A5 /* MCP */,
 			);
 			productName = Example;
 			productReference = 7FB7E7792CE71033004A300C /* Example.app */;
@@ -437,6 +440,7 @@
 			packageReferences = (
 				7FB3A8E62D830ACB00C66D26 /* XCRemoteSwiftPackageReference "Hero" */,
 				7F8C72BB2DC0BFCD003561D5 /* XCRemoteSwiftPackageReference "Kingfisher" */,
+				7F6CB3352DFBD9AC003CB3A5 /* XCRemoteSwiftPackageReference "swift-sdk" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 7FB7E77A2CE71033004A300C /* Products */;
@@ -933,6 +937,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		7F6CB3352DFBD9AC003CB3A5 /* XCRemoteSwiftPackageReference "swift-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/modelcontextprotocol/swift-sdk.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.9.0;
+			};
+		};
 		7F8C72BB2DC0BFCD003561D5 /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/onevcat/Kingfisher.git";
@@ -984,6 +996,11 @@
 		7F6167492DCC98DF00F20023 /* MusicWasmClientLive */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = MusicWasmClientLive;
+		};
+		7F6CB3362DFBDC4E003CB3A5 /* MCP */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 7F6CB3352DFBD9AC003CB3A5 /* XCRemoteSwiftPackageReference "swift-sdk" */;
+			productName = MCP;
 		};
 		7F76A20E2D5C5BA8001C9C6A /* TCAInitializableReducer */ = {
 			isa = XCSwiftPackageProductDependency;
