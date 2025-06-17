@@ -80,10 +80,6 @@ public class FlexibleNativeAdView: NativeAdView {
 		imageView.accessibilityIdentifier = "Ad Rating Image View"
 		imageView.translatesAutoresizingMaskIntoConstraints = false
 		imageView.contentMode = .left
-		imageView.layer.cornerRadius = 4
-		imageView.layer.masksToBounds = true
-		imageView.layer.borderColor = UIColor.systemIndigo.cgColor
-		imageView.layer.borderWidth = 1
 		
 		return imageView
 	}()
@@ -218,7 +214,7 @@ extension FlexibleNativeAdView {
 		storeStack.axis = .horizontal
 		storeStack.spacing = 8
 		storeStack.alignment = .center
-		storeStack.distribution = .fill
+		storeStack.distribution = .fillEqually
 		storeStack.translatesAutoresizingMaskIntoConstraints = false
 		storeStack.addArrangedSubview(adStoreLabel)
 		storeStack.addArrangedSubview(adPriceLabel)
@@ -305,6 +301,7 @@ extension FlexibleNativeAdView {
 			actionButton.heightAnchor.constraint(equalToConstant: 38),
 			
 			adAttributionLabel.heightAnchor.constraint(equalToConstant: 22),
+			adRatingImageView.heightAnchor.constraint(equalToConstant: 22),
 		])
 	}
 	
@@ -358,10 +355,10 @@ extension FlexibleNativeAdView {
 					self.adSponsorLabel.text = nativeAd.advertiser
 					
 				case self.adStoreLabel:
-					self.adStoreLabel.text = nativeAd.store?.capitalized
+					self.adStoreLabel.text = nativeAd.store?.uppercased()
 					
 				case self.adPriceLabel:
-					self.adPriceLabel.text = nativeAd.price?.capitalized
+					self.adPriceLabel.text = nativeAd.price?.uppercased()
 					
 				case self.adBodyLabel:
 					self.adBodyLabel.text = nativeAd.body
