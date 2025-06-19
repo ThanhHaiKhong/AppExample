@@ -29,7 +29,7 @@ public class FlexibleNativeAdView: NativeAdView {
 		label.accessibilityIdentifier = "Ad Headline Label"
 		label.translatesAutoresizingMaskIntoConstraints = false
 		label.numberOfLines = 0
-		label.font = .boldSystemFont(ofSize: 14)
+		label.font = .boldSystemFont(ofSize: 15)
 		label.textColor = UIColor(red: 66 / 255, green: 66 / 255, blue: 66 / 255, alpha: 1)
 		label.text = "Ad Headline"
 		
@@ -52,14 +52,14 @@ public class FlexibleNativeAdView: NativeAdView {
 		let label = PaddedLabel(padding: UIEdgeInsets(top: 2, left: 6, bottom: 2, right: 6))
 		label.accessibilityIdentifier = "Ad Attribution Label"
 		label.translatesAutoresizingMaskIntoConstraints = false
-		label.textColor = .systemIndigo
+		label.textColor = .systemBlue
 		label.text = "Ad"
 		label.textAlignment = .center
 		label.layer.cornerRadius = 4
 		label.layer.masksToBounds = true
-		label.layer.borderColor = UIColor.systemIndigo.cgColor
-		label.layer.borderWidth = 1
-		label.font = .systemFont(ofSize: 12, weight: .bold)
+		label.layer.borderColor = UIColor.systemBlue.cgColor
+		label.layer.borderWidth = 1.4
+		label.font = .systemFont(ofSize: 13, weight: .bold)
 		
 		return label
 	}()
@@ -104,7 +104,7 @@ public class FlexibleNativeAdView: NativeAdView {
 		label.accessibilityIdentifier = "Ad Body Label"
 		label.translatesAutoresizingMaskIntoConstraints = false
 		label.numberOfLines = 0
-		label.font = .systemFont(ofSize: 12, weight: .regular)
+		label.font = .systemFont(ofSize: 13, weight: .regular)
 		label.textAlignment = .left
 		label.textColor = .secondaryLabel
 		
@@ -116,10 +116,10 @@ public class FlexibleNativeAdView: NativeAdView {
 		label.accessibilityIdentifier = "Ad Store Label"
 		label.translatesAutoresizingMaskIntoConstraints = false
 		label.numberOfLines = 0
-		label.textColor = .white
+		label.textColor = .systemGreen
 		label.textAlignment = .center
-		label.backgroundColor = .systemGreen
-		label.font = .systemFont(ofSize: 13, weight: .semibold)
+		label.backgroundColor = .systemGreen.withAlphaComponent(0.15)
+		label.font = .boldSystemFont(ofSize: 15)
 		label.text = "App Store"
 		label.layer.cornerRadius = 5
 		label.layer.masksToBounds = true
@@ -132,13 +132,13 @@ public class FlexibleNativeAdView: NativeAdView {
 		label.accessibilityIdentifier = "Ad Price Label"
 		label.translatesAutoresizingMaskIntoConstraints = false
 		label.numberOfLines = 0
-		label.textColor = .white
+		label.textColor = .systemGreen
 		label.textAlignment = .center
-		label.font = .systemFont(ofSize: 13, weight: .semibold)
+		label.font = .boldSystemFont(ofSize: 15)
 		label.text = "Free"
 		label.layer.cornerRadius = 5
 		label.layer.masksToBounds = true
-		label.backgroundColor = .systemGreen
+		label.backgroundColor = .systemGreen.withAlphaComponent(0.15)
 		
 		return label
 	}()
@@ -216,9 +216,9 @@ extension FlexibleNativeAdView {
 		storeStack.alignment = .center
 		storeStack.distribution = .fillEqually
 		storeStack.translatesAutoresizingMaskIntoConstraints = false
+		storeStack.addArrangedSubview(actionButton)
 		storeStack.addArrangedSubview(adStoreLabel)
 		storeStack.addArrangedSubview(adPriceLabel)
-		storeStack.addArrangedSubview(actionButton)
 		
 		let attributionStack = CustomStackView()
 		attributionStack.accessibilityIdentifier = "Attribution Stack"
@@ -245,7 +245,7 @@ extension FlexibleNativeAdView {
 		headerStack.accessibilityIdentifier = "Header Stack"
 		headerStack.axis = .horizontal
 		headerStack.spacing = 8
-		headerStack.alignment = .center
+		headerStack.alignment = .top
 		headerStack.distribution = .fill
 		headerStack.translatesAutoresizingMaskIntoConstraints = false
 		headerStack.addArrangedSubview(adIconImageView)
@@ -287,8 +287,8 @@ extension FlexibleNativeAdView {
 			bodyStack.trailingAnchor.constraint(equalTo: adContainerView.trailingAnchor, constant: -8),
 			bodyStack.bottomAnchor.constraint(equalTo: adContainerView.bottomAnchor, constant: -8),
 			
-			adIconImageView.widthAnchor.constraint(equalToConstant: 54),
-			adIconImageView.heightAnchor.constraint(equalToConstant: 54),
+			adIconImageView.widthAnchor.constraint(equalToConstant: 60),
+			adIconImageView.heightAnchor.constraint(equalToConstant: 60),
 			
 			headerStack.leadingAnchor.constraint(equalTo: bodyStack.leadingAnchor),
 			headerStack.trailingAnchor.constraint(equalTo: bodyStack.trailingAnchor),
@@ -296,9 +296,9 @@ extension FlexibleNativeAdView {
 			storeStack.leadingAnchor.constraint(equalTo: bodyStack.leadingAnchor),
 			storeStack.trailingAnchor.constraint(equalTo: bodyStack.trailingAnchor),
 
-			adStoreLabel.heightAnchor.constraint(equalToConstant: 38),
-			adPriceLabel.heightAnchor.constraint(equalToConstant: 38),
-			actionButton.heightAnchor.constraint(equalToConstant: 38),
+			adStoreLabel.heightAnchor.constraint(equalToConstant: 40),
+			adPriceLabel.heightAnchor.constraint(equalToConstant: 40),
+			actionButton.heightAnchor.constraint(equalToConstant: 40),
 			
 			adAttributionLabel.heightAnchor.constraint(equalToConstant: 22),
 			adRatingImageView.heightAnchor.constraint(equalToConstant: 22),
