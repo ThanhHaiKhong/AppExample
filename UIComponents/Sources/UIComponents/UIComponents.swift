@@ -12,3 +12,5 @@
 @_exported import SlidingRuler
 @_exported import FlipView
 @_exported import BlurView
+@_exported import AutoHidingStackView
+@_exported import PaddedLabel

@@ -9,13 +9,17 @@ let package = Package(
         .iOS(.v13)
     ],
     products: [
-        .library(
-            name: "UIModifiers",
-            targets: ["UIModifiers"]),
+		.singleTargetLibrary("UIModifiers"),
     ],
     targets: [
         .target(
-            name: "UIModifiers"),
-
+            name: "UIModifiers"
+		),
     ]
 )
+
+extension Product {
+	static func singleTargetLibrary(_ name: String) -> Product {
+		.library(name: name, targets: [name])
+	}
+}

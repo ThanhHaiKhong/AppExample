@@ -245,8 +245,8 @@ extension FlexibleNativeAdView {
 		headerStack.accessibilityIdentifier = "Header Stack"
 		headerStack.axis = .horizontal
 		headerStack.spacing = 8
-		headerStack.alignment = .top
-		headerStack.distribution = .fill
+		headerStack.alignment = .center
+		headerStack.distribution = .fillProportionally
 		headerStack.translatesAutoresizingMaskIntoConstraints = false
 		headerStack.addArrangedSubview(adIconImageView)
 		headerStack.addArrangedSubview(labelStack)
@@ -295,6 +295,8 @@ extension FlexibleNativeAdView {
 			
 			storeStack.leadingAnchor.constraint(equalTo: bodyStack.leadingAnchor),
 			storeStack.trailingAnchor.constraint(equalTo: bodyStack.trailingAnchor),
+			
+			labelStack.trailingAnchor.constraint(equalTo: headerStack.trailingAnchor),
 
 			adStoreLabel.heightAnchor.constraint(equalToConstant: 40),
 			adPriceLabel.heightAnchor.constraint(equalToConstant: 40),
@@ -413,6 +415,10 @@ extension FlexibleNativeAdView {
 			
 			if let nsString = data as? NSString {
 				return !nsString.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+			}
+			
+			if let number = data as? NSNumber {
+				return number.doubleValue > 0
 			}
 			
 			return true

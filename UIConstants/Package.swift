@@ -9,7 +9,7 @@ let package = Package(
         .iOS(.v13)
     ],
     products: [
-        .library(name: "UIConstants", targets: ["UIConstants"]),
+		.singleTargetLibrary("UIConstants"),
     ],
     targets: [
         .target(
@@ -17,3 +17,9 @@ let package = Package(
         ),
     ]
 )
+
+extension Product {
+	static func singleTargetLibrary(_ name: String) -> Product {
+		.library(name: name, targets: [name])
+	}
+}

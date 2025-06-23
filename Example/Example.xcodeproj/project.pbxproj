@@ -15,6 +15,8 @@
 		7F5399BA2CED72B1003141AC /* UIModifiers in Frameworks */ = {isa = PBXBuildFile; productRef = 7F5399B92CED72B1003141AC /* UIModifiers */; };
 		7F6167482DCC98DF00F20023 /* MusicWasmClient in Frameworks */ = {isa = PBXBuildFile; productRef = 7F6167472DCC98DF00F20023 /* MusicWasmClient */; };
 		7F61674A2DCC98DF00F20023 /* MusicWasmClientLive in Frameworks */ = {isa = PBXBuildFile; productRef = 7F6167492DCC98DF00F20023 /* MusicWasmClientLive */; };
+		7F6585572E0907BE006ADF1C /* UIKitPreviews in Frameworks */ = {isa = PBXBuildFile; productRef = 7F6585562E0907BE006ADF1C /* UIKitPreviews */; };
+		7F65855B2E093E9B006ADF1C /* UIComponents in Frameworks */ = {isa = PBXBuildFile; productRef = 7F65855A2E093E9B006ADF1C /* UIComponents */; };
 		7F6CB3372DFBDC4E003CB3A5 /* MCP in Frameworks */ = {isa = PBXBuildFile; productRef = 7F6CB3362DFBDC4E003CB3A5 /* MCP */; };
 		7F76A20F2D5C5BA8001C9C6A /* TCAInitializableReducer in Frameworks */ = {isa = PBXBuildFile; productRef = 7F76A20E2D5C5BA8001C9C6A /* TCAInitializableReducer */; };
 		7F79E4B22DD48D7A008EAA8D /* NowPlayingClient in Frameworks */ = {isa = PBXBuildFile; productRef = 7F79E4B12DD48D7A008EAA8D /* NowPlayingClient */; };
@@ -66,6 +68,7 @@
 		7F17AB302DCA3FEE00B2244E /* SQLiteExplorations.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SQLiteExplorations.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7F4079A22DBA19FC004FBE25 /* MediaPlayerPreview.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MediaPlayerPreview.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7F5FF2E52DB5EAA40087B9B4 /* IJKMediaFramework.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = IJKMediaFramework.xcframework; path = "../../../Downloads/IJKMediaPlayer-master/IJKMediaFramework/IJKMediaFramework.xcframework"; sourceTree = "<group>"; };
+		7F6583382E08F721006ADF1C /* UIDemoPreview.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = UIDemoPreview.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7FB7E7792CE71033004A300C /* Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7FB7E7962CE710F5004A300C /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		7FBA6F112D9B7C9600C096C8 /* StoreKitPreview.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StoreKitPreview.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -113,6 +116,17 @@
 			);
 			target = 7F4079A12DBA19FC004FBE25 /* MediaPlayerPreview */;
 		};
+		7F65835E2E08F927006ADF1C /* Exceptions for "Example" folder in "UIDemoPreview" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				"/Localized: Previews/UIDemoPreview/LaunchScreen.storyboard",
+				Previews/UIDemoPreview/AppDelegate.swift,
+				Previews/UIDemoPreview/Assets.xcassets,
+				Previews/UIDemoPreview/SceneDelegate.swift,
+				Previews/UIDemoPreview/UIDemoViewController.swift,
+			);
+			target = 7F6583372E08F721006ADF1C /* UIDemoPreview */;
+		};
 		7FBA6F292D9B7C9E00C096C8 /* Exceptions for "Example" folder in "StoreKitPreview" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -127,6 +141,7 @@
 		7FE06F6E2D51B9F20002164B /* Exceptions for "Example" folder in "Example" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				"/Localized: Previews/UIDemoPreview/LaunchScreen.storyboard",
 				Previews/MediaPlayerPreview/Apps/AppDelegate.swift,
 				Previews/MediaPlayerPreview/Apps/SceneDelegate.swift,
 				Previews/MediaPlayerPreview/Controllers/EqualizerViewController.swift,
@@ -161,6 +176,11 @@
 				Previews/StoreKitPreview/ProductConfig.swift,
 				Previews/StoreKitPreview/StoreView.swift,
 				Previews/StoreKitPreview/Subscriptions.swift,
+				Previews/UIDemoPreview/AppDelegate.swift,
+				Previews/UIDemoPreview/Assets.xcassets,
+				Previews/UIDemoPreview/Info.plist,
+				Previews/UIDemoPreview/SceneDelegate.swift,
+				Previews/UIDemoPreview/UIDemoViewController.swift,
 				"Supporting Files/Info.plist",
 			);
 			target = 7FB7E7782CE71033004A300C /* Example */;
@@ -175,6 +195,7 @@
 				7FBA6F292D9B7C9E00C096C8 /* Exceptions for "Example" folder in "StoreKitPreview" target */,
 				7F4079C72DBA1A0F004FBE25 /* Exceptions for "Example" folder in "MediaPlayerPreview" target */,
 				7F17AB422DCA3FF500B2244E /* Exceptions for "Example" folder in "SQLiteExplorations" target */,
+				7F65835E2E08F927006ADF1C /* Exceptions for "Example" folder in "UIDemoPreview" target */,
 			);
 			path = Example;
 			sourceTree = "<group>";
@@ -206,6 +227,15 @@
 				7F8C72BA2DC08284003561D5 /* MediaPlayerClient in Frameworks */,
 				7F6167482DCC98DF00F20023 /* MusicWasmClient in Frameworks */,
 				7F61674A2DCC98DF00F20023 /* MusicWasmClientLive in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7F6583352E08F721006ADF1C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7F65855B2E093E9B006ADF1C /* UIComponents in Frameworks */,
+				7F6585572E0907BE006ADF1C /* UIKitPreviews in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -269,6 +299,7 @@
 				7FBA6F112D9B7C9600C096C8 /* StoreKitPreview.app */,
 				7F4079A22DBA19FC004FBE25 /* MediaPlayerPreview.app */,
 				7F17AB302DCA3FEE00B2244E /* SQLiteExplorations.app */,
+				7F6583382E08F721006ADF1C /* UIDemoPreview.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -334,6 +365,27 @@
 			);
 			productName = MediaPlayerPreview;
 			productReference = 7F4079A22DBA19FC004FBE25 /* MediaPlayerPreview.app */;
+			productType = "com.apple.product-type.application";
+		};
+		7F6583372E08F721006ADF1C /* UIDemoPreview */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 7F65834A2E08F723006ADF1C /* Build configuration list for PBXNativeTarget "UIDemoPreview" */;
+			buildPhases = (
+				7F6583342E08F721006ADF1C /* Sources */,
+				7F6583352E08F721006ADF1C /* Frameworks */,
+				7F6583362E08F721006ADF1C /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = UIDemoPreview;
+			packageProductDependencies = (
+				7F6585562E0907BE006ADF1C /* UIKitPreviews */,
+				7F65855A2E093E9B006ADF1C /* UIComponents */,
+			);
+			productName = UIDemoPreview;
+			productReference = 7F6583382E08F721006ADF1C /* UIDemoPreview.app */;
 			productType = "com.apple.product-type.application";
 		};
 		7FB7E7782CE71033004A300C /* Example */ = {
@@ -411,7 +463,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 1630;
+				LastSwiftUpdateCheck = 1640;
 				LastUpgradeCheck = 1610;
 				TargetAttributes = {
 					7F17AB2F2DCA3FEE00B2244E = {
@@ -419,6 +471,9 @@
 					};
 					7F4079A12DBA19FC004FBE25 = {
 						CreatedOnToolsVersion = 16.3;
+					};
+					7F6583372E08F721006ADF1C = {
+						CreatedOnToolsVersion = 16.4;
 					};
 					7FB7E7782CE71033004A300C = {
 						CreatedOnToolsVersion = 16.1;
@@ -451,6 +506,7 @@
 				7FBA6F102D9B7C9600C096C8 /* StoreKitPreview */,
 				7F4079A12DBA19FC004FBE25 /* MediaPlayerPreview */,
 				7F17AB2F2DCA3FEE00B2244E /* SQLiteExplorations */,
+				7F6583372E08F721006ADF1C /* UIDemoPreview */,
 			);
 		};
 /* End PBXProject section */
@@ -464,6 +520,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		7F4079A02DBA19FC004FBE25 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7F6583362E08F721006ADF1C /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -495,6 +558,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		7F40799E2DBA19FC004FBE25 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7F6583342E08F721006ADF1C /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -625,6 +695,62 @@
 				);
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.zerooone.MusicPlayer;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		7F65834B2E08F723006ADF1C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 87T49LGKSG;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Example/Previews/UIDemoPreview/Info.plist;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.thanhhaikhong.UIDemoPreview;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		7F65834C2E08F723006ADF1C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 87T49LGKSG;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Example/Previews/UIDemoPreview/Info.plist;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.thanhhaikhong.UIDemoPreview;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -907,6 +1033,15 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		7F65834A2E08F723006ADF1C /* Build configuration list for PBXNativeTarget "UIDemoPreview" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7F65834B2E08F723006ADF1C /* Debug */,
+				7F65834C2E08F723006ADF1C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		7FB7E7742CE71033004A300C /* Build configuration list for PBXProject "Example" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -996,6 +1131,14 @@
 		7F6167492DCC98DF00F20023 /* MusicWasmClientLive */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = MusicWasmClientLive;
+		};
+		7F6585562E0907BE006ADF1C /* UIKitPreviews */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = UIKitPreviews;
+		};
+		7F65855A2E093E9B006ADF1C /* UIComponents */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = UIComponents;
 		};
 		7F6CB3362DFBDC4E003CB3A5 /* MCP */ = {
 			isa = XCSwiftPackageProductDependency;
