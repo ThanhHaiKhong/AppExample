@@ -6,6 +6,7 @@
 //
 
 import GoogleMobileAds
+import UIComponents
 import UIKit
 
 public class CustomNativeAdView: NativeAdView {
@@ -150,8 +151,8 @@ public class CustomNativeAdView: NativeAdView {
         return view
     }()
     
-    private lazy var headlineStack: CustomStackView = {
-        let stack = CustomStackView()
+    private lazy var headlineStack: AutoHidingStackView = {
+        let stack = AutoHidingStackView()
         stack.accessibilityIdentifier = "Headline Stack"
         stack.axis = .horizontal
         stack.spacing = 12
@@ -180,7 +181,7 @@ extension CustomNativeAdView {
         layer.cornerRadius = 5
         layer.masksToBounds = true
         
-        let storeStack = CustomStackView()
+        let storeStack = AutoHidingStackView()
         storeStack.accessibilityIdentifier = "Store Stack"
         storeStack.axis = .horizontal
         storeStack.spacing = 8
@@ -200,7 +201,7 @@ extension CustomNativeAdView {
         attributionStack.addArrangedSubview(adAttributionLabel)
         attributionStack.addArrangedSubview(adRatingImageView)
         
-        let labelStack = CustomStackView()
+        let labelStack = AutoHidingStackView()
         labelStack.accessibilityIdentifier = "Label Stack"
         labelStack.axis = .vertical
         labelStack.spacing = 8
@@ -215,7 +216,7 @@ extension CustomNativeAdView {
         headlineStack.addArrangedSubview(adIconImageView)
         headlineStack.addArrangedSubview(labelStack)
         
-        let bodyStack = CustomStackView()
+        let bodyStack = AutoHidingStackView()
         bodyStack.accessibilityIdentifier = "Body Stack"
         bodyStack.axis = .vertical
         bodyStack.spacing = defaultSpacing
@@ -376,15 +377,7 @@ extension CustomNativeAdView {
             }
         }, completion: { _ in
             validViews.forEach { view, isVisible in
-                if let stackView = view.superview as? CustomStackView {
-                    let viewName = view.accessibilityIdentifier ?? String(describing: type(of: view))
-					#if DEBUG
-                    print("- \(viewName) -> \(isVisible ? "Hiển thị ✅" : "Ẩn ❌") trong: \(stackView.accessibilityIdentifier ?? String(describing: type(of: stackView)))")
-                    #endif
-                    stackView.setVisibility(for: view, isVisible: isVisible)
-                } else {
-                    view.isHidden = !isVisible
-                }
+				view.isHidden = !isVisible
             }
         })
     }

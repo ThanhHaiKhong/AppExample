@@ -6,6 +6,7 @@
 //
 
 import GoogleMobileAds
+import UIComponents
 import UIKit
 
 public class FlexibleNativeAdView: NativeAdView {
@@ -151,8 +152,8 @@ public class FlexibleNativeAdView: NativeAdView {
 		return view
 	}()
 	
-	private lazy var headlineStack: CustomStackView = {
-		let stack = CustomStackView()
+	private lazy var headlineStack: AutoHidingStackView = {
+		let stack = AutoHidingStackView()
 		stack.accessibilityIdentifier = "Headline Stack"
 		stack.axis = .horizontal
 		stack.spacing = 12
@@ -209,7 +210,7 @@ extension FlexibleNativeAdView {
 		layer.cornerRadius = 5
 		layer.masksToBounds = true
 		
-		let storeStack = CustomStackView()
+		let storeStack = AutoHidingStackView()
 		storeStack.accessibilityIdentifier = "Store Stack"
 		storeStack.axis = .horizontal
 		storeStack.spacing = 8
@@ -220,7 +221,7 @@ extension FlexibleNativeAdView {
 		storeStack.addArrangedSubview(adStoreLabel)
 		storeStack.addArrangedSubview(adPriceLabel)
 		
-		let attributionStack = CustomStackView()
+		let attributionStack = AutoHidingStackView()
 		attributionStack.accessibilityIdentifier = "Attribution Stack"
 		attributionStack.axis = .horizontal
 		attributionStack.spacing = 8
@@ -230,7 +231,7 @@ extension FlexibleNativeAdView {
 		attributionStack.addArrangedSubview(adAttributionLabel)
 		attributionStack.addArrangedSubview(adSponsorLabel)
 		
-		let labelStack = CustomStackView()
+		let labelStack = AutoHidingStackView()
 		labelStack.accessibilityIdentifier = "Label Stack"
 		labelStack.axis = .vertical
 		labelStack.spacing = 4
@@ -251,7 +252,7 @@ extension FlexibleNativeAdView {
 		headerStack.addArrangedSubview(adIconImageView)
 		headerStack.addArrangedSubview(labelStack)
 		
-		let bodyStack = CustomStackView()
+		let bodyStack = AutoHidingStackView()
 		bodyStack.accessibilityIdentifier = "Body Stack"
 		bodyStack.axis = .vertical
 		bodyStack.spacing = 8
@@ -437,9 +438,6 @@ extension FlexibleNativeAdView {
 			UIView.animate(withDuration: 0.3) {
 				validViews.forEach { view, isVisible in
 					view.isHidden = !isVisible
-					if let stackView = view.superview as? CustomStackView {
-						stackView.setCustomSpacing(isVisible ? 8 : 0, after: view)
-					}
 				}
 			}
 		})
