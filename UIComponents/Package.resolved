@@ -1,5 +1,5 @@
 {
-  "originHash" : "245128bd3358a78ce683af0ef555cf8f22743120acf34fb361f7e6f21329e94e",
+  "originHash" : "e9e543a48598818ecfca68b2b94ce36d7636b328a74b04eb0bbbd17b35d3339d",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -137,6 +137,15 @@
       }
     },
     {
+      "identity" : "remoteconfigclient",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/ThanhHaiKhong/RemoteConfigClient.git",
+      "state" : {
+        "branch" : "master",
+        "revision" : "c7508137f4f7cb462e79480e2262c576bb22080d"
+      }
+    },
+    {
       "identity" : "smoothoperators",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Pyroh/SmoothOperators.git",
@@ -227,24 +236,6 @@
       }
     },
     {
-      "identity" : "swift-package-manager-google-mobile-ads",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/googleads/swift-package-manager-google-mobile-ads.git",
-      "state" : {
-        "branch" : "main",
-        "revision" : "356bebbc5b84c07a7b7cdd744b22829bf5ad4e76"
-      }
-    },
-    {
-      "identity" : "swift-package-manager-google-user-messaging-platform",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/googleads/swift-package-manager-google-user-messaging-platform.git",
-      "state" : {
-        "revision" : "708a282840c2171ee63bd93b87afa49fe507d70e",
-        "version" : "2.7.0"
-      }
-    },
-    {
       "identity" : "swift-perception",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pointfreeco/swift-perception",
@@ -281,21 +272,30 @@
       }
     },
     {
+      "identity" : "uiconstants",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/ThanhHaiKhong/UIConstants.git",
+      "state" : {
+        "branch" : "master",
+        "revision" : "9b58a980e026e0e8efaf199c845bef0506a71935"
+      }
+    },
+    {
+      "identity" : "uimodifiers",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/ThanhHaiKhong/UIModifiers.git",
+      "state" : {
+        "branch" : "master",
+        "revision" : "6140d18e6da67c3ecac84e7443ca6c8c365a6dc7"
+      }
+    },
+    {
       "identity" : "xctest-dynamic-overlay",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pointfreeco/xctest-dynamic-overlay",
       "state" : {
         "revision" : "39de59b2d47f7ef3ca88a039dff3084688fe27f4",
         "version" : "1.5.2"
-      }
-    },
-    {
-      "identity" : "zip",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/marmelroy/Zip.git",
-      "state" : {
-        "branch" : "master",
-        "revision" : "bca30f6d6c7d37cbc4aa8f6b0002e281dcc36195"
       }
     }
   ],

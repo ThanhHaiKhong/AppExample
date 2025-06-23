@@ -1,11 +1,10 @@
 //
 //  PaddedLabel.swift
-//  UIComponents
+//  MobileAdsClient
 //
 //  Created by Thanh Hai Khong on 23/6/25.
 //
 
-import Foundation
 import UIKit
 
 public class PaddedLabel: UILabel {

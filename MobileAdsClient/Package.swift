@@ -19,7 +19,6 @@ let package = Package(
         .package(url: "https://github.com/pointfreeco/swift-composable-architecture.git", branch: "main"),
         .package(url: "https://github.com/googleads/swift-package-manager-google-mobile-ads.git", branch: "main"),
         .package(url: "https://github.com/ThanhHaiKhong/TCAInitializableReducer.git", branch: "master"),
-		.package(url: "https://github.com/ThanhHaiKhong/UIComponents.git", branch: "master"),
     ],
     targets: [
         .target(
@@ -45,7 +44,6 @@ let package = Package(
                 .product(name: "GoogleMobileAds", package: "swift-package-manager-google-mobile-ads"),
 				.product(name: "TCAInitializableReducer", package: "TCAInitializableReducer"),
                 "NativeAdClient",
-				"UIComponents",
             ],
             resources: [
                 .process("Resources/stars_3_5.png"),

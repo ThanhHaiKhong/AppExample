@@ -14,9 +14,9 @@ public struct EditorChoiceCard: Sendable {
     @ObservableState
     public struct State: Identifiable, Equatable, Sendable {
         public let id: UUID = UUID()
-        public let item: EditorChoice
+		public let item: RemoteConfigClient.EditorChoice
         
-        public init(item: EditorChoice) {
+		public init(item: RemoteConfigClient.EditorChoice) {
             self.item = item
         }
     }

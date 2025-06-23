@@ -6,7 +6,7 @@ import PackageDescription
 let package = Package(
     name: "RemoteConfigClient",
     platforms: [
-        .iOS(.v15), .macOS(.v12), .tvOS(.v15), .watchOS(.v8), .visionOS(.v1)
+		.iOS(.v15), .macOS(.v10_15)
     ],
     products: [
         .singleTargetLibrary("RemoteConfigClient"),
@@ -28,12 +28,6 @@ let package = Package(
             dependencies: [
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
                 .product(name: "FirebaseRemoteConfig", package: "firebase-ios-sdk"),
-                "RemoteConfigClient"
-            ]
-        ),
-        .testTarget(
-            name: "RemoteConfigClientTests",
-            dependencies: [
                 "RemoteConfigClient"
             ]
         ),

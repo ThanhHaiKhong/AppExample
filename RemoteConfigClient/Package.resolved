@@ -1,5 +1,5 @@
 {
-  "originHash" : "f1f0b80ba13c08b0f26805de4bc9262fd0be7c702e1755605b7ff835b4328f1e",
+  "originHash" : "cb19cb793d59f49c9d12f7f551e199855e20ef3e0df547b35245ffd22a83a4f3",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -222,8 +222,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pointfreeco/swift-sharing",
       "state" : {
-        "revision" : "732871fabfc6b38fcdff5ad2f7336327dbf78e81",
-        "version" : "2.3.4"
+        "revision" : "75e846ee3159dc75b3a29bfc24b6ce5a557ddca9",
+        "version" : "2.5.2"
       }
     },
     {

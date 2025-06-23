@@ -6,7 +6,6 @@
 //
 
 import GoogleMobileAds
-import UIComponents
 import UIKit
 
 public class FlexibleNativeAdView: NativeAdView {

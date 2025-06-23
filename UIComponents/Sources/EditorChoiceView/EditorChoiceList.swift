@@ -22,7 +22,7 @@ public struct EditorChoiceList: Sendable {
     public enum Action: Equatable, Sendable {
         case onTask
         case editorChoiceCards(IdentifiedActionOf<EditorChoiceCard>)
-        case editorChoiceCardsResponse([EditorChoice])
+		case editorChoiceCardsResponse([RemoteConfigClient.EditorChoice])
     }
     
     @Dependency(\.remoteConfigClient) private var remoteConfigClient

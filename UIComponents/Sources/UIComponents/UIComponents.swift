@@ -6,7 +6,7 @@
 //
 
 @_exported import EditorChoiceView
-@_exported import ModalTransition
+//@_exported import ModalTransition
 @_exported import LoadingSpinner
 @_exported import SettingsView
 @_exported import SlidingRuler
