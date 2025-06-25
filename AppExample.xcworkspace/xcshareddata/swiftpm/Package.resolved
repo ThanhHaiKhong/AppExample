@@ -1,5 +1,5 @@
 {
-  "originHash" : "067fcf61e79c1f096d5d020d0ce5fc05c3dfd761a8160c23482740bf3e593497",
+  "originHash" : "d8aa2cb10a6547ebccca5afe888633365e61d65d38ca11b40b28897430d2d8f7",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -70,7 +70,7 @@
       "location" : "https://github.com/firebase/firebase-ios-sdk.git",
       "state" : {
         "branch" : "main",
-        "revision" : "5902b4087de393025cfda096091ad08743c3f3f2"
+        "revision" : "f67afddf8d53dad87d0399b6948c97a389f389ab"
       }
     },
     {
@@ -78,8 +78,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/googleads/google-ads-on-device-conversion-ios-sdk",
       "state" : {
-        "revision" : "70a7857886f065a40486a7607268781c49db04ae",
-        "version" : "2.0.0"
+        "revision" : "428d8bb138e00f9a3f4f61cc6cd8863607524f65",
+        "version" : "2.1.0"
       }
     },
     {
@@ -87,8 +87,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/google/GoogleAppMeasurement.git",
       "state" : {
-        "revision" : "406f72d0d5e9445fd1cf782db3e9e338cee2bed4",
-        "version" : "11.14.0"
+        "revision" : "45ce435e9406d3c674dd249a042b932bee006f60",
+        "version" : "11.15.0"
       }
     },
     {
@@ -151,7 +151,7 @@
       "location" : "https://github.com/onevcat/Kingfisher",
       "state" : {
         "branch" : "master",
-        "revision" : "a1704c5e75d563789b8f9f2f88cddee1c3ab4e49"
+        "revision" : "a9953d8c3d4bf59e13c6fa6e1eca15644b8af366"
       }
     },
     {
@@ -204,8 +204,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pointfreeco/swift-case-paths",
       "state" : {
-        "revision" : "41b89b8b68d8c56c622dbb7132258f1a3e638b25",
-        "version" : "1.7.0"
+        "revision" : "9810c8d6c2914de251e072312f01d3bf80071852",
+        "version" : "1.7.1"
       }
     },
     {
@@ -232,7 +232,7 @@
       "location" : "https://github.com/pointfreeco/swift-composable-architecture.git",
       "state" : {
         "branch" : "main",
-        "revision" : "510a776fb93ebfa62a9c05dfd29be5625492d58a"
+        "revision" : "8730c8f7336c9629485220f118501f82a48dbc07"
       }
     },
     {

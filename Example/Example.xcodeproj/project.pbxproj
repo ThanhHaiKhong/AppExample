@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		7F02B85A2DBB490E002A4F1F /* Hero in Frameworks */ = {isa = PBXBuildFile; productRef = 7F02B8592DBB490E002A4F1F /* Hero */; };
+		7F1CE1CA2E0A59A6003773AC /* MobileAdsClient in Frameworks */ = {isa = PBXBuildFile; productRef = 7F1CE1C92E0A59A6003773AC /* MobileAdsClient */; };
+		7F1CE1CC2E0A59A6003773AC /* MobileAdsClientLive in Frameworks */ = {isa = PBXBuildFile; productRef = 7F1CE1CB2E0A59A6003773AC /* MobileAdsClientLive */; };
+		7F1CE1CE2E0A59A6003773AC /* MobileAdsClientUI in Frameworks */ = {isa = PBXBuildFile; productRef = 7F1CE1CD2E0A59A6003773AC /* MobileAdsClientUI */; };
 		7F4079D22DBA1EA2004FBE25 /* MediaPlayerClientLive in Frameworks */ = {isa = PBXBuildFile; productRef = 7F4079D12DBA1EA2004FBE25 /* MediaPlayerClientLive */; };
 		7F4079DA2DBA21A7004FBE25 /* UIKitPreviews in Frameworks */ = {isa = PBXBuildFile; productRef = 7F4079D92DBA21A7004FBE25 /* UIKitPreviews */; };
 		7F4A24072D599FB40036D1C7 /* NotificationsClient in Frameworks */ = {isa = PBXBuildFile; productRef = 7F4A24062D599FB40036D1C7 /* NotificationsClient */; };
@@ -122,8 +125,11 @@
 				"/Localized: Previews/UIDemoPreview/LaunchScreen.storyboard",
 				Previews/UIDemoPreview/AppDelegate.swift,
 				Previews/UIDemoPreview/Assets.xcassets,
+				Previews/UIDemoPreview/DraftNativeAdView.swift,
+				Previews/UIDemoPreview/NativeAdViewController.swift,
 				Previews/UIDemoPreview/SceneDelegate.swift,
 				Previews/UIDemoPreview/UIDemoViewController.swift,
+				"Supporting Files/GoogleService-Info.plist",
 			);
 			target = 7F6583372E08F721006ADF1C /* UIDemoPreview */;
 		};
@@ -178,7 +184,9 @@
 				Previews/StoreKitPreview/Subscriptions.swift,
 				Previews/UIDemoPreview/AppDelegate.swift,
 				Previews/UIDemoPreview/Assets.xcassets,
+				Previews/UIDemoPreview/DraftNativeAdView.swift,
 				Previews/UIDemoPreview/Info.plist,
+				Previews/UIDemoPreview/NativeAdViewController.swift,
 				Previews/UIDemoPreview/SceneDelegate.swift,
 				Previews/UIDemoPreview/UIDemoViewController.swift,
 				"Supporting Files/Info.plist",
@@ -236,6 +244,9 @@
 			files = (
 				7F65855B2E093E9B006ADF1C /* UIComponents in Frameworks */,
 				7F6585572E0907BE006ADF1C /* UIKitPreviews in Frameworks */,
+				7F1CE1CC2E0A59A6003773AC /* MobileAdsClientLive in Frameworks */,
+				7F1CE1CA2E0A59A6003773AC /* MobileAdsClient in Frameworks */,
+				7F1CE1CE2E0A59A6003773AC /* MobileAdsClientUI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -383,6 +394,9 @@
 			packageProductDependencies = (
 				7F6585562E0907BE006ADF1C /* UIKitPreviews */,
 				7F65855A2E093E9B006ADF1C /* UIComponents */,
+				7F1CE1C92E0A59A6003773AC /* MobileAdsClient */,
+				7F1CE1CB2E0A59A6003773AC /* MobileAdsClientLive */,
+				7F1CE1CD2E0A59A6003773AC /* MobileAdsClientUI */,
 			);
 			productName = UIDemoPreview;
 			productReference = 7F6583382E08F721006ADF1C /* UIDemoPreview.app */;
@@ -1103,6 +1117,18 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 7FB3A8E62D830ACB00C66D26 /* XCRemoteSwiftPackageReference "Hero" */;
 			productName = Hero;
+		};
+		7F1CE1C92E0A59A6003773AC /* MobileAdsClient */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MobileAdsClient;
+		};
+		7F1CE1CB2E0A59A6003773AC /* MobileAdsClientLive */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MobileAdsClientLive;
+		};
+		7F1CE1CD2E0A59A6003773AC /* MobileAdsClientUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MobileAdsClientUI;
 		};
 		7F4079D12DBA1EA2004FBE25 /* MediaPlayerClientLive */ = {
 			isa = XCSwiftPackageProductDependency;

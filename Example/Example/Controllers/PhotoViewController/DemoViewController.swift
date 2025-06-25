@@ -170,8 +170,8 @@ class DemoViewController: UIViewController {
         return view
     }()
     
-    private lazy var storeStack: CustomStackView = {
-        let storeStack = CustomStackView(arrangedSubviews: [adStoreLabel, adPriceLabel])
+    private lazy var storeStack: AutoHidingStackView = {
+        let storeStack = AutoHidingStackView(arrangedSubviews: [adStoreLabel, adPriceLabel])
         storeStack.accessibilityIdentifier = "Store Stack"
         storeStack.axis = .horizontal
         storeStack.spacing = 12
@@ -183,8 +183,8 @@ class DemoViewController: UIViewController {
         return storeStack
     }()
     
-    private lazy var titleStack: CustomStackView = {
-        let stack = CustomStackView(arrangedSubviews: [adHeadlineLabel, adSponsorLabel, attributionStack, storeStack])
+    private lazy var titleStack: AutoHidingStackView = {
+        let stack = AutoHidingStackView(arrangedSubviews: [adHeadlineLabel, adSponsorLabel, attributionStack, storeStack])
         stack.accessibilityIdentifier = "Title Stack"
         stack.axis = .vertical
         stack.spacing = 8
@@ -196,8 +196,8 @@ class DemoViewController: UIViewController {
         return titleStack
     }()
     
-    private lazy var attributionStack: CustomStackView = {
-        let attributionStack = CustomStackView(arrangedSubviews: [adAttributionLabel, adRatingImageView])
+    private lazy var attributionStack: AutoHidingStackView = {
+        let attributionStack = AutoHidingStackView(arrangedSubviews: [adAttributionLabel, adRatingImageView])
         attributionStack.accessibilityIdentifier = "Attribution Stack"
         attributionStack.axis = .horizontal
         attributionStack.spacing = 12
@@ -210,7 +210,7 @@ class DemoViewController: UIViewController {
     }()
     
     private func setupUI() {
-        let headlineStack = CustomStackView(arrangedSubviews: [adIconImageView, titleStack])
+        let headlineStack = AutoHidingStackView(arrangedSubviews: [adIconImageView, titleStack])
         headlineStack.accessibilityIdentifier = "Headline Stack"
         headlineStack.axis = .horizontal
         headlineStack.spacing = 12

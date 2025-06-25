@@ -16,7 +16,7 @@ public struct PhotoList {
     @ObservableState
     public struct State: Equatable {
         public var photos: [PHAsset] = []
-        public var editorChoices: [EditorChoice] = []
+		public var editorChoices: [RemoteConfigClient.EditorChoice] = []
         public var isSelecting = false
         public var selectedItem: Item?
         public var currentCategory: PhotosClient.Category = .all
@@ -42,7 +42,7 @@ public struct PhotoList {
         case binding(BindingAction<State>)
         case onDidLoad
         case fetchedPhotos([PHAsset])
-        case fetchedEditorChoices([EditorChoice])
+		case fetchedEditorChoices([RemoteConfigClient.EditorChoice])
         case toggleSectionButtonTapped
         case premiumButtonTapped
         case toggleLayoutButtonTapped

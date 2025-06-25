@@ -50,6 +50,7 @@ let package = Package(
                 .process("Resources/stars_4.png"),
                 .process("Resources/stars_4_5.png"),
                 .process("Resources/stars_5.png"),
+				.process("Resources/placeholder_image.png"),
             ]
         ),
         .target(

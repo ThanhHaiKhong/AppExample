@@ -26,7 +26,7 @@ public class PhotoViewController: UIViewController {
     
     public enum Item: Hashable, Sendable {
         case photo(PHAsset)
-        case editorChoice(EditorChoice)
+		case editorChoice(RemoteConfigClient.EditorChoice)
     }
 
     @UIBindable private var store: StoreOf<PhotoList>
@@ -54,7 +54,7 @@ public class PhotoViewController: UIViewController {
         setupViews()
         setupConstraints()
         
-        let editorChoiceCellRegistration = UICollectionView.CellRegistration<EditorChoiceItemView, EditorChoice> { [weak self] cell, _, editorChoice in
+		let editorChoiceCellRegistration = UICollectionView.CellRegistration<EditorChoiceItemView, RemoteConfigClient.EditorChoice> { [weak self] cell, _, editorChoice in
             guard let `self` = self else {
                 return
             }
@@ -758,7 +758,7 @@ extension PhotoViewController {
         return section
     }
     
-    private func configureCell(_ cell: EditorChoiceItemView, with editorChoice: EditorChoice) {
+	private func configureCell(_ cell: EditorChoiceItemView, with editorChoice: RemoteConfigClient.EditorChoice) {
         DispatchQueue.main.async {
             print("🚦 CONFIGURE_EDITOR_CHOICE on Thread: \(DispatchQueue.currentLabel)")
             if let url = editorChoice.artworkURL {
