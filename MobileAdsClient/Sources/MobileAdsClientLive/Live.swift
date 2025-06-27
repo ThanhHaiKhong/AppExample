@@ -31,23 +31,3 @@ extension MobileAdsClient: DependencyKey {
         )
     }()
 }
-
-extension Array where Element == MobileAdsClient.AdRule {
-    public func allRulesSatisfied() async -> Bool {
-        await withTaskGroup(of: Bool.self) { group in
-            for rule in self {
-                group.addTask {
-                    await rule.evaluate()
-                }
-            }
-            
-            for await result in group {
-                if !result {
-                    group.cancelAll()
-                    return false
-                }
-            }
-            return true
-        }
-    }
-}

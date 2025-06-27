@@ -21,13 +21,15 @@ final internal class InterstitialAdManager: NSObject, @unchecked Sendable {
 
 extension InterstitialAdManager {
     public func shouldShowAd(_ adUnitID: String, rules: [MobileAdsClient.AdRule]) async -> Bool {
+		let isSatisfied = await rules.allRulesSatisfied()
+		
         if interstitials[adUnitID] == nil {
             do {
                 try await loadAd(adUnitID: adUnitID)
                 #if DEBUG
                 print("🍺 INTERSTITIAL ad loaded successfully")
                 #endif
-                return true
+                return isSatisfied
             } catch {
                 #if DEBUG
                 print("🌶️ Failed to loading INTERSTITIAL ad: \(error.localizedDescription)")
@@ -36,7 +38,7 @@ extension InterstitialAdManager {
             }
         }
         
-        return await rules.allRulesSatisfied()
+        return isSatisfied
     }
     
     @MainActor

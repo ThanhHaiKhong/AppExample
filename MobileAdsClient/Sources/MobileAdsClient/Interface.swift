@@ -31,16 +31,13 @@ extension Effect {
                 await escaped.yield {
                     do {
                         let adManager = DependencyValues._current.mobileAdsClient
-                        
-                        if try await adManager.isUserSubscribed() {
-                            try await operation(send)
-                        } else if try await adManager.shouldShowAd(adType, rules) {
-                            try await adManager.requestTrackingAuthorizationIfNeeded()
-                            try await adManager.showAd()
-                            try await operation(send)
-                        } else {
-                            try await operation(send)
-                        }
+						if try await adManager.shouldShowAd(adType, rules) {
+							try await adManager.requestTrackingAuthorizationIfNeeded()
+							try await adManager.showAd()
+							try await operation(send)
+						} else {
+							try await operation(send)
+						}
                     } catch is CancellationError {
                         return
                     } catch {

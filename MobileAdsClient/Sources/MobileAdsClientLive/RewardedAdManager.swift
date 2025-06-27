@@ -21,15 +21,16 @@ final internal class RewardedAdManager: NSObject, @unchecked Sendable {
 
 extension RewardedAdManager {
     public func shouldShowAd(_ adUnitID: String, rules: [MobileAdsClient.AdRule]) async -> Bool {
+		let isSatisfied = await rules.allRulesSatisfied()
         if rewardeds[adUnitID] == nil {
             do {
                 try await loadAd(adUnitID: adUnitID)
-                return true
+                return isSatisfied
             } catch {
                 return false
             }
         }
-        return await rules.allRulesSatisfied()
+        return isSatisfied
     }
     
     @MainActor

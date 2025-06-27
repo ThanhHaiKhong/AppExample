@@ -129,6 +129,7 @@
 				Previews/UIDemoPreview/NativeAdViewController.swift,
 				Previews/UIDemoPreview/SceneDelegate.swift,
 				Previews/UIDemoPreview/UIDemoViewController.swift,
+				Previews/UIDemoPreview/ViewController.swift,
 				"Supporting Files/GoogleService-Info.plist",
 			);
 			target = 7F6583372E08F721006ADF1C /* UIDemoPreview */;
@@ -189,6 +190,7 @@
 				Previews/UIDemoPreview/NativeAdViewController.swift,
 				Previews/UIDemoPreview/SceneDelegate.swift,
 				Previews/UIDemoPreview/UIDemoViewController.swift,
+				Previews/UIDemoPreview/ViewController.swift,
 				"Supporting Files/Info.plist",
 			);
 			target = 7FB7E7782CE71033004A300C /* Example */;

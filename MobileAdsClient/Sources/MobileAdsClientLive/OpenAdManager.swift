@@ -29,10 +29,12 @@ extension OpenAdManager {
                 #if DEBUG
                 print("🍺 APP_OPEN ad loaded successfully: \(isSatisfied)")
                 #endif
+				return isSatisfied
             } catch {
                 #if DEBUG
                 print("🌶️ Failed to loading APP_OPEN ad: \(error.localizedDescription)")
                 #endif
+				return false
             }
         }
         
