@@ -66,9 +66,9 @@ extension MusicWasmActor {
 		loadError
 	}
 	
-	func discover(category: MusicDiscoverCategory, continuation: String?) async throws -> MusicListTracks {
+	func discover(category: MusicDiscoverCategory, country: String?, continuation: String?) async throws -> MusicListTracks {
 		try await withEngine { engine in
-			try await engine.discover(category: category, continuation: continuation)
+			try await engine.discover(category: category, country: country, continuation: continuation)
 		}
 	}
 	
@@ -103,6 +103,12 @@ extension MusicWasmActor {
 			} else {
 				return MusicTranscript()
 			}
+		}
+	}
+	
+	func related(vid: String, continuation: String?) async throws -> MusicListTracks {
+		try await withEngine { engine in
+			try await engine.related(vid: vid, continuation: continuation)
 		}
 	}
 }

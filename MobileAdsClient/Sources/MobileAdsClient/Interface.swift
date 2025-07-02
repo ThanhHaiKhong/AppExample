@@ -8,9 +8,9 @@ import UIKit
 
 @DependencyClient
 public struct MobileAdsClient: Sendable {
-    public var requestTrackingAuthorizationIfNeeded: @Sendable () async throws -> Void
-    public var isUserSubscribed: @Sendable () async throws -> Bool
-	public var shouldShowAd: @Sendable (_ adType: MobileAdsClient.AdType, _ rules: [MobileAdsClient.AdRule]) async throws -> Bool
+    public var requestTrackingAuthorizationIfNeeded: @Sendable () async -> Void
+    public var isUserSubscribed: @Sendable () async -> Bool = { false }
+	public var shouldShowAd: @Sendable (_ adType: MobileAdsClient.AdType, _ rules: [MobileAdsClient.AdRule]) async -> Bool = { _, _ in false }
     public var showAd: @Sendable () async throws -> Void
 }
 

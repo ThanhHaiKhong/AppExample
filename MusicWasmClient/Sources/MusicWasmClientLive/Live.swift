@@ -34,11 +34,14 @@ extension MusicWasmClient: DependencyKey {
 			tracks: { pid, continuation in
 				try await actor.tracks(pid: pid, continuation: continuation)
 			},
-			discover: { category, continuation in
-				try await actor.discover(category: category, continuation: continuation)
+			discover: { category, country, continuation in
+				try await actor.discover(category: category, country: country, continuation: continuation)
 			},
 			transcript: { vid in
 				try await actor.transcript(vid: vid)
+			},
+			related: { vid, continuation in
+				try await actor.related(vid: vid, continuation: continuation)
 			},
 		)
 	}()

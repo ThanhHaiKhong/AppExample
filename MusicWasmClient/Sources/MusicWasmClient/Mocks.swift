@@ -45,12 +45,15 @@ extension MusicWasmClient: TestDependencyKey {
 		tracks: { _, _ in
 			MusicListTracks()
 		},
-		discover: { _, _ in
+		discover: { _, _, _ in
 			MusicListTracks()
 		},
 		transcript: { _ in
 			MusicTranscript()
 		},
+		related: { _, _ in
+			MusicListTracks()
+		}
 	)
 	
 	public static let previewValue = MusicWasmClient()

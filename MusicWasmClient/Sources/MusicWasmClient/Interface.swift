@@ -28,10 +28,13 @@ public struct MusicWasmClient: Sendable {
 	public var tracks: @Sendable(_ pid: String, _ continuation: String?) async throws -> MusicListTracks = { _, _ in
 		MusicListTracks()
 	}
-	public var discover: @Sendable(_ category: MusicDiscoverCategory, _ continuation: String?) async throws -> MusicListTracks = { _, _ in
+	public var discover: @Sendable(_ category: MusicDiscoverCategory, _ country: String?, _ continuation: String?) async throws -> MusicListTracks = { _, _, _ in
 		MusicListTracks()
 	}
 	public var transcript: @Sendable (_ vid: String) async throws -> MusicTranscript = { _ in
 		MusicTranscript()
+	}
+	public var related: @Sendable (_ vid: String, _ continuation: String?) async throws -> MusicListTracks = { _, _ in
+		MusicListTracks()
 	}
 }

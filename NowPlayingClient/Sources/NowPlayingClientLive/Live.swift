@@ -16,11 +16,8 @@ extension NowPlayingClient: DependencyKey {
 			initializeAudioSession: { category, mode, options in
 				try await actor.initializeAudioSession(category, mode, options)
 			},
-			setupRemoteCommands: { handlers in
-				await actor.setupRemoteCommands(handlers)
-			},
-			remoteCommandEvents: { enabledCommands in
-				await actor.remoteCommandEvents(enabledCommands)
+			registerRemoteCommandEvents: { enabledCommands in
+				await actor.registerRemoteCommandEvents(enabledCommands)
 			},
 			interruptionEvents: {
 				await actor.interruptionEvents()
@@ -30,9 +27,6 @@ extension NowPlayingClient: DependencyKey {
 			},
 			updateDynamicInfo: { info in
 				try await actor.updateDynamicInfo(info)
-			},
-			reset: {
-				await actor.reset()
 			}
 		)
 	}()

@@ -284,39 +284,43 @@ extension NativeAdvancedView {
 		
 		for view in viewsToAnimate {
 			UIView.transition(with: view, duration: 0.3, options: .transitionFlipFromLeft) {
-				switch view {
-				case self.iconImageView:
-					self.iconImageView.image = nativeAd.icon?.image
-					
-				case self.headlineLabel:
-					self.headlineLabel.text = nativeAd.headline?.capitalized
-					
-				case self.ratingImageView:
-					self.ratingImageView.image = self.imageOfStars(from: nativeAd.starRating)
-					
-				case self.sponsorLabel:
-					self.sponsorLabel.text = nativeAd.advertiser
-					
-				case self.storeLabel:
-					self.storeLabel.text = nativeAd.store?.uppercased()
-					
-				case self.priceLabel:
-					self.priceLabel.text = nativeAd.price?.uppercased()
-					
-				case self.bodyLabel:
-					self.bodyLabel.text = nativeAd.body?.capitalized
-					
-				case self.actionButton:
-					self.actionButton.setTitle(nativeAd.callToAction?.uppercased(), for: .normal)
-					
-				default:
-					break
+				DispatchQueue.main.async {
+					switch view {
+					case self.iconImageView:
+						self.iconImageView.image = nativeAd.icon?.image
+						
+					case self.headlineLabel:
+						self.headlineLabel.text = nativeAd.headline?.capitalized
+						
+					case self.ratingImageView:
+						self.ratingImageView.image = self.imageOfStars(from: nativeAd.starRating)
+						
+					case self.sponsorLabel:
+						self.sponsorLabel.text = nativeAd.advertiser
+						
+					case self.storeLabel:
+						self.storeLabel.text = nativeAd.store?.uppercased()
+						
+					case self.priceLabel:
+						self.priceLabel.text = nativeAd.price?.uppercased()
+						
+					case self.bodyLabel:
+						self.bodyLabel.text = nativeAd.body?.capitalized
+						
+					case self.actionButton:
+						self.actionButton.setTitle(nativeAd.callToAction?.uppercased(), for: .normal)
+						
+					default:
+						break
+					}
 				}
 			}
 		}
 		
 		UIView.transition(with: mediaContentView, duration: 0.3, options: [.curveEaseOut]) {
-			self.mediaContentView.mediaContent = nativeAd.mediaContent
+			DispatchQueue.main.async {
+				self.mediaContentView.mediaContent = nativeAd.mediaContent
+			}
 		}
 	}
 	

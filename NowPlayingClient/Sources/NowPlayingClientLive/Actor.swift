@@ -10,33 +10,33 @@ import AVKit
 
 actor NowPlayingActor {
 	
-	private let delegate = NowPlayingDelegate()
+	private let nowPlaying = NowPlayingCenter()
 	
 	func initializeAudioSession(_ category: AVAudioSession.Category, _ mode: AVAudioSession.Mode, _ options: AVAudioSession.CategoryOptions) async throws {
-		try await delegate.initializeAudioSession(category, mode, options)
+		try await nowPlaying.initializeAudioSession(category, mode, options)
 	}
 	
 	func setupRemoteCommands(_ handlers: NowPlayingClient.RemoteCommandHandlers) async {
-		await delegate.setupRemoteCommands(handlers)
+		await nowPlaying.setupRemoteCommands(handlers)
 	}
 
-	func remoteCommandEvents(_ enabledCommands: Set<NowPlayingClient.RemoteCommand>) -> AsyncStream<NowPlayingClient.RemoteCommandEvent> {
-		delegate.remoteCommandEvents(enabledCommands)
+	func registerRemoteCommandEvents(_ enabledCommands: Set<NowPlayingClient.RemoteCommand>) -> AsyncStream<NowPlayingClient.RemoteCommandEvent> {
+		nowPlaying.registerRemoteCommandEvents(enabledCommands)
 	}
 	
 	func interruptionEvents() -> AsyncStream<NowPlayingClient.InterruptionEvent> {
-		delegate.interruptionEvents()
+		nowPlaying.interruptionEvents()
 	}
 	
 	func updateStaticInfo(_ info: NowPlayingClient.StaticNowPlayingInfo) async throws {
-		try await delegate.updateStaticInfo(info)
+		try await nowPlaying.updateStaticInfo(info)
 	}
 	
 	func updateDynamicInfo(_ info: NowPlayingClient.DynamicNowPlayingInfo) async throws {
-		try await delegate.updateDynamicInfo(info)
+		try await nowPlaying.updateDynamicInfo(info)
 	}
 	
 	func reset() async {
-		await delegate.reset()
+		await nowPlaying.reset()
 	}
 }

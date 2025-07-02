@@ -34,6 +34,11 @@ extension UIImage.SymbolConfiguration {
         return config
     }()
 	
+	public static let tinySmallSymbol: UIImage.SymbolConfiguration = {
+		let config = UIImage.SymbolConfiguration(pointSize: 17, weight: .semibold, scale: .default)
+		return config
+	}()
+	
 	public static let tinySymbol: UIImage.SymbolConfiguration = {
 		let config = UIImage.SymbolConfiguration(pointSize: 15, weight: .semibold, scale: .default)
 		return config

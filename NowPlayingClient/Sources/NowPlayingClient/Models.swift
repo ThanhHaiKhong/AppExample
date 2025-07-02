@@ -20,10 +20,9 @@ extension NowPlayingClient {
 		public var artwork: UIImage?
 		public var duration: TimeInterval
 		public var mediaType: MPNowPlayingInfoMediaType
+		public var isLiveStream: Bool
 		
-		public static let empty = StaticNowPlayingInfo(
-			title: nil, artist: nil, album: nil, artwork: nil, duration: 0, mediaType: .audio
-		)
+		public static let none = StaticNowPlayingInfo(title: nil, artist: nil, album: nil, artwork: nil, duration: 0, mediaType: .audio, isLiveStream: false)
 		
 		public init(
 			title: String? = nil,
@@ -31,13 +30,15 @@ extension NowPlayingClient {
 			album: String? = nil,
 			artwork: UIImage? = nil,
 			duration: TimeInterval = 0,
-			mediaType: MPNowPlayingInfoMediaType = .audio) {
+			mediaType: MPNowPlayingInfoMediaType = .audio,
+			isLiveStream: Bool = false) {
 			self.title = title
 			self.artist = artist
 			self.album = album
 			self.artwork = artwork
 			self.duration = duration
 			self.mediaType = mediaType
+			self.isLiveStream = isLiveStream
 		}
 	}
 	
@@ -227,6 +228,48 @@ extension NowPlayingClient.RemoteCommand {
 			bookmarkCommand.isActive = isActive
 			bookmarkCommand.localizedTitle = title
 			return bookmarkCommand
+		}
+	}
+}
+
+extension NowPlayingClient {
+	
+	public struct AudioSession: Sendable {
+		public var category: AVAudioSession.Category
+		public var mode: AVAudioSession.Mode
+		public var options: AVAudioSession.CategoryOptions
+		
+		public init(
+			category: AVAudioSession.Category = .playback,
+			mode: AVAudioSession.Mode = .default,
+			options: AVAudioSession.CategoryOptions = []) {
+			self.category = category
+			self.mode = mode
+			self.options = options
+		}
+		
+		public static let `default` = AudioSession()
+		
+		public func configure() throws {
+			let session = AVAudioSession.sharedInstance()
+			try session.setCategory(category, mode: mode, options: options)
+			try session.setActive(true)
+		}
+	}
+}
+
+extension NowPlayingClient {
+	
+	public struct Configuration: Sendable {
+		public let audioSession: AudioSession
+		public let registedCommands: Set<NowPlayingClient.RemoteCommand>
+		
+		public init(
+			audioSession: AudioSession = .default,
+			registedCommands: Set<NowPlayingClient.RemoteCommand> = [.changePlaybackPosition, .previousTrack, .togglePlayPause, .nextTrack]
+		) {
+			self.audioSession = audioSession
+			self.registedCommands = registedCommands
 		}
 	}
 }
