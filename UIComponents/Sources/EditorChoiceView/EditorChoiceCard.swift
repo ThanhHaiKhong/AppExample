@@ -16,7 +16,7 @@ public struct EditorChoiceCard: Sendable {
         public let id: UUID = UUID()
 		public let item: RemoteConfigClient.EditorChoice
         
-		public init(item: RemoteConfigClient.EditorChoice) {
+        public init(item: RemoteConfigClient.EditorChoice) {
             self.item = item
         }
     }

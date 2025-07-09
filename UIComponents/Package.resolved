@@ -1,5 +1,5 @@
 {
-  "originHash" : "e9e543a48598818ecfca68b2b94ce36d7636b328a74b04eb0bbbd17b35d3339d",
+  "originHash" : "5ceedca5490f80e914798030eb47b929b741bd8d3e5dd996668451f2158f34c7",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -142,7 +142,7 @@
       "location" : "https://github.com/ThanhHaiKhong/RemoteConfigClient.git",
       "state" : {
         "branch" : "master",
-        "revision" : "c7508137f4f7cb462e79480e2262c576bb22080d"
+        "revision" : "02050e9f2264d4433422c418dac51f03c2f17380"
       }
     },
     {

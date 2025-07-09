@@ -2,10 +2,10 @@
 //  PaddedLabel.swift
 //  UIComponents
 //
-//  Created by Thanh Hai Khong on 23/6/25.
+//  Created by Thanh Hai Khong on 7/7/25.
 //
 
-import Foundation
+
 import UIKit
 
 public class PaddedLabel: UILabel {

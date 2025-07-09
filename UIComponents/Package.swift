@@ -6,7 +6,7 @@ import PackageDescription
 let package = Package(
     name: "UIComponents",
     platforms: [
-		.iOS(.v15)
+        .iOS(.v15)
     ],
     products: [
         .singleTargetLibrary("UIComponents"),
@@ -42,7 +42,7 @@ let package = Package(
                 "SettingsView",
                 "ModalTransition",
 				"AutoHidingStackView",
-				"PaddedLabel"
+				"PaddedLabel",
             ]
         ),
         .target(
@@ -68,10 +68,10 @@ let package = Package(
             name: "EditorChoiceView",
             dependencies: [
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
-				.product(name: "RemoteConfigClient", package: "RemoteConfigClient"),
                 "Kingfisher",
                 "UIConstants",
                 "UIModifiers",
+                "RemoteConfigClient"
             ]
         ),
         .target(

@@ -1,0 +1,119 @@
+//
+//  ContextMenu.swift
+//  ContextMenuBuilder
+//
+//  Created by Thanh Hai Khong on 6/7/25.
+//
+
+import UIKit
+
+public struct ContextMenu: Identifiable, Sendable {
+	public let id: String
+	public let source: AnyContextMenuBuildable
+	public let title: String
+	public let image: UIImage?
+	public let options: Options
+	public let sections: [Section]
+	public var handler: ((@Sendable (ContextMenu.Action, AnyContextMenuBuildable) -> Void))?
+	
+	public init(
+		id: String = UUID().uuidString,
+		source: AnyContextMenuBuildable,
+		title: String = "",
+		image: UIImage? = nil,
+		options: Options = [],
+		@MenuSectionBuilder _ builder: () -> [Section],
+		handler: (@Sendable (ContextMenu.Action, AnyContextMenuBuildable) -> Void)? = nil
+	) {
+		self.id = id
+		self.source = source
+		self.title = title
+		self.image = image
+		self.options = options
+		self.sections = builder()
+		self.handler = handler
+	}
+	
+	public init(
+		id: String = UUID().uuidString,
+		source: AnyContextMenuBuildable,
+		title: String = "",
+		image: UIImage? = nil,
+		options: Options = [],
+		sections: [Section],
+		handler: (@Sendable (ContextMenu.Action, AnyContextMenuBuildable) -> Void)? = nil
+	) {
+		self.id = id
+		self.source = source
+		self.title = title
+		self.image = image
+		self.options = options
+		self.sections = sections
+		self.handler = handler
+	}
+}
+
+// MARK: - Equatable
+
+extension ContextMenu: Equatable {
+	public static func == (lhs: ContextMenu, rhs: ContextMenu) -> Bool {
+		lhs.id == rhs.id &&
+		lhs.title == rhs.title &&
+		lhs.image == rhs.image &&
+		lhs.options == rhs.options &&
+		lhs.sections == rhs.sections
+	}
+}
+
+// MARK: - Supporting Methods
+
+extension ContextMenu {
+	@MainActor
+	func toUIMenu() -> UIMenu {
+		if sections.count == 1 {
+			let children = sections[0].toUIMenuElement(handler, from: source)
+			
+			if children is UIAction {
+				return UIMenu(
+					title: title,
+					image: image,
+					identifier: UIMenu.Identifier(id),
+					options: [options.toUIMenuOptions],
+					children: [children]
+				)
+			} else if children is UIMenu {
+				return children as! UIMenu
+			} else {
+				return UIMenu(
+					title: title,
+					image: image,
+					identifier: UIMenu.Identifier(id),
+					options: [options.toUIMenuOptions],
+					children: [children]
+				)
+			}
+		} else {
+			var mainChildren: [UIMenuElement] = []
+			
+			for section in sections {
+				let children = section.toUIMenuElement(handler, from: source)
+				let menu = UIMenu(
+					title: section.header,
+					image: section.image,
+					identifier: UIMenu.Identifier(section.id.rawValue),
+					options: [.displayInline],
+					children: [children]
+				)
+				mainChildren.append(menu)
+			}
+			
+			return UIMenu(
+				title: title,
+				image: image,
+				identifier: UIMenu.Identifier(id),
+				options: [options.toUIMenuOptions],
+				children: mainChildren
+			)
+		}
+	}
+}

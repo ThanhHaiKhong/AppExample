@@ -26,8 +26,6 @@ extension TimeInterval {
 		let minutes = (totalSeconds % 3600) / 60
 		let seconds = totalSeconds % 60
 		
-		// display --:-- if totalSeconds <= 0
-		
 		if totalSeconds <= 0 {
 			return "--:--"
 		}

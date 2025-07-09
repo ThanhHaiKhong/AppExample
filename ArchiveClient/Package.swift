@@ -6,7 +6,7 @@ import PackageDescription
 let package = Package(
     name: "ArchiveClient",
     platforms: [
-        .iOS(.v15), .macOS(.v12), .tvOS(.v15), .watchOS(.v8), .visionOS(.v1)
+        .iOS(.v15)
     ],
     products: [
         .singleTargetLibrary("ArchiveClient"),

@@ -2,7 +2,7 @@
 //  AutoHidingStackView.swift
 //  UIComponents
 //
-//  Created by Thanh Hai Khong on 23/6/25.
+//  Created by Thanh Hai Khong on 7/7/25.
 //
 
 import UIKit
@@ -20,21 +20,27 @@ public class AutoHidingStackView: UIStackView {
 		super.didMoveToSuperview()
 		
 		setupObservers()
-		updateVisibility()
+		DispatchQueue.main.async {
+			self.updateVisibility()
+		}
 	}
 	
 	public override func addArrangedSubview(_ view: UIView) {
 		super.addArrangedSubview(view)
 		
 		observe(view)
-		updateVisibility()
+		DispatchQueue.main.async {
+			self.updateVisibility()
+		}
 	}
 	
 	public override func removeArrangedSubview(_ view: UIView) {
 		super.removeArrangedSubview(view)
 		
 		removeObserver(for: view)
-		updateVisibility()
+		DispatchQueue.main.async {
+			self.updateVisibility()
+		}
 	}
 	
 	private func setupObservers() {
@@ -45,8 +51,9 @@ public class AutoHidingStackView: UIStackView {
 	@discardableResult
 	private func observe(_ view: UIView) -> ViewObservation {
 		let obs = view.observe(\.isHidden, options: [.initial, .new]) { [weak self] _, _ in
-			DispatchQueue.main.async {	
-				self?.updateVisibility()
+			guard let `self` = self else { return }
+			DispatchQueue.main.async {
+				self.updateVisibility()
 			}
 		}
 		let pair = ViewObservation(view: view, observation: obs)

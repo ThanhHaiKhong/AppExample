@@ -1,0 +1,15 @@
+{
+  "originHash" : "7cc3c7087ce2ae8b3b5e95da3145893ba43c1a4f9f940bb54c46e958db0237ef",
+  "pins" : [
+    {
+      "identity" : "uikitpreviews",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/ThanhHaiKhong/UIKitPreviews.git",
+      "state" : {
+        "branch" : "master",
+        "revision" : "a1d263f009a1bfba08df8f52a2211bdb25d85b13"
+      }
+    }
+  ],
+  "version" : 3
+}
