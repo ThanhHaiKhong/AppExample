@@ -2,6 +2,15 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:AuthenticationCore">
+   </FileRef>
+   <FileRef
+      location = "group:NetworkCore">
+   </FileRef>
+   <FileRef
+      location = "group:PremiumGatewayClient">
+   </FileRef>
+   <FileRef
       location = "group:ContextMenuBuilder">
    </FileRef>
    <FileRef
