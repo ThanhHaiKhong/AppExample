@@ -9,10 +9,10 @@ import Foundation
 
 extension ContextMenu {
 	public struct Configuration: Sendable {
-		public let menuBuilder: @Sendable ([ContextMenu.Section], (@Sendable (ContextMenu.Action, AnyContextMenuBuildable) -> Void)?) -> ContextMenu
+		public let menuBuilder: @Sendable ([ContextMenu.Action.Configuration], (@Sendable (ContextMenu.Action, AnyContextMenuBuildable) -> Void)?) async -> ContextMenu
 		
 		public init(
-			menuBuilder: @escaping @Sendable ([ContextMenu.Section], (@Sendable (ContextMenu.Action, AnyContextMenuBuildable) -> Void)?) -> ContextMenu
+			menuBuilder: @escaping @Sendable ([ContextMenu.Action.Configuration], (@Sendable (ContextMenu.Action, AnyContextMenuBuildable) -> Void)?) async -> ContextMenu
 		) {
 			self.menuBuilder = menuBuilder
 		}

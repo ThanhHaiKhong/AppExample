@@ -83,7 +83,7 @@ extension ContextMenu.Section {
 
 extension ContextMenu.Section {
 	public enum Item: Sendable, Equatable {
-		case action(ContextMenu.Action, ContextMenu.Action.Configuration)
+		case action(ContextMenu.Action)
 		case submenu(ContextMenu)
 	}
 }
@@ -119,7 +119,7 @@ extension ContextMenu.Section {
 	func toUIMenuElement(_ handler: ((ContextMenu.Action, AnyContextMenuBuildable) -> Void)?, from source: AnyContextMenuBuildable) -> UIMenuElement {
 		let elements = children.map {
 			switch $0 {
-			case let .action(action, _): return action.toUIMenuElement(handler, from: source) as UIMenuElement
+			case let .action(action): return action.toUIMenuElement(handler, from: source) as UIMenuElement
 			case .submenu(let submenu): return submenu.toUIMenu() as UIMenuElement
 			}
 		}
@@ -154,32 +154,32 @@ extension ContextMenu.Section {
 		id: .library,
 		options: [.displayInline]
 	) {
-		Item.action(.addToAPlaylist, .default)
-		Item.action(.addToLibrary, .default)
+		Item.action(.addToAPlaylist)
+		Item.action(.addToLibrary)
 	}
 	
 	public static let favorite = ContextMenu.Section(
 		id: .favorite,
 		options: [.displayInline]
 	) {
-		Item.action(.viewFullLyrics, .default)
-		Item.action(.favorite, .default)
+		Item.action(.viewFullLyrics)
+		Item.action(.favorite)
 	}
 	
 	public static let share = ContextMenu.Section(
 		id: .share,
 		options: [.displayInline]
 	) {
-		Item.action(.reportAConcern, .default)
-		Item.action(.share, .default)
+		Item.action(.reportAConcern)
+		Item.action(.share)
 	}
 	
 	public static let queue = ContextMenu.Section(
 		id: .queue,
 		options: [.displayInline]
 	) {
-		Item.action(.addToQueue, .default)
-		Item.action(.playNext, .default)
+		Item.action(.addToQueue)
+		Item.action(.playNext)
 	}
 	
 	public static let remove = ContextMenu.Section(
@@ -188,8 +188,8 @@ extension ContextMenu.Section {
 		image: UIImage(systemName: "xmark.bin"),
 		options: []
 	) {
-		Item.action(.removeFromAllPlaylists, .default)
-		Item.action(.deleteFromLibrary, .default)
+		Item.action(.removeFromAllPlaylists)
+		Item.action(.deleteFromLibrary)
 	}
 }
 

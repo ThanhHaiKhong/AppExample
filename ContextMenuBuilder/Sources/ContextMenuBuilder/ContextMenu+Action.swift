@@ -13,6 +13,7 @@ extension ContextMenu {
 		public let id: ID
 		public let title: String
 		public let image: UIImage?
+		public let kind: Kind
 		public var attributes: Attributes
 		public var state: State
 		public let deferredProvider: (@Sendable () async -> [Action])?
@@ -21,6 +22,7 @@ extension ContextMenu {
 			id: ID,
 			title: String = "",
 			image: UIImage? = nil,
+			kind: Kind = .default,
 			attributes: Attributes = [],
 			state: State = .off,
 			deferredProvider: (@Sendable () async -> [Action])? = nil
@@ -28,6 +30,7 @@ extension ContextMenu {
 			self.id = id
 			self.title = title
 			self.image = image
+			self.kind = kind
 			self.attributes = attributes
 			self.state = state
 			self.deferredProvider = deferredProvider
@@ -95,12 +98,12 @@ extension ContextMenu.Action {
 
 extension ContextMenu.Action {
 	public struct Configuration: Identifiable, Sendable, Equatable {
-		public let id: String
+		public let id: ID
 		public let attributesProvider: @Sendable () async -> ContextMenu.Action.Attributes
 		public let stateProvider: @Sendable () async -> ContextMenu.Action.State
 		
 		public init(
-			id: String = UUID().uuidString,
+			id: ID,
 			attributesProvider: @escaping @Sendable () async -> ContextMenu.Action.Attributes,
 			stateProvider: @escaping @Sendable () async -> ContextMenu.Action.State
 		) {
@@ -111,6 +114,20 @@ extension ContextMenu.Action {
 		
 		public static func == (lhs: Configuration, rhs: Configuration) -> Bool {
 			lhs.id == rhs.id
+		}
+	}
+}
+
+extension ContextMenu.Action {
+	public struct Kind: RawRepresentable, Sendable, Equatable {
+		public let rawValue: String
+		
+		public init(rawValue: String) {
+			self.rawValue = rawValue
+		}
+		
+		public init(_ type: String) {
+			self.rawValue = type
 		}
 	}
 }
@@ -146,6 +163,12 @@ extension ContextMenu.Action {
 				}
 			)
 		}
+	}
+	
+	@MainActor
+	public mutating func applying(configure: Configuration) async {
+		self.attributes = await configure.attributesProvider()
+		self.state = await configure.stateProvider()
 	}
 }
 
@@ -297,9 +320,6 @@ extension ContextMenu.Action.State {
 	}
 }
 
-extension ContextMenu.Action.Configuration {
-	public static let `default` = ContextMenu.Action.Configuration(
-		attributesProvider: { [] },
-		stateProvider: { .off }
-	)
+extension ContextMenu.Action.Kind {
+	public static let `default` = ContextMenu.Action.Kind(rawValue: "defaultAction")
 }
