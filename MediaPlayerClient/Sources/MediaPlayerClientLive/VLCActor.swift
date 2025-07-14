@@ -288,6 +288,9 @@ extension VLCPlayer: VLCMediaPlayerDelegate {
 		guard let player = aNotification.object as? VLCMediaPlayer else { return }
 		
 		switch player.state {
+		case .opening:
+			eventContinuation?.yield(.opening)
+			
 		case .playing:
 			eventContinuation?.yield(.didStartPlaying)
 			

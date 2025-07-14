@@ -51,6 +51,8 @@
 		7FC297892CFD94AC00674EEA /* UIComponents in Frameworks */ = {isa = PBXBuildFile; productRef = 7FC297882CFD94AC00674EEA /* UIComponents */; };
 		7FDD6FCF2D6FF67D00082A78 /* NotificationsClientUI in Frameworks */ = {isa = PBXBuildFile; productRef = 7FDD6FCE2D6FF67D00082A78 /* NotificationsClientUI */; };
 		7FE06F742D51CAC60002164B /* TCAFeatureAction in Frameworks */ = {isa = PBXBuildFile; productRef = 7FE06F732D51CAC60002164B /* TCAFeatureAction */; };
+		7FE434902E1FB05400EDF17A /* NetworkCore in Frameworks */ = {isa = PBXBuildFile; productRef = 7FE4348F2E1FB05400EDF17A /* NetworkCore */; };
+		7FE434922E1FB0E300EDF17A /* AuthenticationCore in Frameworks */ = {isa = PBXBuildFile; productRef = 7FE434912E1FB0E300EDF17A /* AuthenticationCore */; };
 		7FEB9FCD2DB8800A00CE85BB /* MediaPlayerClientLive in Frameworks */ = {isa = PBXBuildFile; productRef = 7FEB9FCC2DB8800A00CE85BB /* MediaPlayerClientLive */; };
 /* End PBXBuildFile section */
 
@@ -69,6 +71,7 @@
 
 /* Begin PBXFileReference section */
 		7F17AB302DCA3FEE00B2244E /* SQLiteExplorations.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SQLiteExplorations.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		7F1E19F32E1FAE4300391585 /* NetworkPreview.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NetworkPreview.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7F4079A22DBA19FC004FBE25 /* MediaPlayerPreview.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MediaPlayerPreview.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7F5FF2E52DB5EAA40087B9B4 /* IJKMediaFramework.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = IJKMediaFramework.xcframework; path = "../../../Downloads/IJKMediaPlayer-master/IJKMediaFramework/IJKMediaFramework.xcframework"; sourceTree = "<group>"; };
 		7F6583382E08F721006ADF1C /* UIDemoPreview.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = UIDemoPreview.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -86,6 +89,15 @@
 				Previews/SQLiteExplorations/SQLiteExplorationsApp.swift,
 			);
 			target = 7F17AB2F2DCA3FEE00B2244E /* SQLiteExplorations */;
+		};
+		7F1E1A052E1FAE4C00391585 /* Exceptions for "Example" folder in "NetworkPreview" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Previews/NetworkPreview/Assets.xcassets,
+				Previews/NetworkPreview/ContentView.swift,
+				Previews/NetworkPreview/NetworkPreviewApp.swift,
+			);
+			target = 7F1E19F22E1FAE4300391585 /* NetworkPreview */;
 		};
 		7F4079C72DBA1A0F004FBE25 /* Exceptions for "Example" folder in "MediaPlayerPreview" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
@@ -175,6 +187,9 @@
 				Previews/MediaPlayerPreview/Views/TrackCell.swift,
 				Previews/MediaPlayerPreview/Views/UpnextView.swift,
 				Previews/MediaPlayerPreview/Views/VerticalSlider.swift,
+				Previews/NetworkPreview/Assets.xcassets,
+				Previews/NetworkPreview/ContentView.swift,
+				Previews/NetworkPreview/NetworkPreviewApp.swift,
 				Previews/SQLiteExplorations/Assets.xcassets,
 				Previews/SQLiteExplorations/ContentView.swift,
 				Previews/SQLiteExplorations/SQLiteExplorationsApp.swift,
@@ -206,6 +221,7 @@
 				7F4079C72DBA1A0F004FBE25 /* Exceptions for "Example" folder in "MediaPlayerPreview" target */,
 				7F17AB422DCA3FF500B2244E /* Exceptions for "Example" folder in "SQLiteExplorations" target */,
 				7F65835E2E08F927006ADF1C /* Exceptions for "Example" folder in "UIDemoPreview" target */,
+				7F1E1A052E1FAE4C00391585 /* Exceptions for "Example" folder in "NetworkPreview" target */,
 			);
 			path = Example;
 			sourceTree = "<group>";
@@ -217,6 +233,15 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7F1E19F02E1FAE4300391585 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7FE434902E1FB05400EDF17A /* NetworkCore in Frameworks */,
+				7FE434922E1FB0E300EDF17A /* AuthenticationCore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -313,6 +338,7 @@
 				7F4079A22DBA19FC004FBE25 /* MediaPlayerPreview.app */,
 				7F17AB302DCA3FEE00B2244E /* SQLiteExplorations.app */,
 				7F6583382E08F721006ADF1C /* UIDemoPreview.app */,
+				7F1E19F32E1FAE4300391585 /* NetworkPreview.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -346,6 +372,27 @@
 			);
 			productName = SQLiteExplorations;
 			productReference = 7F17AB302DCA3FEE00B2244E /* SQLiteExplorations.app */;
+			productType = "com.apple.product-type.application";
+		};
+		7F1E19F22E1FAE4300391585 /* NetworkPreview */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 7F1E19FD2E1FAE4500391585 /* Build configuration list for PBXNativeTarget "NetworkPreview" */;
+			buildPhases = (
+				7F1E19EF2E1FAE4300391585 /* Sources */,
+				7F1E19F02E1FAE4300391585 /* Frameworks */,
+				7F1E19F12E1FAE4300391585 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = NetworkPreview;
+			packageProductDependencies = (
+				7FE4348F2E1FB05400EDF17A /* NetworkCore */,
+				7FE434912E1FB0E300EDF17A /* AuthenticationCore */,
+			);
+			productName = NetworkPreview;
+			productReference = 7F1E19F32E1FAE4300391585 /* NetworkPreview.app */;
 			productType = "com.apple.product-type.application";
 		};
 		7F4079A12DBA19FC004FBE25 /* MediaPlayerPreview */ = {
@@ -485,6 +532,9 @@
 					7F17AB2F2DCA3FEE00B2244E = {
 						CreatedOnToolsVersion = 16.3;
 					};
+					7F1E19F22E1FAE4300391585 = {
+						CreatedOnToolsVersion = 16.4;
+					};
 					7F4079A12DBA19FC004FBE25 = {
 						CreatedOnToolsVersion = 16.3;
 					};
@@ -523,12 +573,20 @@
 				7F4079A12DBA19FC004FBE25 /* MediaPlayerPreview */,
 				7F17AB2F2DCA3FEE00B2244E /* SQLiteExplorations */,
 				7F6583372E08F721006ADF1C /* UIDemoPreview */,
+				7F1E19F22E1FAE4300391585 /* NetworkPreview */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		7F17AB2E2DCA3FEE00B2244E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7F1E19F12E1FAE4300391585 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -567,6 +625,13 @@
 
 /* Begin PBXSourcesBuildPhase section */
 		7F17AB2C2DCA3FEE00B2244E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7F1E19EF2E1FAE4300391585 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -655,6 +720,64 @@
 				);
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.thanhhaikhong.SQLiteExplorations;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		7F1E19FB2E1FAE4500391585 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = C77T3ALUS5;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.thanhhaikhong.NetworkPreview;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		7F1E19FC2E1FAE4500391585 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = C77T3ALUS5;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.thanhhaikhong.NetworkPreview;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -1040,6 +1163,15 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		7F1E19FD2E1FAE4500391585 /* Build configuration list for PBXNativeTarget "NetworkPreview" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7F1E19FB2E1FAE4500391585 /* Debug */,
+				7F1E19FC2E1FAE4500391585 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		7F4079B42DBA19FE004FBE25 /* Build configuration list for PBXNativeTarget "MediaPlayerPreview" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -1290,6 +1422,14 @@
 		7FE06F732D51CAC60002164B /* TCAFeatureAction */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = TCAFeatureAction;
+		};
+		7FE4348F2E1FB05400EDF17A /* NetworkCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = NetworkCore;
+		};
+		7FE434912E1FB0E300EDF17A /* AuthenticationCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = AuthenticationCore;
 		};
 		7FEB9FCC2DB8800A00CE85BB /* MediaPlayerClientLive */ = {
 			isa = XCSwiftPackageProductDependency;

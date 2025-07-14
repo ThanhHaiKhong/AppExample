@@ -8,11 +8,15 @@
 @preconcurrency import FirebaseAuth
 
 @MainActor
-final class FirebaseTokenProvider: TokenProvider {
+public final class FirebaseTokenProvider: TokenProvider {
 	private var currentToken: String?
 	private var expiryDate: Date?
 	
-	func getToken() async throws -> String {
+	public init() {
+		
+	}
+	
+	public func getToken() async throws -> String {
 		if let token = currentToken, let expiry = expiryDate, Date() < expiry {
 			return token
 		}
@@ -25,7 +29,7 @@ final class FirebaseTokenProvider: TokenProvider {
 		return token
 	}
 	
-	func refreshToken() async throws -> String {
+	public func refreshToken() async throws -> String {
 		guard let user = Auth.auth().currentUser else {
 			throw NSError(domain: "Firebase", code: -1, userInfo: [NSLocalizedDescriptionKey: "User not signed in"])
 		}

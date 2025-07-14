@@ -42,6 +42,7 @@ extension MediaPlayerClient {
     public enum PlaybackEvent: Equatable, Sendable {
 		case idle
         case readyToPlay
+		case opening
         case didStartPlaying
         case didPause
         case didStop
@@ -54,6 +55,7 @@ extension MediaPlayerClient {
             switch (lhs, rhs) {
             case (.idle, .idle),
 				 (.readyToPlay, .readyToPlay),
+				 (.opening, .opening),
                  (.didStartPlaying, .didStartPlaying),
                  (.didPause, .didPause),
                  (.didStop, .didStop),
@@ -68,6 +70,31 @@ extension MediaPlayerClient {
                 return false
             }
         }
+		
+		public var description: String {
+			switch self {
+			case .idle:
+				return "Idle"
+			case .readyToPlay:
+				return "Ready to Play"
+			case .opening:
+				return "Opening"
+			case .didStartPlaying:
+				return "Did Start Playing"
+			case .didPause:
+				return "Did Pause"
+			case .didStop:
+				return "Did Stop"
+			case .didFinish:
+				return "Did Finish"
+			case .didToEnd:
+				return "Did To End"
+			case .buffering(let isBuffering):
+				return isBuffering ? "Buffering" : "Not buffering"
+			case .error(let error):
+				return "Error: \(error.localizedDescription)"
+			}
+		}
     }
     
     public enum PlayerError: Error, Equatable, Sendable {

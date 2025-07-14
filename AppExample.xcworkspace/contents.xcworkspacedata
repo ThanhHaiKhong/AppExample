@@ -2,13 +2,16 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:NetworkClient">
+   </FileRef>
+   <FileRef
       location = "group:AuthenticationCore">
    </FileRef>
    <FileRef
-      location = "group:NetworkCore">
+      location = "group:PremiumGatewayClient">
    </FileRef>
    <FileRef
-      location = "group:PremiumGatewayClient">
+      location = "group:NotificationClient">
    </FileRef>
    <FileRef
       location = "group:ContextMenuBuilder">
@@ -66,9 +69,6 @@
    </FileRef>
    <FileRef
       location = "group:MobileAdsClient">
-   </FileRef>
-   <FileRef
-      location = "group:NotificationsClient">
    </FileRef>
    <FileRef
       location = "group:UIModifiers">

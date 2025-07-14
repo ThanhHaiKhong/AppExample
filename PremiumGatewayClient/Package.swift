@@ -14,22 +14,22 @@ let package = Package(
     ],
 	dependencies: [
 		.package(url: "https://github.com/pointfreeco/swift-composable-architecture.git", branch: "main"),
-		.package(url: "https://github.com/ThanhHaiKhong/NetworkCore.git", branch: "master"),
+		.package(url: "https://github.com/ThanhHaiKhong/NetworkClient.git", branch: "master"),
 	],
     targets: [
         .target(
             name: "PremiumGatewayClient",
 			dependencies: [
 				.product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
-				"NetworkCore",
+				.product(name: "NetworkClient", package: "NetworkClient"),
 			]
 		),
 		.target(
 			name: "PremiumGatewayClientLive",
 			dependencies: [
 				.product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
+				.product(name: "NetworkClientLive", package: "NetworkClient"),
 				"PremiumGatewayClient",
-				"NetworkCore",
 			]
 		),
     ]
