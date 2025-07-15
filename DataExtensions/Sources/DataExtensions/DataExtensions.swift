@@ -37,3 +37,14 @@ extension TimeInterval {
 		}
 	}
 }
+
+extension Date {
+	public func formattedLocalTime(style: DateFormatter.Style = .medium) -> String {
+		let formatter = DateFormatter()
+		formatter.dateStyle = style
+		formatter.timeStyle = style
+		formatter.locale = Locale.current
+		formatter.timeZone = TimeZone.current
+		return formatter.string(from: self)
+	}
+}

@@ -51,7 +51,6 @@
 		7FC297892CFD94AC00674EEA /* UIComponents in Frameworks */ = {isa = PBXBuildFile; productRef = 7FC297882CFD94AC00674EEA /* UIComponents */; };
 		7FDD6FCF2D6FF67D00082A78 /* NotificationsClientUI in Frameworks */ = {isa = PBXBuildFile; productRef = 7FDD6FCE2D6FF67D00082A78 /* NotificationsClientUI */; };
 		7FE06F742D51CAC60002164B /* TCAFeatureAction in Frameworks */ = {isa = PBXBuildFile; productRef = 7FE06F732D51CAC60002164B /* TCAFeatureAction */; };
-		7FE434902E1FB05400EDF17A /* NetworkCore in Frameworks */ = {isa = PBXBuildFile; productRef = 7FE4348F2E1FB05400EDF17A /* NetworkCore */; };
 		7FE434922E1FB0E300EDF17A /* AuthenticationCore in Frameworks */ = {isa = PBXBuildFile; productRef = 7FE434912E1FB0E300EDF17A /* AuthenticationCore */; };
 		7FEB9FCD2DB8800A00CE85BB /* MediaPlayerClientLive in Frameworks */ = {isa = PBXBuildFile; productRef = 7FEB9FCC2DB8800A00CE85BB /* MediaPlayerClientLive */; };
 /* End PBXBuildFile section */
@@ -240,7 +239,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7FE434902E1FB05400EDF17A /* NetworkCore in Frameworks */,
 				7FE434922E1FB0E300EDF17A /* AuthenticationCore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -388,7 +386,6 @@
 			);
 			name = NetworkPreview;
 			packageProductDependencies = (
-				7FE4348F2E1FB05400EDF17A /* NetworkCore */,
 				7FE434912E1FB0E300EDF17A /* AuthenticationCore */,
 			);
 			productName = NetworkPreview;
@@ -1422,10 +1419,6 @@
 		7FE06F732D51CAC60002164B /* TCAFeatureAction */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = TCAFeatureAction;
-		};
-		7FE4348F2E1FB05400EDF17A /* NetworkCore */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = NetworkCore;
 		};
 		7FE434912E1FB0E300EDF17A /* AuthenticationCore */ = {
 			isa = XCSwiftPackageProductDependency;

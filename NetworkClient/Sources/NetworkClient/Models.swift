@@ -328,3 +328,21 @@ extension NetworkClient {
 		case unknown(Swift.Error)
 	}
 }
+
+extension NetworkClient.Error: CustomStringConvertible {
+	public var description: String {
+		switch self {
+		case .invalidResponse:
+			return "Invalid response from server."
+		case .serverError(let statusCode, let data):
+			let dataDescription = data.map { String(data: $0, encoding: .utf8) ?? "No data" } ?? "No data"
+			return "Server error with status code \(statusCode): \(dataDescription)"
+		case .decodingError(let error):
+			return "Decoding error: \(error.localizedDescription)"
+		case .authenticationError(let error):
+			return "Authentication error: \(error.localizedDescription)"
+		case .unknown(let error):
+			return "Unknown error: \(error.localizedDescription)"
+		}
+	}
+}
