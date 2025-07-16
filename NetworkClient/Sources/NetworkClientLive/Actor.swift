@@ -26,10 +26,19 @@ public actor NetworkActor {
 private final class APIClient: @unchecked Sendable {
 	
 	private let session: URLSession = .shared
+	private var authResponse: NetworkClient.AuthResponse?
 	
 	public init() {}
 	
 	public func authenticate(_ authRequest: NetworkClient.AuthRequest) async throws -> NetworkClient.AuthResponse {
+		if let existingResponse = authResponse {
+			if existingResponse.isValid {
+				return existingResponse
+			} else {
+				authResponse = nil
+			}
+		}
+		
 		let urlRequest = authRequest.request.urlRequest
 		let (data, response) = try await session.data(for: urlRequest)
 		
@@ -42,7 +51,9 @@ private final class APIClient: @unchecked Sendable {
 		}
 		
 		do {
-			return try JSONDecoder().decode(NetworkClient.AuthResponse.self, from: data)
+			let response = try JSONDecoder().decode(NetworkClient.AuthResponse.self, from: data)
+			self.authResponse = response
+			return response
 		} catch {
 			throw NetworkClient.Error.decodingError(error)
 		}

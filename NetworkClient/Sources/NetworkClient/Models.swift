@@ -304,6 +304,11 @@ extension NetworkClient.AuthResponse {
 				throw DecodingError.dataCorruptedError(forKey: .expiry, in: container, debugDescription: "Invalid expiry format")
 			}
 		}
+		
+		public func isValid() -> Bool {
+			let now = Date()
+			return now >= createdDate && now <= expiryDate
+		}
 	}
 }
 
