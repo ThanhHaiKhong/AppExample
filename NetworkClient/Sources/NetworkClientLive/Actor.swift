@@ -32,7 +32,7 @@ private final class APIClient: @unchecked Sendable {
 	
 	public func authenticate(_ authRequest: NetworkClient.AuthRequest) async throws -> NetworkClient.AuthResponse {
 		if let existingResponse = authResponse {
-			if existingResponse.isValid {
+			if existingResponse.token.isValid {
 				return existingResponse
 			} else {
 				authResponse = nil
