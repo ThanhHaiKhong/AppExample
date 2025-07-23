@@ -2,31 +2,31 @@
 // https://docs.swift.org/swift-book
 
 import Foundation
-import UIKitPreviews
 import UIKit
-import SwiftUI
+
+public typealias ContextualMenuHandler = @Sendable (ContextualMenu.Action, AnyContextMenuBuildable) -> Void
 
 public protocol ContextMenuBuildable: Sendable {
-	var sections: [ContextMenu.Section] { get }
-	func makeConfiguration() async -> ContextMenu.Configuration
-	func makeContextMenu(configurations: [ContextMenu.Action.Configuration], handler: ((@Sendable (ContextMenu.Action, AnyContextMenuBuildable) -> Void))?) async -> ContextMenu
+	var sections: [ContextualMenu.Section] { get }
+	func makeConfiguration() async -> ContextualMenu.Configuration
+	func makeContextMenu(configurations: [ContextualMenu.Action.Configuration], handler: ((@Sendable (ContextualMenu.Action, AnyContextMenuBuildable) -> Void))?) async -> ContextualMenu
 }
 
 public struct AnyContextMenuBuildable: ContextMenuBuildable {
-	private let _configuration: @Sendable () async -> ContextMenu.Configuration
-	private let _makeMenu: @Sendable ([ContextMenu.Action.Configuration], (@Sendable (ContextMenu.Action, AnyContextMenuBuildable) -> Void)?) async -> ContextMenu
+	private let _configuration: @Sendable () async -> ContextualMenu.Configuration
+	private let _makeMenu: @Sendable ([ContextualMenu.Action.Configuration], (@Sendable (ContextualMenu.Action, AnyContextMenuBuildable) -> Void)?) async -> ContextualMenu
 	
 	public let base: any ContextMenuBuildable
 	
-	public var sections: [ContextMenu.Section] {
+	public var sections: [ContextualMenu.Section] {
 		base.sections
 	}
 	
-	public func makeConfiguration() async -> ContextMenu.Configuration {
+	public func makeConfiguration() async -> ContextualMenu.Configuration {
 		await _configuration()
 	}
 	
-	public func makeContextMenu(configurations: [ContextMenu.Action.Configuration], handler: (@Sendable (ContextMenu.Action, AnyContextMenuBuildable) -> Void)?) async -> ContextMenu {
+	public func makeContextMenu(configurations: [ContextualMenu.Action.Configuration], handler: (@Sendable (ContextualMenu.Action, AnyContextMenuBuildable) -> Void)?) async -> ContextualMenu {
 		await _makeMenu(configurations, handler)
 	}
 	

@@ -12,13 +12,13 @@ let package = Package(
 		.singleTargetLibrary(name: "ContextMenuBuilder"),
     ],
 	dependencies: [
-		.package(url: "https://github.com/ThanhHaiKhong/UIKitPreviews.git", branch: "master"),
+
 	],
     targets: [
         .target(
             name: "ContextMenuBuilder",
 			dependencies: [
-				"UIKitPreviews"
+				
 			],
 		),
     ]

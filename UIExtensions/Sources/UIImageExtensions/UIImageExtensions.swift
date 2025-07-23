@@ -99,3 +99,13 @@ extension UIImage {
 		}
 	}
 }
+
+extension UIImage {
+	public func resize(to size: CGSize) -> UIImage {
+		UIGraphicsBeginImageContextWithOptions(size, false, scale)
+		draw(in: CGRect(origin: .zero, size: size))
+		let result = UIGraphicsGetImageFromCurrentImageContext()
+		UIGraphicsEndImageContext()
+		return result ?? self
+	}
+}
