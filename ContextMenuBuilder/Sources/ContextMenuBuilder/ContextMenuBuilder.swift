@@ -30,7 +30,9 @@ public struct AnyContextMenuBuildable: ContextMenuBuildable {
 		await _makeMenu(configurations, handler)
 	}
 	
-	public init<Base: ContextMenuBuildable>(_ base: Base) {
+	public init<Base: ContextMenuBuildable>(
+		_ base: Base
+	) {
 		self.base = base
 		_configuration = { await base.makeConfiguration() }
 		_makeMenu = { configurations, handler in
@@ -60,29 +62,36 @@ public struct Song: Identifiable, Sendable, Hashable {
 
 extension Song: ContextMenuBuildable {
 	
-	public var sections: [ContextMenu.Section] {
-		[.remove, .queue, .favorite, .share, .library]
+	public var sections: [ContextualMenu.Section] {
+		[.library, .share, .favorite, .queue, .remove]
 	}
 	
-	public func makeConfiguration() async -> ContextMenu.Configuration {
+	public func makeConfiguration() async -> ContextualMenu.Configuration {
 		.init { configurations, handler in
 			let updatedSections = await updatedSections(from: sections, using: configurations)
-			return ContextMenu(source: AnyContextMenuBuildable(self), sections: updatedSections, handler: handler)
+			return ContextualMenu(
+				source: AnyContextMenuBuildable(self),
+				sections: updatedSections,
+				handler: handler
+			)
 		}
 	}
 	
-	public func makeContextMenu(configurations: [ContextMenu.Action.Configuration], handler: (@Sendable (ContextMenu.Action, AnyContextMenuBuildable) -> Void)?) async -> ContextMenu {
+	public func makeContextMenu(
+		configurations: [ContextualMenu.Action.Configuration],
+		handler: (@Sendable (ContextualMenu.Action, AnyContextMenuBuildable) -> Void)?
+	) async -> ContextualMenu {
 		let config = await makeConfiguration()
 		return await config.menuBuilder(configurations, handler)
 	}
 	
 	private func updatedSections(
-		from sections: [ContextMenu.Section],
-		using configurations: [ContextMenu.Action.Configuration]
-	) async -> [ContextMenu.Section] {
-		var resultSections: [ContextMenu.Section] = []
+		from sections: [ContextualMenu.Section],
+		using configurations: [ContextualMenu.Action.Configuration]
+	) async -> [ContextualMenu.Section] {
+		var resultSections: [ContextualMenu.Section] = []
 		for section in sections {
-			var updatedItems: [ContextMenu.Section.Item] = []
+			var updatedItems: [ContextualMenu.Section.Item] = []
 			for item in section.children {
 				switch item {
 				case var .action(action):
@@ -97,7 +106,7 @@ extension Song: ContextMenuBuildable {
 				}
 			}
 			
-			let updatedSection = ContextMenu.Section(id: section.id, title: section.title, options: section.options, children: updatedItems)
+			let updatedSection = ContextualMenu.Section(id: section.id, title: section.title, options: section.options, children: updatedItems)
 			resultSections.append(updatedSection)
 		}
 		return resultSections
@@ -119,22 +128,27 @@ struct ContextMenuViewController_Previews: PreviewProvider {
 				artworkURL: URL(string: "https://example.com/artwork.jpg")
 			)
 			
-			let handler: @Sendable (ContextMenu.Action, AnyContextMenuBuildable) -> Void = { action, item in
+			let handler: @Sendable (ContextualMenu.Action, AnyContextMenuBuildable) -> Void = { action, item in
 				print("Selected ACTION: \(action.id) - Item: \(item.base)")
 			}
 			
-			let addToLibraryConfig = ContextMenu.Action.Configuration(id: .addToLibrary) {
+			let addToLibraryConfig = ContextualMenu.Action.Configuration(id: .addToLibrary) {
 				[]
 			} stateProvider: {
 				.off
 			}
 			
+			let addToAPlaylistConfig = ContextualMenu.Action.Configuration(id: .addToAPlaylist) {
+				[.disabled]
+			} stateProvider: {
+				.off
+			}
+						
 			Task {
 				let contextMenu = await song.makeContextMenu(
-					configurations: [addToLibraryConfig],
+					configurations: [addToLibraryConfig, addToAPlaylistConfig],
 					handler: handler
 				)
-				
 				menuButton.menu = contextMenu.toUIMenu()
 			}
 			
@@ -149,6 +163,7 @@ struct ContextMenuViewController_Previews: PreviewProvider {
 			
 			return viewController
 		}
+		.ignoresSafeArea()
 	}
 }
 */

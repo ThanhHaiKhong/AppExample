@@ -8,6 +8,12 @@
 import Foundation
 import UIKit
 
+/// A structure representing a section in a contextual menu.
+/// It contains an identifier, header, title, optional image, options, and a list of
+/// menu items or submenus.
+/// You can use this structure to organize related actions or options in a menu,
+/// allowing for a more structured and user-friendly interface.
+
 extension ContextualMenu {
 	public struct Section: Sendable {
 		public let id: ID
@@ -81,6 +87,8 @@ extension ContextualMenu.Section {
 	}
 }
 
+// MARK: - Item
+
 extension ContextualMenu.Section {
 	public enum Item: Sendable, Equatable {
 		case action(ContextualMenu.Action)
@@ -88,43 +96,23 @@ extension ContextualMenu.Section {
 	}
 }
 
-// MARK: - Builder
-
-@resultBuilder
-public struct MenuItemBuilder {
-	public static func buildBlock(_ components: ContextualMenu.Section.Item...) -> [ContextualMenu.Section.Item] {
-		components
-	}
-	
-	public static func buildOptional(_ component: [ContextualMenu.Section.Item]?) -> [ContextualMenu.Section.Item] {
-		component ?? []
-	}
-	
-	public static func buildEither(first component: [ContextualMenu.Section.Item]) -> [ContextualMenu.Section.Item] {
-		component
-	}
-	
-	public static func buildEither(second component: [ContextualMenu.Section.Item]) -> [ContextualMenu.Section.Item] {
-		component
-	}
-	
-	public static func buildArray(_ components: [[ContextualMenu.Section.Item]]) -> [ContextualMenu.Section.Item] {
-		components.flatMap { $0 }
-	}
-}
-
+// MARK: - UIMenuElement Conversion
 
 extension ContextualMenu.Section {
 	@MainActor
-	func toUIMenuElement(_ handler: ((ContextualMenu.Action, AnyContextMenuBuildable) -> Void)?, from source: AnyContextMenuBuildable) -> UIMenuElement {
-		let elements = children.map {
+	func toUIMenuElement(
+		_ handler: ((ContextualMenu.Action, AnyContextMenuBuildable) -> Void)?,
+		from source: AnyContextMenuBuildable
+	) -> UIMenuElement {
+		let children = children.map {
 			switch $0 {
-			case let .action(action): return action.toUIMenuElement(handler, from: source) as UIMenuElement
-			case .submenu(let submenu): return submenu.toUIMenu() as UIMenuElement
+			case let .action(action):
+				return action.toUIMenuElement(handler, from: source)
+				
+			case .submenu(let submenu):
+				return submenu.toUIMenu() as UIMenuElement
 			}
 		}
-		
-		let children: [UIMenuElement] = elements.compactMap { $0 }
 		
 		if children.isEmpty {
 			return UIAction(
@@ -133,7 +121,7 @@ extension ContextualMenu.Section {
 				identifier: UIAction.Identifier(id.rawValue),
 				attributes: [],
 				handler: { _ in
-
+					
 				}
 			)
 		} else {
@@ -147,6 +135,8 @@ extension ContextualMenu.Section {
 		}
 	}
 }
+
+// MARK: - Predefined Sections
 
 extension ContextualMenu.Section {
 	
@@ -184,14 +174,13 @@ extension ContextualMenu.Section {
 	
 	public static let remove = ContextualMenu.Section(
 		id: .remove,
-		title: "Remove...",
-		image: UIImage(systemName: "xmark.bin"),
-		options: []
+		options: [.displayInline]
 	) {
-		Item.action(.removeFromAllPlaylists)
-		Item.action(.deleteFromLibrary)
+		Item.action(.remove)
 	}
 }
+
+// MARK: - Section IDs
 
 extension ContextualMenu.Section.ID {
 	public static let standalone = ContextualMenu.Section.ID("standaloneSection")
@@ -201,7 +190,6 @@ extension ContextualMenu.Section.ID {
 	public static let remove = ContextualMenu.Section.ID("removeSection")
 	public static let favorite = ContextualMenu.Section.ID("removeSection")
 }
-
 
 // MARK: - Builder
 
@@ -224,6 +212,29 @@ public struct MenuSectionBuilder {
 	}
 	
 	public static func buildArray(_ components: [[ContextualMenu.Section]]) -> [ContextualMenu.Section] {
+		components.flatMap { $0 }
+	}
+}
+
+@resultBuilder
+public struct MenuItemBuilder {
+	public static func buildBlock(_ components: ContextualMenu.Section.Item...) -> [ContextualMenu.Section.Item] {
+		components
+	}
+	
+	public static func buildOptional(_ component: [ContextualMenu.Section.Item]?) -> [ContextualMenu.Section.Item] {
+		component ?? []
+	}
+	
+	public static func buildEither(first component: [ContextualMenu.Section.Item]) -> [ContextualMenu.Section.Item] {
+		component
+	}
+	
+	public static func buildEither(second component: [ContextualMenu.Section.Item]) -> [ContextualMenu.Section.Item] {
+		component
+	}
+	
+	public static func buildArray(_ components: [[ContextualMenu.Section.Item]]) -> [ContextualMenu.Section.Item] {
 		components.flatMap { $0 }
 	}
 }

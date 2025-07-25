@@ -78,7 +78,7 @@ extension ContextualMenu {
 					title: title,
 					image: image,
 					identifier: UIMenu.Identifier(id),
-					options: [options.toUIMenuOptions],
+					options: options.toUIMenuOptions,
 					children: [children]
 				)
 			} else if children is UIMenu {
@@ -88,7 +88,7 @@ extension ContextualMenu {
 					title: title,
 					image: image,
 					identifier: UIMenu.Identifier(id),
-					options: [options.toUIMenuOptions],
+					options: options.toUIMenuOptions,
 					children: [children]
 				)
 			}
@@ -111,7 +111,7 @@ extension ContextualMenu {
 				title: title,
 				image: image,
 				identifier: UIMenu.Identifier(id),
-				options: [options.toUIMenuOptions],
+				options: options.toUIMenuOptions,
 				children: mainChildren
 			)
 		}

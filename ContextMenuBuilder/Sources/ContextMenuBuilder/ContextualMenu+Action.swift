@@ -9,6 +9,9 @@ import Foundation
 import UIKit
 
 extension ContextualMenu {
+	
+	public typealias DeferredProvider = @Sendable () async -> [Action]
+	
 	public struct Action: Identifiable, Sendable {
 		public let id: ID
 		public let title: String
@@ -16,7 +19,7 @@ extension ContextualMenu {
 		public let kind: Kind
 		public var attributes: Attributes
 		public var state: State
-		public let deferredProvider: (@Sendable () async -> [Action])?
+		public let deferredProvider: DeferredProvider?
 		
 		public init(
 			id: ID,
@@ -25,7 +28,7 @@ extension ContextualMenu {
 			kind: Kind = .default,
 			attributes: Attributes = [],
 			state: State = .off,
-			deferredProvider: (@Sendable () async -> [Action])? = nil
+			deferredProvider: DeferredProvider? = nil
 		) {
 			self.id = id
 			self.title = title
@@ -118,6 +121,8 @@ extension ContextualMenu.Action {
 	}
 }
 
+// MARK: - Kind
+
 extension ContextualMenu.Action {
 	public struct Kind: RawRepresentable, Sendable, Equatable {
 		public let rawValue: String
@@ -132,25 +137,61 @@ extension ContextualMenu.Action {
 	}
 }
 
+// MARK: - Conversion to UIMenuElement
+
 extension ContextualMenu.Action {
 	@MainActor
-	public func toUIMenuElement(_ handler: ((ContextualMenu.Action, AnyContextMenuBuildable) -> Void)?, from source: AnyContextMenuBuildable) -> UIMenuElement {
+	public func toUIMenuElement(
+		_ handler: ((ContextualMenu.Action, AnyContextMenuBuildable) -> Void)?,
+		from source: AnyContextMenuBuildable
+	) -> UIMenuElement {
 		if let deferredProvider = deferredProvider {
-			return UIMenu(
-				title: title,
-				image: image,
-				identifier: UIMenu.Identifier(id.rawValue),
-				options: [],
-				children: [
-					UIDeferredMenuElement { completion in
-						Task {
-							let actions = await deferredProvider()
-							let children = actions.map { $0.toUIMenuElement(handler, from: source) }
-							completion(children)
-						}
+			let attributes = attributes.toUIActionAttributes
+
+			if attributes.contains(.disabled) || attributes.contains(.hidden) {
+				return UIAction(
+					title: title,
+					image: image,
+					identifier: UIAction.Identifier(id.rawValue),
+					attributes: attributes,
+					state: state.toUIActionState,
+					handler: { _ in
+						handler?(self, source)
 					}
-				]
-			)
+				)
+			} else if attributes.contains(.destructive) {
+				return UIMenu(
+					title: title,
+					image: image,
+					identifier: UIMenu.Identifier(id.rawValue),
+					options: [.destructive],
+					children: [
+						UIDeferredMenuElement { completion in
+							Task {
+								let actions = await deferredProvider()
+								let children = actions.map { $0.toUIMenuElement(handler, from: source) }
+								completion(children)
+							}
+						}
+					]
+				)
+			} else {
+				return UIMenu(
+					title: title,
+					image: image,
+					identifier: UIMenu.Identifier(id.rawValue),
+					options: [],
+					children: [
+						UIDeferredMenuElement { completion in
+							Task {
+								let actions = await deferredProvider()
+								let children = actions.map { $0.toUIMenuElement(handler, from: source) }
+								completion(children)
+							}
+						}
+					]
+				)
+			}
 		} else {
 			return UIAction(
 				title: title,
@@ -172,55 +213,50 @@ extension ContextualMenu.Action {
 	}
 }
 
+// MARK: - Predefined Actions
+
 extension ContextualMenu.Action {
 	
 	public static let share = ContextualMenu.Action(
 		id: .share,
 		title: "Share",
-		image: UIImage(systemName: "square.and.arrow.up"),
-		attributes: []
+		image: UIImage(systemName: "square.and.arrow.up")
 	)
 	
 	public static let favorite = ContextualMenu.Action(
 		id: .favorite,
 		title: "Favorite",
-		image: UIImage(systemName: "star"),
-		attributes: []
+		image: UIImage(systemName: "star")
 	)
 	
 	public static let unfavorite = ContextualMenu.Action(
 		id: .unfavorite,
 		title: "Unfavorite",
-		image: UIImage(systemName: "star.slash"),
-		attributes: []
+		image: UIImage(systemName: "star.slash")
 	)
 	
 	public static let viewFullLyrics = ContextualMenu.Action(
 		id: .viewFullLyrics,
 		title: "View Full Lyrics",
-		image: UIImage(systemName: "text.bubble"),
-		attributes: []
+		image: UIImage(systemName: "text.bubble")
 	)
 	
 	public static let reportAConcern = ContextualMenu.Action(
 		id: .reportAConcern,
 		title: "Report a Concern",
-		image: UIImage(systemName: "exclamationmark.bubble"),
-		attributes: []
+		image: UIImage(systemName: "exclamationmark.bubble")
 	)
 	
 	public static let addToLibrary = ContextualMenu.Action(
 		id: .addToLibrary,
 		title: "Add to Library",
-		image: UIImage(systemName: "plus"),
-		attributes: []
+		image: UIImage(systemName: "plus")
 	)
 	
 	public static let addToAPlaylist = ContextualMenu.Action(
 		id: .addToAPlaylist,
 		title: "Add to a Playlist...",
-		image: UIImage(systemName: "text.badge.plus"),
-		attributes: []
+		image: UIImage(systemName: "text.badge.plus")
 	) {
 		try? await Task.sleep(nanoseconds: 1_000_000_000)
 		let playlists = ["Hot Hits", "Chill Vibes", "Workout Mix", "Throwback Classics", "Favorites"]
@@ -231,7 +267,7 @@ extension ContextualMenu.Action {
 				id: ContextualMenu.Action.ID(playlist),
 				title: playlist,
 				image: UIImage(systemName: "music.note.list"),
-				attributes: playlist == "Favorites" ? [.disabled] : [],
+				attributes: playlist == "Favorites" ? [.destructive] : [],
 				state: .off
 			)
 			actions.append(action)
@@ -242,23 +278,22 @@ extension ContextualMenu.Action {
 	public static let playNext = ContextualMenu.Action(
 		id: .playNext,
 		title: "Play Next",
-		image: UIImage(systemName: "text.line.first.and.arrowtriangle.forward"),
-		attributes: [],
+		image: UIImage(systemName: "text.line.first.and.arrowtriangle.forward")
 	)
 	
 	public static let addToQueue = ContextualMenu.Action(
 		id: .addToQueue,
 		title: "Add to Queue",
-		image: UIImage(systemName: "text.line.last.and.arrowtriangle.forward"),
-		attributes: []
+		image: UIImage(systemName: "text.line.last.and.arrowtriangle.forward")
 	)
 	
 	public static let remove = ContextualMenu.Action(
 		id: .remove,
 		title: "Remove...",
-		image: UIImage(systemName: "xmark.bin"),
-		attributes: []
-	)
+		image: UIImage(systemName: "xmark.bin")
+	) {
+		return [.removeFromAllPlaylists, .deleteFromLibrary]
+	}
 	
 	public static let removeFromAllPlaylists = ContextualMenu.Action(
 		id: .removeFromAllPlaylists,
@@ -275,6 +310,8 @@ extension ContextualMenu.Action {
 	)
 }
 
+// MARK: - Predefined Action IDs
+
 extension ContextualMenu.Action.ID {
 	public static let remove = ContextualMenu.Action.ID("remove")
 	public static let addToLibrary = ContextualMenu.Action.ID("addToLibrary")
@@ -289,6 +326,8 @@ extension ContextualMenu.Action.ID {
 	public static let deleteFromLibrary = ContextualMenu.Action.ID("deleteFromLibrary")
 	public static let removeFromAllPlaylists = ContextualMenu.Action.ID("removeFromAllPlaylists")
 }
+
+// MARK: - Conversion to UIMenuElement Attributes
 
 extension ContextualMenu.Action.Attributes {
 	@MainActor
@@ -309,6 +348,8 @@ extension ContextualMenu.Action.Attributes {
 	}
 }
 
+// MARK: - Conversion to UIMenuElement State
+
 extension ContextualMenu.Action.State {
 	@MainActor
 	public var toUIActionState: UIMenuElement.State {
@@ -319,6 +360,8 @@ extension ContextualMenu.Action.State {
 		}
 	}
 }
+
+// MARK: - Predefined Action Kinds
 
 extension ContextualMenu.Action.Kind {
 	public static let `default` = ContextualMenu.Action.Kind(rawValue: "defaultAction")
