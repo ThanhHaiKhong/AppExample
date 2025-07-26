@@ -19,7 +19,7 @@ extension ContextualMenu {
 		public let kind: Kind
 		public var attributes: Attributes
 		public var state: State
-		public let deferredProvider: DeferredProvider?
+		public var deferredProvider: DeferredProvider?
 		
 		public init(
 			id: ID,
@@ -100,15 +100,19 @@ extension ContextualMenu.Action {
 // MARK: - Configuration
 
 extension ContextualMenu.Action {
+	
+	public typealias AttributesProvider = @Sendable () async -> ContextualMenu.Action.Attributes
+	public typealias StateProvider = @Sendable () async -> ContextualMenu.Action.State
+	
 	public struct Configuration: Identifiable, Sendable, Equatable {
 		public let id: ID
-		public let attributesProvider: @Sendable () async -> ContextualMenu.Action.Attributes
-		public let stateProvider: @Sendable () async -> ContextualMenu.Action.State
+		public let attributesProvider: AttributesProvider
+		public let stateProvider: StateProvider
 		
 		public init(
 			id: ID,
-			attributesProvider: @escaping @Sendable () async -> ContextualMenu.Action.Attributes,
-			stateProvider: @escaping @Sendable () async -> ContextualMenu.Action.State
+			attributesProvider: @escaping AttributesProvider,
+			stateProvider: @escaping StateProvider
 		) {
 			self.id = id
 			self.attributesProvider = attributesProvider

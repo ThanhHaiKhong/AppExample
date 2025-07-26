@@ -13,7 +13,7 @@ public struct ContextualMenu: Identifiable, Sendable {
 	public let title: String
 	public let image: UIImage?
 	public let options: Options
-	public let sections: [Section]
+	public var sections: [Section]
 	public var handler: ((@Sendable (ContextualMenu.Action, AnyContextMenuBuildable) -> Void))?
 	
 	public init(

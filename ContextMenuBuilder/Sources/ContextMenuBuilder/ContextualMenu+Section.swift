@@ -21,7 +21,7 @@ extension ContextualMenu {
 		public let title: String
 		public let image: UIImage?
 		public let options: ContextualMenu.Options
-		public let children: [Item]
+		public var children: [Item]
 		
 		public init(
 			id: ID,
