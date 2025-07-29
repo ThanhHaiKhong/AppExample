@@ -117,3 +117,25 @@ extension ContextualMenu {
 		}
 	}
 }
+
+extension ContextualMenu {
+	
+	public mutating func updateDefferedProvider(
+		_ provider: @escaping ContextualMenu.DeferredProvider,
+		for actionID: ContextualMenu.Action.ID
+	) {
+		for sectionIndex in sections.indices {
+			for itemIndex in sections[sectionIndex].children.indices {
+				switch sections[sectionIndex].children[itemIndex] {
+				case .action(var action) where action.id == actionID:
+					action.deferredProvider = provider
+					sections[sectionIndex].children[itemIndex] = .action(action)
+					return
+					
+				default:
+					continue
+				}
+			}
+		}
+	}
+}
