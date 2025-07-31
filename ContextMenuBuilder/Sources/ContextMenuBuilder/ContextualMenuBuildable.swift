@@ -6,35 +6,37 @@ import UIKit
 
 public typealias ContextualMenuHandler = @Sendable (ContextualMenu.Action, AnyContextMenuBuildable) -> Void
 
-public protocol ContextMenuBuildable: Sendable {
+public protocol ContextualMenuBuildable: Sendable {
 	var sections: [ContextualMenu.Section] { get }
-	func makeConfiguration() async -> ContextualMenu.Configuration
+	func makeBuilder() async -> ContextualMenu.Builder
 	func makeContextMenu(configurations: [ContextualMenu.Action.Configuration], handler: ((@Sendable (ContextualMenu.Action, AnyContextMenuBuildable) -> Void))?) async -> ContextualMenu
+	
+	// TODO: Add a method to update configurations when the action has deferred provider
 }
 
-public struct AnyContextMenuBuildable: ContextMenuBuildable {
-	private let _configuration: @Sendable () async -> ContextualMenu.Configuration
+public struct AnyContextMenuBuildable: ContextualMenuBuildable {
+	private let _builder: @Sendable () async -> ContextualMenu.Builder
 	private let _makeMenu: @Sendable ([ContextualMenu.Action.Configuration], (@Sendable (ContextualMenu.Action, AnyContextMenuBuildable) -> Void)?) async -> ContextualMenu
 	
-	public let base: any ContextMenuBuildable
+	public let base: any ContextualMenuBuildable
 	
 	public var sections: [ContextualMenu.Section] {
 		base.sections
 	}
 	
-	public func makeConfiguration() async -> ContextualMenu.Configuration {
-		await _configuration()
+	public func makeBuilder() async -> ContextualMenu.Builder {
+		await _builder()
 	}
 	
 	public func makeContextMenu(configurations: [ContextualMenu.Action.Configuration], handler: (@Sendable (ContextualMenu.Action, AnyContextMenuBuildable) -> Void)?) async -> ContextualMenu {
 		await _makeMenu(configurations, handler)
 	}
 	
-	public init<Base: ContextMenuBuildable>(
+	public init<Base: ContextualMenuBuildable>(
 		_ base: Base
 	) {
 		self.base = base
-		_configuration = { await base.makeConfiguration() }
+		_builder = { await base.makeBuilder() }
 		_makeMenu = { configurations, handler in
 			await base.makeContextMenu(configurations: configurations, handler: handler)
 		}

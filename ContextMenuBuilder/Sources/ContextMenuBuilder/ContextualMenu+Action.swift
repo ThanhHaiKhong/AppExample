@@ -236,7 +236,7 @@ extension ContextualMenu.Action {
 	public static let unfavorite = ContextualMenu.Action(
 		id: .unfavorite,
 		title: "Unfavorite",
-		image: UIImage(systemName: "star.slash")
+		image: UIImage(systemName: "star.slash.fill")
 	)
 	
 	public static let viewFullLyrics = ContextualMenu.Action(
