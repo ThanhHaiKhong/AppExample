@@ -296,13 +296,20 @@ extension ContextualMenu.Action {
 		title: "Remove...",
 		image: UIImage(systemName: "xmark.bin")
 	) {
-		return [.removeFromAllPlaylists, .deleteFromLibrary]
+		return [.removeFromThisPlaylist, .removeFromAllPlaylists, .deleteFromLibrary]
 	}
 	
 	public static let removeFromAllPlaylists = ContextualMenu.Action(
 		id: .removeFromAllPlaylists,
 		title: "Remove from all Playlists",
 		image: UIImage(systemName: "rectangle.stack.badge.minus"),
+		attributes: [.destructive]
+	)
+	
+	public static let removeFromThisPlaylist = ContextualMenu.Action(
+		id: .removeFromThisPlaylist,
+		title: "Remove from this Playlist",
+		image: UIImage(systemName: "text.badge.minus"),
 		attributes: [.destructive]
 	)
 	
@@ -329,6 +336,7 @@ extension ContextualMenu.Action.ID {
 	public static let addToQueue = ContextualMenu.Action.ID("addToQueue")
 	public static let deleteFromLibrary = ContextualMenu.Action.ID("deleteFromLibrary")
 	public static let removeFromAllPlaylists = ContextualMenu.Action.ID("removeFromAllPlaylists")
+	public static let removeFromThisPlaylist = ContextualMenu.Action.ID("removeFromThisPlaylist")
 }
 
 // MARK: - Conversion to UIMenuElement Attributes
