@@ -6,7 +6,7 @@ import PackageDescription
 let package = Package(
     name: "MusicWasmClient",
 	platforms: [
-		.iOS(.v15), .macOS(.v11), .watchOS(.v7)
+		.iOS(.v15), .macOS(.v12), .watchOS(.v7)
 	],
     products: [
 		.singleTargetLibrary("MusicWasmClient"),

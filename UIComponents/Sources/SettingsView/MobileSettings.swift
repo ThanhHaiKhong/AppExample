@@ -6,8 +6,11 @@
 //
 
 import ComposableArchitecture
+#if canImport(UIKit)
 import UIKit
+#endif
 
+#if os(iOS)
 @available(iOS 16.0, *)
 @Reducer
 public struct MobileSettings: Sendable {
@@ -155,3 +158,4 @@ public struct MobileSettings: Sendable {
     
     public init () { }
 }
+#endif

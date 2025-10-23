@@ -1,8 +1,11 @@
 // The Swift Programming Language
 // https://docs.swift.org/swift-book
 
+#if canImport(UIKit)
 import UIKit
+#endif
 
+#if os(iOS)
 public class ModalCardAnimator: NSObject, @unchecked Sendable {
     public let operationType: UINavigationController.Operation
     public let interactor: InteractiveModalTransition?
@@ -375,3 +378,4 @@ extension ModalCardAnimator {
         }
     }
 }
+#endif

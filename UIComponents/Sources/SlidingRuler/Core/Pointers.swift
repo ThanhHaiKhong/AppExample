@@ -26,9 +26,11 @@
 //  SOFTWARE.
 //
 
+#if canImport(UIKit)
+import UIKit
+#endif
 
-import UIKit.UIBezierPath
-
+#if os(iOS)
 enum Pointers {
     static var standard: UIBezierPath {
         let path = UIBezierPath()
@@ -70,3 +72,4 @@ enum Pointers {
         return path
     }
 }
+#endif

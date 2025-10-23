@@ -6,7 +6,7 @@ import PackageDescription
 let package = Package(
     name: "MobileAdsClient",
     platforms: [
-		.iOS(.v15)
+		.iOS(.v15), .macOS(.v12)
     ],
     products: [
         .singleTargetLibrary("MobileAdsClient"),
@@ -50,7 +50,6 @@ let package = Package(
                 .process("Resources/stars_4.png"),
                 .process("Resources/stars_4_5.png"),
                 .process("Resources/stars_5.png"),
-				.process("Resources/placeholder_image.png"),
             ]
         ),
         .target(

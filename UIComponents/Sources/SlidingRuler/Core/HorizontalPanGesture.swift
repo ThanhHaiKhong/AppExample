@@ -29,7 +29,11 @@
 
 import SwiftUI
 import CoreGeometry
+#if canImport(UIKit)
+import UIKit
+#endif
 
+#if os(iOS)
 struct HorizontalDragGestureValue {
     let state: UIGestureRecognizer.State
     let translation: CGSize
@@ -140,3 +144,4 @@ extension HorizontalPanGesture.Coordinator: UIPointerInteractionDelegate {
         .init(shape: .path(Pointers.standard), constrainedAxes: .vertical)
     }
 }
+#endif

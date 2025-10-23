@@ -2,10 +2,13 @@
 // https://docs.swift.org/swift-book
 
 import SwiftUI
+#if canImport(UIKit)
 import UIKit
+#endif
 
 // MARK: - Preview cho UIViewController
 
+#if os(iOS)
 public struct UIViewControllerPreview<VC: UIViewController>: UIViewControllerRepresentable {
     private let builder: () -> VC
     
@@ -39,3 +42,4 @@ public struct UIViewPreview<V: UIView>: UIViewRepresentable {
         
     }
 }
+#endif

@@ -5,8 +5,11 @@
 //  Created by Thanh Hai Khong on 29/4/25.
 //
 
+#if canImport(UIKit)
 import UIKit
+#endif
 
+#if os(iOS)
 extension UIImage.SymbolConfiguration {
     
     public static let largeSymbol: UIImage.SymbolConfiguration = {
@@ -109,3 +112,4 @@ extension UIImage {
 		return result ?? self
 	}
 }
+#endif

@@ -1,8 +1,9 @@
 // The Swift Programming Language
 // https://docs.swift.org/swift-book
 
-import UIKit
+import Foundation
 
+#if os(iOS)
 public protocol TransitionPresenter: AnyObject {
     
     var presentingView: UIView? { get }
@@ -46,3 +47,4 @@ public extension TransitionPresenter {
     
     func updateStatusBar(_ style: UIStatusBarStyle) { }
 }
+#endif

@@ -6,7 +6,7 @@ import PackageDescription
 let package = Package(
     name: "PHAssetExtensions",
     platforms: [
-        .iOS(.v13)
+        .iOS(.v15), .macOS(.v12)
     ],
     products: [
         .library(name: "PHAssetExtensions", targets: ["PHAssetExtensions"]),

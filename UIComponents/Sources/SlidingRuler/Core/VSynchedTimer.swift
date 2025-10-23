@@ -26,8 +26,11 @@
 //  SOFTWARE.
 //
 
+#if canImport(UIKit)
 import UIKit
+#endif
 
+#if os(iOS)
 struct VSynchedTimer {
     typealias Animations = (TimeInterval, TimeInterval) -> ()
     typealias Completion = (Bool) -> ()
@@ -105,3 +108,4 @@ private final class SynchedTimer {
         return dl
     }
 }
+#endif

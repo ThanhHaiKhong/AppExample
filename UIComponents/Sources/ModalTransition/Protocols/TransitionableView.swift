@@ -6,8 +6,11 @@
 //
 
 import Foundation
+#if canImport(UIKit)
 import UIKit
+#endif
 
+#if os(iOS)
 public protocol TransitionableView: AnyObject {
     
     var modalInteractor: InteractiveModalTransition? { get }
@@ -86,3 +89,4 @@ public extension TransitionableView {
         
     }
 }
+#endif

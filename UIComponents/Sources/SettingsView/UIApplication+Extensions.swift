@@ -5,8 +5,11 @@
 //  Created by Thanh Hai Khong on 10/10/24.
 //
 
+#if canImport(UIKit)
 import UIKit
+#endif
 
+#if os(iOS)
 @available(iOS 16.0, *)
 extension UIApplication {
     public var topMostViewController: UIViewController? {
@@ -19,3 +22,4 @@ extension UIApplication {
         return topMostViewController
     }
 }
+#endif

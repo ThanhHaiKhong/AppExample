@@ -279,101 +279,109 @@ extension NowPlayingCenter {
 				return .noSuchContent
 				
 			case let .asyncAction(asyncAction):
-				var result: MPRemoteCommandHandlerStatus = .noSuchContent
+				let result = LockIsolated<MPRemoteCommandHandlerStatus>(.noSuchContent)
 				let semaphore = DispatchSemaphore(value: 0)
-				Task {
-					result = try await asyncAction()
+				Task { @Sendable in
+					let status = try await asyncAction()
+					result.withValue { $0 = status }
 					semaphore.signal()
 				}
 				semaphore.wait()
-				return result
+				return result.value
 				
 			case let .asyncBoolAction(asyncAction):
-				var result: MPRemoteCommandHandlerStatus = .noSuchContent
+				let result = LockIsolated<MPRemoteCommandHandlerStatus>(.noSuchContent)
 				let semaphore = DispatchSemaphore(value: 0)
-				
+
 				if let event = rawEvent as? MPFeedbackCommandEvent {
 					let isNegative = event.isNegative
-					Task {
-						result = try await asyncAction(isNegative)
+					Task { @Sendable in
+						let status = try await asyncAction(isNegative)
+						result.withValue { $0 = status }
 						semaphore.signal()
 					}
 					semaphore.wait()
 				}
-				
-				return result
+
+				return result.value
 				
 			case let .asyncIntAction(asyncAction):
-				var result: MPRemoteCommandHandlerStatus = .noSuchContent
+				let result = LockIsolated<MPRemoteCommandHandlerStatus>(.noSuchContent)
 				let semaphore = DispatchSemaphore(value: 0)
-				
+
 				if let event = rawEvent as? MPChangeRepeatModeCommandEvent {
 					_ = event.repeatType.rawValue
-					Task {
-						//						result = try await asyncAction(repeatType)
+					Task { @Sendable in
+						//						let status = try await asyncAction(repeatType)
+						//						result.withValue { $0 = status }
 						semaphore.signal()
 					}
 					semaphore.wait()
 				}
-				
+
 				if let event = rawEvent as? MPChangeShuffleModeCommandEvent {
 					let shuffleType = event.shuffleType.rawValue
-					Task {
-						result = try await asyncAction(shuffleType)
+					Task { @Sendable in
+						let status = try await asyncAction(shuffleType)
+						result.withValue { $0 = status }
 						semaphore.signal()
 					}
 					semaphore.wait()
 				}
-				
-				return result
+
+				return result.value
 				
 			case let .asyncFloatAction(asyncAction):
-				var result: MPRemoteCommandHandlerStatus = .noSuchContent
+				let result = LockIsolated<MPRemoteCommandHandlerStatus>(.noSuchContent)
 				let semaphore = DispatchSemaphore(value: 0)
-				
+
 				if let event = rawEvent as? MPChangePlaybackRateCommandEvent {
 					_ = event.playbackRate
-					Task {
-						//						result = try await asyncAction(playbackRate)
+					Task { @Sendable in
+						//						let status = try await asyncAction(playbackRate)
+						//						result.withValue { $0 = status }
 						semaphore.signal()
 					}
 					semaphore.wait()
 				}
-				
+
 				if let event = rawEvent as? MPRatingCommandEvent {
 					let rating = event.rating
-					Task {
-						result = try await asyncAction(rating)
+					Task { @Sendable in
+						let status = try await asyncAction(rating)
+						result.withValue { $0 = status }
 						semaphore.signal()
 					}
 					semaphore.wait()
 				}
-				
-				return result
+
+				return result.value
 				
 			case let .asyncTimeIntervalAction(asyncAction):
-				var result: MPRemoteCommandHandlerStatus = .noSuchContent
+				let result = LockIsolated<MPRemoteCommandHandlerStatus>(.noSuchContent)
 				let semaphore = DispatchSemaphore(value: 0)
-				
+
 				if let event = rawEvent as? MPChangePlaybackPositionCommandEvent {
 					_ = event.positionTime
-					Task {
-						//						result = try await asyncAction(positionTime)
+					Task { @Sendable in
+						//						let status = try await asyncAction(positionTime)
+						//						result.withValue { $0 = status }
 						semaphore.signal()
 					}
 					semaphore.wait()
 				}
-				
+
 				if let event = rawEvent as? MPSkipIntervalCommandEvent {
 					let interval = event.interval
-					Task {
-						result = try await asyncAction(interval)
+					Task { @Sendable in
+						let status = try await asyncAction(interval)
+						result.withValue { $0 = status }
 						semaphore.signal()
 					}
 					semaphore.wait()
 				}
-				
-				return result
+
+				return result.value
 			}
 		}
 	}

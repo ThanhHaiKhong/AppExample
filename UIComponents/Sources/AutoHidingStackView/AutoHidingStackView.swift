@@ -5,8 +5,11 @@
 //  Created by Thanh Hai Khong on 7/7/25.
 //
 
+#if canImport(UIKit)
 import UIKit
+#endif
 
+#if os(iOS)
 public class AutoHidingStackView: UIStackView {
 	
 	private struct ViewObservation {
@@ -74,3 +77,4 @@ public class AutoHidingStackView: UIStackView {
 		observations.forEach { $0.observation.invalidate() }
 	}
 }
+#endif

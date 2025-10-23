@@ -28,7 +28,11 @@
 
 
 import SwiftUI
+#if canImport(UIKit)
+import UIKit
+#endif
 
+#if os(iOS)
 public protocol MarkedRulerCellView: FractionableView {
     associatedtype CellView: RulerCellView
 
@@ -45,3 +49,4 @@ public protocol MarkedRulerCellView: FractionableView {
 extension MarkedRulerCellView {
     static var fractions: Int { CellView.fractions }
 }
+#endif

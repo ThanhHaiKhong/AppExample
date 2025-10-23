@@ -5,8 +5,11 @@
 //  Created by Thanh Hai Khong on 28/6/25.
 //
 
+#if canImport(UIKit)
 import UIKit
+#endif
 
+#if os(iOS)
 extension UIView {
 	
 	public func addBlur(style: UIBlurEffect.Style = .light, cornerRadius: CGFloat = 0) {
@@ -35,3 +38,4 @@ extension UIView {
 			.forEach { $0.removeFromSuperview() }
 	}
 }
+#endif

@@ -5,8 +5,11 @@
 //  Created by Thanh Hai Khong on 13/3/25.
 //
 
+#if canImport(UIKit)
 import UIKit
+#endif
 
+#if os(iOS)
 public extension ModalTransitionNavigationDelegate {
     
     func navigationController(_ navigationController: UINavigationController, animationControllerFor operation: UINavigationController.Operation, from fromVC: UIViewController, to toVC: UIViewController) -> UIViewControllerAnimatedTransitioning? {
@@ -45,3 +48,4 @@ public class ModalNavigationController: UINavigationController, UINavigationCont
         return interactor.interactionInProgress ? interactor : nil
     }
 }
+#endif

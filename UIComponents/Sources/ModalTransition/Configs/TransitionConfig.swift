@@ -1,8 +1,11 @@
 // The Swift Programming Language
 // https://docs.swift.org/swift-book
 
+#if canImport(UIKit)
 import UIKit
+#endif
 
+#if os(iOS)
 public struct TransitionConfig {
     public var presentDuration: TimeInterval
     public var presentResize: TimeInterval
@@ -44,3 +47,4 @@ public struct TransitionConfig {
         self.backgroundColor = backgroundColor
     }
 }
+#endif

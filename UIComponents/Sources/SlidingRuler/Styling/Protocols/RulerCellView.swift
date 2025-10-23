@@ -26,9 +26,13 @@
 //  SOFTWARE.
 //
 
+#if canImport(UIKit)
+import UIKit
+#endif
 
 import SwiftUI
 
+#if os(iOS)
 public protocol RulerCellView: FractionableView, Equatable {
     associatedtype Scale: ScaleView
     associatedtype MaskShape: Shape
@@ -70,3 +74,4 @@ extension RulerCellView {
         lhs.isComplete && rhs.isComplete
     }
 }
+#endif

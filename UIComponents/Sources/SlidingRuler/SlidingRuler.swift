@@ -28,7 +28,11 @@
 
 import SwiftUI
 import SmoothOperators
+#if canImport(UIKit)
+import UIKit
+#endif
 
+#if os(iOS)
 @available(iOS 13.0, *)
 public struct SlidingRuler<V>: View where V: BinaryFloatingPoint, V.Stride: BinaryFloatingPoint {
     @Environment(\.slidingRulerStyle) private var style
@@ -540,4 +544,4 @@ extension SlidingRuler {
         fg.impactOccurred(intensity: 0.5)
     }
 }
-
+#endif

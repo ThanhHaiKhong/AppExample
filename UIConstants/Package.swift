@@ -6,7 +6,7 @@ import PackageDescription
 let package = Package(
     name: "UIConstants",
     platforms: [
-        .iOS(.v13)
+        .iOS(.v15)
     ],
     products: [
 		.singleTargetLibrary("UIConstants"),

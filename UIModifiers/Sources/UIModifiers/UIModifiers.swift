@@ -2,67 +2,80 @@
 // https://docs.swift.org/swift-book
 
 import SwiftUI
+#if canImport(UIKit)
+import UIKit
+#endif
 
-@available(iOS 16.0, *)
+@available(iOS 16.0, macOS 12.0, *)
 enum BackgroundType {
     case color(Color)
     case material(Material)
 }
 
 extension View {
-    @available(iOS 16.0, *)
+	@available(iOS 16.0, macOS 12.0, *)
     public func circleMaterialStyleWithoutBackground(_ size: CGFloat = 44, isSelected: Bool) -> some View {
         modifier(CircleStyleWithoutBackgroundModifier(size: size, isSelected: isSelected))
     }
     
-    @available(iOS 16.0, *)
+	@available(iOS 16.0, macOS 12.0, *)
     public func circleMaterialStyle(_ size: CGFloat = 44) -> some View {
         modifier(CircleStyleModifier(size: size))
     }
     
-    @available(iOS 16.0, *)
+	@available(iOS 16.0, macOS 12.0, *)
     public func circleColorStyle(_ size: CGFloat = 44, backgroundColor: Color) -> some View {
         modifier(CircleColorStyleModifier(size: size, backgroundColor: backgroundColor))
     }
     
-    @available(iOS 16.0, *)
+	@available(iOS 16.0, macOS 12.0, *)
     public func squareStyle() -> some View {
         modifier(SquareStyleModifier())
     }
     
-    @available(iOS 16.0, *)
+	@available(iOS 16.0, macOS 12.0, *)
     public func capsuleStyle() -> some View {
         modifier(CapsuleStyleModifier())
     }
     
-    @available(iOS 16.0, *)
+	@available(iOS 16.0, macOS 12.0, *)
     public func backgroundCapsule(_ backgroundColor: Color) -> some View {
         modifier(BackgroundCapsuleStyleModifier(backgroundColor: backgroundColor))
     }
     
-    @available(iOS 16.0, *)
+	@available(iOS 16.0, macOS 12.0, *)
     public func squareHorizontalStretchStyle() -> some View {
         modifier(SquareHorizontalStretchStyleModifier())
     }
     
-    @available(iOS 16.0, *)
+	@available(iOS 16.0, macOS 12.0, *)
     public func squareVerticalStretchStyle() -> some View {
         modifier(SquareVerticalStretchStyleModifier())
     }
     
     public var screenSize: CGSize {
+#if os(iOS)
         guard let size = (UIApplication.shared.connectedScenes.first as? UIWindowScene)?.windows.first?.screen.bounds.size else {
             return .zero
         }
         return size
+#else
+        return .zero
+#endif
     }
     
+#if os(iOS)
     public func cornerRadius(_ radius: CGFloat, corners: UIRectCorner) -> some View {
         clipShape(RoundedCorner(radius: radius, corners: corners))
     }
+#else
+    public func cornerRadius(_ radius: CGFloat) -> some View {
+        self // No custom corner radius on non-iOS platforms
+    }
+#endif
 }
 
-@available(iOS 16.0, *)
+@available(iOS 16.0, macOS 12.0, *)
 struct CircleStyleWithoutBackgroundModifier: ViewModifier {
     let size: CGFloat
     let isSelected: Bool
@@ -70,12 +83,12 @@ struct CircleStyleWithoutBackgroundModifier: ViewModifier {
         content
             .frame(width: size, height: size)
             .font(.system(.title3).weight(.semibold))
-            .foregroundColor(isSelected ? .accentColor : Color(uiColor: .label))
+            .foregroundColor(isSelected ? .accentColor : .primary)
     }
 }
 
 
-@available(iOS 16.0, *)
+@available(iOS 16.0, macOS 12.0, *)
 struct CircleStyleModifier: ViewModifier {
     let size: CGFloat
     func body(content: Content) -> some View {
@@ -88,7 +101,7 @@ struct CircleStyleModifier: ViewModifier {
     }
 }
 
-@available(iOS 16.0, *)
+@available(iOS 16.0, macOS 12.0, *)
 struct CircleColorStyleModifier: ViewModifier {
     let size: CGFloat
     let backgroundColor: Color
@@ -102,7 +115,7 @@ struct CircleColorStyleModifier: ViewModifier {
     }
 }
 
-@available(iOS 16.0, *)
+@available(iOS 16.0, macOS 12.0, *)
 struct SquareStyleModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
@@ -114,7 +127,7 @@ struct SquareStyleModifier: ViewModifier {
     }
 }
 
-@available(iOS 16.0, *)
+@available(iOS 16.0, macOS 12.0, *)
 struct SquareHorizontalStretchStyleModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
@@ -127,7 +140,7 @@ struct SquareHorizontalStretchStyleModifier: ViewModifier {
     }
 }
 
-@available(iOS 16.0, *)
+@available(iOS 16.0, macOS 12.0, *)
 struct SquareVerticalStretchStyleModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
@@ -140,7 +153,7 @@ struct SquareVerticalStretchStyleModifier: ViewModifier {
     }
 }
 
-@available(iOS 16.0, *)
+@available(iOS 16.0, macOS 12.0, *)
 struct CapsuleStyleModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
@@ -153,7 +166,7 @@ struct CapsuleStyleModifier: ViewModifier {
     }
 }
 
-@available(iOS 16.0, *)
+@available(iOS 16.0, macOS 12.0, *)
 struct BackgroundCapsuleStyleModifier: ViewModifier {
     let backgroundColor: Color
     func body(content: Content) -> some View {
@@ -168,6 +181,7 @@ struct BackgroundCapsuleStyleModifier: ViewModifier {
     }
 }
 
+#if os(iOS)
 private struct RoundedCorner: Shape {
     let radius: CGFloat
     let corners: UIRectCorner
@@ -182,3 +196,4 @@ private struct RoundedCorner: Shape {
         return Path(path.cgPath)
     }
 }
+#endif

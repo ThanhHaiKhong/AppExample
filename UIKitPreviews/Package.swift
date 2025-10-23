@@ -9,17 +9,14 @@ let package = Package(
         .iOS(.v15)
     ],
     products: [
-        .singleTargetLibrary("UIKitPreviews"),
+        .library(name: "UIKitPreviews", targets: ["UIKitPreviews"])
     ],
     targets: [
         .target(
-            name: "UIKitPreviews"
-        ),
+            name: "UIKitPreviews",
+            linkerSettings: [
+                .linkedFramework("UIKit")
+            ]
+        )
     ]
 )
-
-extension Product {
-    static func singleTargetLibrary(_ name: String) -> Product {
-        .library(name: name, targets: [name])
-    }
-}

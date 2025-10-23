@@ -6,7 +6,7 @@ import PackageDescription
 let package = Package(
     name: "AuthenticationCore",
 	platforms: [
-		.iOS(.v15), .macOS(.v10_15)
+		.iOS(.v15), .macOS(.v12)
 	],
     products: [
         .singleTargetLibrary("AuthenticationCore"),

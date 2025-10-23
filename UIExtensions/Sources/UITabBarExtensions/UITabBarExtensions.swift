@@ -5,9 +5,14 @@
 //  Created by Thanh Hai Khong on 23/5/25.
 //
 
+#if canImport(UIKit)
 import UIKit
-import UIImageExtensions
+#endif
 
+import UIImageExtensions
+import Foundation
+
+#if os(iOS)
 extension UITabBar {
 	
 	public static var height: CGFloat {
@@ -57,10 +62,6 @@ extension UITabBarController {
 	}
 }
 
-extension Notification.Name {
-	public static let tabBarRepeatedTap = Notification.Name("tabBarRepeatedTap")
-}
-
 extension UIApplication {
 	
 	public static var safeTabBarHeight: CGFloat {
@@ -69,4 +70,9 @@ extension UIApplication {
 			.first
 		return keyWindow?.rootViewController?.tabBarController?.tabBar.frame.height ?? 49
 	}
+}
+#endif
+
+extension Notification.Name {
+	public static let tabBarRepeatedTap = Notification.Name("tabBarRepeatedTap")
 }

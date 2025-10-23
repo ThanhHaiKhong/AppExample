@@ -6,7 +6,11 @@
 //
 
 import SwiftUI
+#if canImport(UIKit)
+import UIKit
+#endif
 
+#if os(iOS)
 public struct BlurView: UIViewRepresentable {
     private let style: UIBlurEffect.Style
     
@@ -24,3 +28,4 @@ public struct BlurView: UIViewRepresentable {
         uiView.effect = UIBlurEffect(style: style)
     }
 }
+#endif

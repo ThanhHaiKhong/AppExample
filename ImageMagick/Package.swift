@@ -6,7 +6,7 @@ import PackageDescription
 let package = Package(
     name: "ImageMagick",
     platforms: [
-        .iOS(.v13)
+        .iOS(.v15), .macOS(.v12)
     ],
     products: [
         .library(name: "ImageMagick", targets: ["ImageMagick"]),

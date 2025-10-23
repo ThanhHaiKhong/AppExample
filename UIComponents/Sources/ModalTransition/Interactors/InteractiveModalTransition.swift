@@ -1,8 +1,11 @@
 // The Swift Programming Language
 // https://docs.swift.org/swift-book
 
+#if canImport(UIKit)
 import UIKit
+#endif
 
+#if os(iOS)
 private enum Constants {
     static let gestureProgressFactor: CGFloat = 0.01
 }
@@ -179,3 +182,4 @@ extension InteractiveModalTransition: UIGestureRecognizerDelegate {
         return false
     }
 }
+#endif

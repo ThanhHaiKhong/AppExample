@@ -5,10 +5,12 @@
 //  Created by Thanh Hai Khong on 11/6/25.
 //
 
+#if canImport(UIKit)
 import UIKit
+#endif
 
+#if os(iOS)
 extension UIApplication {
-	
 	public static var keyWindow: UIWindow? {
 		shared.connectedScenes
 			.filter { $0.activationState == .foregroundActive }
@@ -29,3 +31,4 @@ extension UIApplication {
 		return topController
 	}
 }
+#endif

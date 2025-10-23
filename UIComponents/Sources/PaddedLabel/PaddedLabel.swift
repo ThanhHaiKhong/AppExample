@@ -5,9 +5,11 @@
 //  Created by Thanh Hai Khong on 7/7/25.
 //
 
-
+#if canImport(UIKit)
 import UIKit
+#endif
 
+#if os(iOS)
 public class PaddedLabel: UILabel {
 	private var padding: UIEdgeInsets
 	
@@ -40,3 +42,4 @@ public class PaddedLabel: UILabel {
 		}
 	}
 }
+#endif

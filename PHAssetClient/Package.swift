@@ -6,7 +6,7 @@ import PackageDescription
 let package = Package(
     name: "PHAssetClient",
     platforms: [
-        .iOS(.v15),
+        .iOS(.v15), .macOS(.v12)
     ],
     products: [
         .singleTargetLibrary("PHAssetClient"),

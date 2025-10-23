@@ -1,8 +1,11 @@
 // The Swift Programming Language
 // https://docs.swift.org/swift-book
 
+#if canImport(UIKit)
 import UIKit
+#endif
 
+#if os(iOS)
 extension UIFont {
 	public static func preferredFont(forTextStyle style: UIFont.TextStyle, weight: UIFont.Weight = .regular, design: UIFontDescriptor.SystemDesign? = nil) -> UIFont {
 		var descriptor = UIFontDescriptor.preferredFontDescriptor(withTextStyle: style)
@@ -58,3 +61,4 @@ extension UIColor {
 		return UIColor(red: 72.0 / 255.0, green: 68.0 / 255.0, blue: 145.0 / 255.0, alpha: 1.0)
 	}
 }
+#endif

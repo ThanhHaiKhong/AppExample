@@ -26,11 +26,14 @@
 //  SOFTWARE.
 //
 
-import UIKit.UIScrollView
+
+#if canImport(UIKit)
+import UIKit
+#endif
 import CoreGraphics
 
+#if os(iOS)
 enum Mechanic {
-
     enum Inertia {
         private static let epsilon: CGFloat = 0.6
 
@@ -89,3 +92,4 @@ enum Mechanic {
         }
     }
 }
+#endif

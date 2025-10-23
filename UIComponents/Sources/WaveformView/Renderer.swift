@@ -9,7 +9,11 @@ import Foundation
 import Metal
 import MetalKit
 import SwiftUI
+#if canImport(UIKit)
+import UIKit
+#endif
 
+#if os(iOS)
 let MaxBuffers = 3
 
 public class Renderer: NSObject {
@@ -206,3 +210,4 @@ public func makeBuffers(device: MTLDevice, samples: SampleBuffer) -> ([MTLBuffer
     
     return (minBuffers, maxBuffers)
 }
+#endif
